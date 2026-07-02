@@ -1,21 +1,28 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-// Module non développé pour le moment : il ne fait que se déclarer auprès du
-// noyau pour apparaître dans le tableau de bord ("Bientôt disponible").
-// Pour l'activer un jour : ajouter un fab_action, passer 'available' à true,
-// puis créer public-display.php + assets/{css,js}/accessibility.* en suivant
-// exactement le schéma du module sticky-cart.
 EH_Module_Registry::register(
     'accessibility',
     array(
         'label'           => __( 'Accessibilité', 'engagement-hub' ),
         'icon'            => '♿',
-        'description'     => __( 'Réglages de langue, police et contraste pour les visiteurs.', 'engagement-hub' ),
+        'description'     => __( 'Traduction de la page (Google), contraste élevé et curseur agrandi.', 'engagement-hub' ),
         'option_name'     => 'eh_module_active_accessibility',
-        'default_active'  => false,
-        'fab_action'      => '',
+        'default_active'  => true,
+        'fab_action'      => 'open-accessibility-panel',
         'fab_condition'   => '',
-        'available'       => false,
+        'available'       => true,
     )
 );
+
+if ( EH_Module_Registry::is_active( 'accessibility' ) ) {
+    require_once __DIR__ . '/public-display.php';
+
+    add_action( 'wp_enqueue_scripts', 'eh_a11y_enqueue_assets' );
+    function eh_a11y_enqueue_assets() {
+        // Les libellés sont déjà rendus côté serveur dans public-display.php ;
+        // le JS n'a besoin d'aucune chaîne traduite, seulement du comportement.
+        eh_enqueue_style( 'eh-a11y-css', EH_PLUGIN_URL . 'assets/css/accessibility.css', array(), EH_VERSION );
+        eh_enqueue_script( 'eh-a11y-js', EH_PLUGIN_URL . 'assets/js/accessibility.js', array(), EH_VERSION, true );
+    }
+}

@@ -8,14 +8,16 @@ Le design vient du croquis dans [`docs/schema.png`](docs/schema.png) :
 
 - Un bouton **engrenage** fixe en bas à droite du site, qui tourne légèrement au scroll.
 - Au clic, il déploie un petit menu d'icônes empilées (sélection de modules actifs sur la page courante).
-- Chaque icône a sa propre condition d'apparition :
-  - 🍪 **Cookies** — toujours visible, ouvre les préférences de consentement.
-  - ↑ **Haut de page** — apparaît après 70% de scroll.
-  - 🛒 **Ajout panier** — visible uniquement sur fiche produit, déclenche l'ajout au panier depuis la barre sticky.
+- Chaque icône a sa propre condition d'apparition, et ouvre un **panneau ancré au bouton** (pas un widget indépendant) :
+  - 🍪 **Cookies** — toujours visible, ouvre le panneau de préférences de consentement.
+  - ↑ **Haut de page** — apparaît après 50% de scroll, remonte la page.
+  - 🛒 **Ajout panier** — visible uniquement sur fiche produit, ouvre le panneau produit (image, variation, ajout au panier).
+  - ♿ **Accessibilité** — toujours visible, ouvre le panneau langue (Google Traduction) / contraste / curseur agrandi.
   - ▶️ **Vidéo à la une** *(à venir)* — vidéo courte associée à une annonce produit.
-  - ♿ **Accessibilité** *(à venir)* — langue, police, contraste.
 
 L'implémentation actuelle du menu est un "speed dial" (pile d'icônes qui apparaît au-dessus du bouton) plutôt que le tracé radial en toile du croquis — même logique de déclenchement conditionnel, rendu plus simple à maintenir. Le style visuel (disposition en éventail, courbes) peut évoluer plus tard sans toucher à la mécanique.
+
+**Panneaux ancrés, pas de widgets indépendants.** Cookies, panier et accessibilité s'affichent tous comme un panneau compact qui apparaît depuis le coin bas-droit du bouton engrenage (`transform-origin: bottom right`, même position `right: 20px; bottom: 90px`), et l'engrenage "pulse" tant qu'un panneau est ouvert — pour que tout se lise comme un seul système. Le panier reste **automatique** (s'ouvre au scroll sur fiche produit, comme avant) ; la toute première bannière de consentement cookie reste **indépendante et immédiate** (exigence RGPD : elle ne doit pas nécessiter un clic sur l'engrenage) — seule sa réouverture après coup passe par le panneau.
 
 ## 🏗️ Architecture
 
@@ -29,9 +31,9 @@ includes/
     frontend.php                  # Enqueue des assets du noyau + construit la config JS du bouton flottant
   modules/
     cookie-consent/    # Consentement cookies + Google Consent Mode V2 (ex banner-cookie-custom)
-    sticky-cart/        # Barre sticky d'ajout au panier (ex sticky-cart)
+    sticky-cart/        # Panneau produit (image, variation, ajout au panier), auto sur fiche produit (ex sticky-cart)
+    accessibility/        # Panneau langue (Google Traduction), contraste, curseur agrandi
     video-ads/           # Module déclaré mais non développé (roadmap)
-    accessibility/        # Module déclaré mais non développé (roadmap)
 assets/
   css/core.css, js/core.js        # Bouton engrenage + menu
   css/*, js/*                     # Un fichier par module actif
@@ -46,16 +48,25 @@ Le noyau ne connaît **aucun détail** des modules. Il lit juste `EH_Module_Regi
 document.dispatchEvent(new CustomEvent('eh:action', { detail: item }));
 ```
 
-Chaque module écoute cet événement et réagit s'il reconnaît l'action (voir `assets/js/cookie-consent.js` et `assets/js/sticky-cart.js`). Ce découplage est ce qui permet d'ajouter un module sans modifier le noyau.
+Chaque module écoute cet événement et réagit s'il reconnaît l'action (voir `assets/js/cookie-consent.js`, `assets/js/sticky-cart.js`, `assets/js/accessibility.js`). Ce découplage est ce qui permet d'ajouter un module sans modifier le noyau.
+
+Le noyau expose aussi une petite API (`assets/js/core.js`) pour coordonner l'ouverture des panneaux, afin qu'un seul soit visible à la fois et que le bouton engrenage "pulse" tant que c'est le cas :
+
+```js
+window.ehHub.openPanel('mon-module');   // ferme le panneau précédent, fait pulser l'engrenage
+window.ehHub.closePanel('mon-module');
+// tout module doit écouter 'eh:panel-close' et se fermer si detail.id === son propre id
+```
 
 ### Ajouter un nouveau module
 
 1. Créer `includes/modules/mon-module/module.php`, y appeler `EH_Module_Registry::register('mon-module', [...])` avec une `icon`, une `fab_action`, et `'available' => true`.
 2. Ajouter le require dans `engagement-hub.php`.
 3. Créer les assets `assets/css/mon-module.css` / `assets/js/mon-module.js`, enqueués depuis le module comme le fait `sticky-frontend.php`.
-4. Dans le JS du module, écouter `document.addEventListener('eh:action', ...)` et réagir à ta `fab_action`.
+4. Dessiner le panneau comme un panneau ancré (voir `assets/css/accessibility.css` pour le patron : `position: fixed; right: 20px; bottom: 90px; transform-origin: bottom right;`), avec un bouton de fermeture.
+5. Dans le JS du module, écouter `document.addEventListener('eh:action', ...)` pour ouvrir le panneau (`window.ehHub.openPanel('mon-module')`), et `eh:panel-close` pour le refermer si un autre panneau s'ouvre.
 
-Les modules `video-ads` et `accessibility` sont déjà déclarés avec `'available' => false` : ils apparaissent dans le tableau de bord admin ("Bientôt disponible") mais n'ont ni assets ni logique — prêts à être complétés en suivant ce schéma.
+Le module `video-ads` est déjà déclaré avec `'available' => false` : il apparaît dans le tableau de bord admin ("Bientôt disponible") mais n'a ni assets ni logique — prêt à être complété en suivant ce schéma (c'est exactement comme ça qu'`accessibility` a été construit).
 
 ## 🛠️ Développement
 
@@ -78,6 +89,10 @@ git tag v1.0.0
 git push origin v1.0.0
 # -> Release GitHub avec engagement-hub.zip prêt à uploader dans wp-content/plugins/
 ```
+
+## ⚠️ À savoir : module Accessibilité
+
+La traduction utilise le widget public **Google Website Translator** (`translate.google.com/translate_a/element.js`), chargé à la demande seulement (pas au chargement de chaque page). C'est un service non documenté officiellement par Google et qu'il peut faire évoluer sans préavis — à surveiller si la traduction cesse de fonctionner. Le contraste élevé et le curseur agrandi sont, eux, 100% CSS/JS maison (pas de dépendance externe) et mémorisés via `localStorage`.
 
 ## 📦 Installation sur le site
 

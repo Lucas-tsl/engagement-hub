@@ -31,16 +31,18 @@ document.addEventListener("DOMContentLoaded", function() {
     function openModal(trigger) {
         if (!modal || !modalBox) return;
         lastFocusedElement = trigger || document.activeElement;
-        modal.style.display = "flex";
+        modal.classList.add("bcc-modal-overlay-open");
         modalBox.focus();
         document.addEventListener("keydown", handleModalKeydown);
+        if (window.ehHub) window.ehHub.openPanel("cookie-consent");
     }
 
     function closeModal() {
         if (!modal) return;
-        modal.style.display = "none";
+        modal.classList.remove("bcc-modal-overlay-open");
         document.removeEventListener("keydown", handleModalKeydown);
         if (lastFocusedElement) lastFocusedElement.focus();
+        if (window.ehHub) window.ehHub.closePanel("cookie-consent");
     }
 
     function setConsent(stats, mkt) {
@@ -71,7 +73,8 @@ document.addEventListener("DOMContentLoaded", function() {
 
         if(banner) banner.style.display = "none";
         document.removeEventListener("keydown", handleModalKeydown);
-        if(modal) modal.style.display = "none";
+        if (modal) modal.classList.remove("bcc-modal-overlay-open");
+        if (window.ehHub) window.ehHub.closePanel("cookie-consent");
     }
 
     const btnAccepter = document.getElementById("bcc-btn-accepter");
@@ -88,8 +91,14 @@ document.addEventListener("DOMContentLoaded", function() {
         openModal(btnPrefs);
     });
 
-    if(modal) modal.addEventListener("click", (event) => {
-        if (event.target === modal) closeModal();
+    // Clic en dehors du panneau (mais pas sur le bouton engrenage lui-même,
+    // qui gère déjà ses propres clics) : on referme.
+    document.addEventListener("click", (event) => {
+        if (!modal || !modal.classList.contains("bcc-modal-overlay-open")) return;
+        if (modal.contains(event.target)) return;
+        const fab = document.getElementById("eh-fab");
+        if (fab && fab.contains(event.target)) return;
+        closeModal();
     });
 
     if(btnCloseModal) btnCloseModal.addEventListener("click", () => {
@@ -108,6 +117,14 @@ document.addEventListener("DOMContentLoaded", function() {
         if (event.detail && event.detail.action === "open-cookie-modal") {
             if (banner) banner.style.display = "none";
             openModal();
+        }
+    });
+
+    // Un autre panneau du hub (ex. panier) vient de s'ouvrir : on se referme.
+    document.addEventListener("eh:panel-close", function(event) {
+        if (event.detail && event.detail.id === "cookie-consent") {
+            if (modal) modal.classList.remove("bcc-modal-overlay-open");
+            document.removeEventListener("keydown", handleModalKeydown);
         }
     });
 });

@@ -4,12 +4,12 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 EH_Module_Registry::register(
     'sticky-cart',
     array(
-        'label'           => __( 'Sticky Add-to-Cart', 'engagement-hub' ),
+        'label'           => __( 'Ajout au panier', 'engagement-hub' ),
         'icon'            => '🛒',
-        'description'     => __( "Barre sticky qui suit l'utilisateur sur les fiches produit, avec sélection de variation.", 'engagement-hub' ),
+        'description'     => __( 'Panneau produit (image, variation, ajout au panier) ancré au bouton, qui suit l\'utilisateur sur les fiches produit.', 'engagement-hub' ),
         'option_name'     => 'eh_module_active_sticky-cart',
         'default_active'  => true,
-        'fab_action'      => 'trigger-add-to-cart',
+        'fab_action'      => 'open-sticky-panel',
         'fab_condition'   => 'is_product',
         'available'       => true,
     )

@@ -10,6 +10,7 @@
      function createStickyBar() {
          const stickyHTML = `
              <div class="sticky-variation-bar" id="stickyVariationBar">
+                 <button type="button" class="sticky-panel-close" aria-label="Fermer">✕</button>
                  <div class="sticky-variation-content">
                      <!-- Bloc gauche : Image + Nom du produit -->
                      <div class="sticky-left-block">
@@ -645,15 +646,37 @@
         let isUpdating = false; // Verrouillage pendant les mises à jour WooCommerce
         let clickedFromStickyBar = false; // Indicateur si le clic vient de la sticky bar
 
-        // Garde le bouton engrenage visuellement "lié" tant que la sticky bar
-        // est affichée, pour que l'ouverture se lise comme un seul système
-        // plutôt qu'une barre qui apparaît de nulle part.
+        // Le panneau panier est coordonné avec le bouton engrenage : l'ouvrir
+        // ferme tout autre panneau du hub (cookies, etc.) et fait "pulser"
+        // l'engrenage, pour que ça se lise comme un seul système plutôt
+        // qu'une barre qui apparaît de nulle part.
         function setStickyBarVisible(visible) {
             $stickyBar.toggleClass('visible', visible);
-            if (window.ehHub && typeof window.ehHub.setLinked === 'function') {
-                window.ehHub.setLinked(visible);
+            if (!window.ehHub) return;
+            if (visible) {
+                window.ehHub.openPanel('sticky-cart');
+            } else {
+                window.ehHub.closePanel('sticky-cart');
             }
         }
+
+        // Un autre panneau du hub (ex. cookies) vient de s'ouvrir : on se referme.
+        document.addEventListener('eh:panel-close', function (event) {
+            if (event.detail && event.detail.id === 'sticky-cart') {
+                $stickyBar.removeClass('visible');
+            }
+        });
+
+        // Ouverture manuelle depuis l'icône 🛒 du bouton engrenage.
+        document.addEventListener('eh:action', function (event) {
+            if (event.detail && event.detail.action === 'open-sticky-panel') {
+                setStickyBarVisible(true);
+            }
+        });
+
+        $stickyBar.on('click', '.sticky-panel-close', function () {
+            setStickyBarVisible(false);
+        });
 
         function findAddToCartBtn() {
             // Chercher le bouton d'ajout au panier dans tous les contextes possibles
@@ -889,15 +912,5 @@
              this.blur();
          });
      }
-
-     // Déclenché par l'icône 🛒 du bouton flottant central (hub) sur fiche produit
-     document.addEventListener('eh:action', function(event) {
-         if (event.detail && event.detail.action === 'trigger-add-to-cart') {
-             const $btn = $('#stickyVariationBar .sticky-add-to-cart').not(':disabled');
-             if ($btn.length) {
-                 $btn.trigger('click');
-             }
-         }
-     });
 
  })(jQuery);

@@ -1,0 +1,169 @@
+/* Panneau Accessibilité, ancré au bouton engrenage (même position que les
+   panneaux panier et cookies : assets/css/sticky-cart.css / cookie-consent.css). */
+.eh-a11y-panel {
+    display: block;
+    position: fixed;
+    right: 20px;
+    bottom: 90px;
+    width: 320px;
+    max-width: calc(100vw - 40px);
+    max-height: calc(100vh - 140px);
+    overflow-y: auto;
+    z-index: 999996; /* juste sous le bouton engrenage (999997) */
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 16px 40px rgb(0 0 0 / 18%);
+    padding: 18px 16px 16px;
+    font-family: sans-serif;
+    opacity: 0;
+    transform: scale(0.15);
+    transform-origin: bottom right;
+    pointer-events: none;
+    transition: opacity 0.25s ease, transform 0.3s cubic-bezier(0.2, 0.85, 0.25, 1);
+}
+
+.eh-a11y-panel.eh-a11y-panel-open {
+    opacity: 1;
+    transform: scale(1);
+    pointer-events: auto;
+}
+
+.eh-a11y-close {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(0, 0, 0, 0.06);
+    color: #333;
+    font-size: 14px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.eh-a11y-close:hover {
+    background: rgba(0, 0, 0, 0.12);
+}
+
+.eh-a11y-title {
+    margin: 0 0 14px;
+    font-size: 16px;
+    font-weight: 700;
+    color: #111;
+}
+
+.eh-a11y-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 0;
+    border-top: 1px solid #eee;
+}
+
+.eh-a11y-row:first-of-type {
+    border-top: none;
+}
+
+.eh-a11y-row label,
+.eh-a11y-row span {
+    font-size: 13px;
+    color: #333;
+}
+
+#eh-a11y-lang {
+    font-size: 13px;
+    padding: 6px 8px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background: #fff;
+}
+
+.eh-a11y-switch {
+    width: 42px;
+    height: 24px;
+    border-radius: 999px;
+    border: none;
+    background: #ccc;
+    cursor: pointer;
+    position: relative;
+    padding: 0;
+    flex-shrink: 0;
+    transition: background 0.2s ease;
+}
+
+.eh-a11y-switch-knob {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 1px 3px rgb(0 0 0 / 30%);
+    transition: transform 0.2s ease;
+}
+
+.eh-a11y-switch[aria-pressed="true"] {
+    background: #111;
+}
+
+.eh-a11y-switch[aria-pressed="true"] .eh-a11y-switch-knob {
+    transform: translateX(18px);
+}
+
+.eh-a11y-note {
+    margin: 12px 0 0;
+    font-size: 11px;
+    color: #888;
+    line-height: 1.4;
+}
+
+.eh-a11y-google-widget {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+}
+
+@media (max-width: 480px) {
+    .eh-a11y-panel {
+        right: 12px;
+        left: 12px;
+        width: auto;
+        bottom: 84px;
+        max-height: calc(100vh - 120px);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .eh-a11y-panel {
+        transition: opacity 0.2s ease-out;
+        transform: none;
+    }
+}
+
+/* ========================================
+   Effets appliqués au site : contraste et curseur agrandi
+   ======================================== */
+html.eh-a11y-contrast {
+    filter: contrast(1.35) saturate(1.1);
+}
+
+html.eh-a11y-contrast img,
+html.eh-a11y-contrast video {
+    filter: contrast(0.85);
+}
+
+html.eh-a11y-large-cursor,
+html.eh-a11y-large-cursor a,
+html.eh-a11y-large-cursor button,
+html.eh-a11y-large-cursor input,
+html.eh-a11y-large-cursor select,
+html.eh-a11y-large-cursor textarea,
+html.eh-a11y-large-cursor [role="button"] {
+    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 32 32'%3E%3Cpath d='M6 2 L6 28 L13 21 L18 30 L22 28 L17 19 L26 19 Z' fill='black' stroke='white' stroke-width='2' stroke-linejoin='round'/%3E%3C/svg%3E") 6 4, auto !important;
+}

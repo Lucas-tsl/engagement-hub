@@ -99,10 +99,30 @@
 
     updateScrollPercent();
 
-    // API publique minimale : permet à un module (ex. sticky-cart) de relier
-    // visuellement le bouton engrenage à sa propre fonctionnalité pendant
-    // qu'elle est affichée, sans que le noyau ait à connaître ce module.
+    // Coordination des panneaux : chaque module (cookie, sticky cart, futurs
+    // modules) affiche son propre panneau ancré à l'engrenage, mais un seul
+    // peut être ouvert à la fois. Le noyau ne connaît pas leur contenu : il
+    // se contente de fermer le panneau précédent et de "lier" visuellement
+    // l'engrenage (pulsation) tant qu'un panneau est ouvert.
+    var activePanel = null;
+
     window.ehHub = {
+        openPanel: function (id) {
+            if (activePanel && activePanel !== id) {
+                document.dispatchEvent(new CustomEvent('eh:panel-close', { detail: { id: activePanel } }));
+            }
+            activePanel = id;
+            fab.classList.add('eh-fab-linked');
+            document.dispatchEvent(new CustomEvent('eh:panel-open', { detail: { id: id } }));
+        },
+        closePanel: function (id) {
+            if (activePanel !== id) return;
+            activePanel = null;
+            fab.classList.remove('eh-fab-linked');
+            document.dispatchEvent(new CustomEvent('eh:panel-close', { detail: { id: id } }));
+        },
+        // Conservé pour compatibilité : un module peut encore piloter le
+        // "lien" visuel sans passer par un panneau à proprement parler.
         setLinked: function (active) {
             fab.classList.toggle('eh-fab-linked', !!active);
         }

@@ -1,107 +1,122 @@
 /**
- * Sticky Variation Bar - Style Adopt Parfum
- * Version 4 : Deux blocs - gauche (image + nom) et droite (variations + bouton)
+ * Panneau "Ajout au panier" ancré au bouton engrenage (Engagement Hub).
+ * Même logique/contenu que l'ancienne barre sticky plein-écran, mais
+ * redessiné comme un panneau compact qui apparaît depuis le coin bas-droit,
+ * là où se trouve le bouton engrenage (assets/css/core.css).
  */
 
 .sticky-variation-bar {
     position: fixed;
-    bottom: -200px;
-    left: 0;
-    right: 0;
-    background-color: rgb(196 196 196 / 24%); /* couleur semi-transparente */
+    right: 20px;
+    bottom: 90px;
+    width: 340px;
+    max-width: calc(100vw - 40px);
+    max-height: calc(100vh - 140px);
+    overflow-y: auto;
+    background-color: rgb(255 255 255 / 92%);
     backdrop-filter: blur(14px);
-    margin : 20px;
-    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.12);
-    border: 1px solid rgba(255, 255, 255, 0.35);
-    z-index: 999;
-    transition: bottom 0.7s ease-in-out, opacity 0.6s ease-out, transform 0.6s cubic-bezier(0.2, 0.85, 0.25, 1);
-    padding: 10px 0;
+    border-radius: 16px;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.18);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    z-index: 999996; /* juste sous le bouton engrenage (999997) */
+    transition: opacity 0.25s ease, transform 0.3s cubic-bezier(0.2, 0.85, 0.25, 1);
+    padding: 18px 16px 16px;
     opacity: 0;
-    /* La barre grandit depuis le coin bas-droit, là où se trouve le bouton
-       engrenage (assets/css/core.css), pour se lire comme une seule et même
-       fonctionnalité plutôt que deux éléments indépendants. */
+    /* Le panneau apparaît depuis le coin où se trouve le bouton engrenage,
+       pour se lire comme une seule et même fonctionnalité. */
     transform: scale(0.15);
     transform-origin: bottom right;
+    pointer-events: none;
     will-change: transform, opacity;
-
 }
 
-/* Tablette et desktop : on laisse la place au bouton engrenage à droite */
-@media (min-width: 768px) {
+.sticky-variation-bar.visible {
+    opacity: 1;
+    transform: scale(1);
+    pointer-events: auto;
+}
+
+@media (max-width: 480px) {
     .sticky-variation-bar {
-        margin-left: 15%;
-        margin-right: calc(15% + 76px);
+        right: 12px;
+        left: 12px;
+        width: auto;
+        bottom: 84px;
+        max-height: calc(100vh - 120px);
     }
 }
 
+.sticky-panel-close {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(0, 0, 0, 0.06);
+    color: #333;
+    font-size: 14px;
+    line-height: 1;
+    cursor: pointer;
+}
 
-.sticky-variation-bar.visible {
-    bottom: 0;
-    opacity: 1;
-    transform: scale(1);
+.sticky-panel-close:hover {
+    background: rgba(0, 0, 0, 0.12);
 }
 
 .sticky-variation-content {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 20px;
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 20px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 14px;
     opacity: 0;
     will-change: opacity, transform;
 }
 
 /* ========================================
-   BLOC GAUCHE : Image + Nom du produit
+   Image + Nom du produit
    ======================================== */
 .sticky-left-block {
     display: flex;
     align-items: center;
-    gap: 15px;
-    flex-shrink: 0;
+    gap: 12px;
 }
 
 .sticky-product-image {
-    width: 50px;
-    height: 50px;
+    width: 46px;
+    height: 46px;
     flex-shrink: 0;
 }
 
 .sticky-product-img {
-    width: 50px;
-    height: 50px;
+    width: 46px;
+    height: 46px;
     object-fit: cover;
-    border-radius: 4px;
+    border-radius: 8px;
 }
 
 .sticky-product-name {
     font-size: 14px;
     font-weight: 600;
     color: #333;
-    max-width: 200px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
     font-family: 'Gotu', sans-serif;
 }
 
 /* ========================================
-   BLOC DROITE : Variations + Bouton
+   Variations + Bouton
    ======================================== */
 .sticky-right-block {
     display: flex;
-    align-items: center;
-    gap: 15px;
-    flex: 1;
-    justify-content: flex-end;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
 }
 
 .sticky-variation-options {
     display: flex;
-    align-items: center;
-    gap: 12px;
+    flex-direction: column;
+    gap: 8px;
 }
 
 .sticky-variation-label {
@@ -110,14 +125,12 @@
     font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    white-space: nowrap;
 }
 
 .sticky-variation-buttons {
     display: flex;
     gap: 8px;
     flex-wrap: wrap;
-
 }
 
 .sticky-variation-btn {
@@ -162,8 +175,8 @@
 
 /* Image de variation dans les boutons */
 .sticky-var-img {
-    width: 32px;
-    height: 32px;
+    width: 28px;
+    height: 28px;
     object-fit: cover;
     border-radius: 2px;
 }
@@ -186,7 +199,8 @@
 
 .sticky-add-to-cart {
     font-family: 'Gotu', sans-serif;
-    padding: 10px 15px;
+    width: 100%;
+    padding: 12px 15px;
     background: #2c2c2c;
     color: #fff;
     border: none;
@@ -194,11 +208,11 @@
     font-weight: 600;
     cursor: pointer;
     transition: background 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
-    min-width: 150px;
     white-space: nowrap;
     display: flex;
     align-items: center;
     justify-content: center;
+    border-radius: 8px;
 }
 
 .sticky-add-to-cart:hover:not(:disabled) {
@@ -247,207 +261,10 @@
 }
 
 /* ========================================
-   PRODUITS SIMPLES - Desktop
+   PRODUITS SIMPLES (sans variations)
    ======================================== */
 .sticky-variation-bar.simple-product .sticky-variation-options {
     display: none !important;
-}
-
-.sticky-variation-bar.simple-product .sticky-right-block {
-    display: flex !important;
-    justify-content: flex-end;
-}
-
-.sticky-variation-bar.simple-product .sticky-product-name {
-    max-width: 400px;
-}
-
-.sticky-variation-bar.simple-product .sticky-add-to-cart {
-    display: flex !important;
-    min-width: 200px;
-}
-
-/* ========================================
-   Responsive Design
-   ======================================== */
-
-/* Mode paysage mobile et tablette */
-@media (max-width: 926px) and (orientation: landscape) {
-    .sticky-variation-bar {
-        margin: 10px;
-        padding: 10px 0;
-        bottom: -200px;
-    }
-
-    .sticky-variation-content {
-        padding: 0 10px;
-        gap: 12px;
-    }
-
-    .sticky-product-image {
-        width: 35px;
-        height: 35px;
-    }
-
-    .sticky-product-name {
-        font-size: 11px;
-        max-width: 120px;
-    }
-
-    .sticky-variation-btn {
-        padding: 5px 8px;
-        font-size: 11px;
-    }
-
-    .sticky-var-img {
-        width: 24px;
-        height: 24px;
-    }
-
-    .sticky-add-to-cart {
-        padding: 10px 20px;
-        font-size: 12px;
-        min-width: 130px;
-    }
-}
-
-/* Mode portrait mobile - version compacte verticale */
-@media (max-width: 768px) and (orientation: portrait),
-       (max-width: 480px) {
-    .sticky-variation-content {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-        padding: 0 15px;
-        justify-content: center;
-    }
-
-    .sticky-right-block {
-        display: contents;
-    }
-
-    .sticky-variation-options {
-        display: contents;
-    }
-
-    /* Ligne 1 : "Sélectionner une option" - prend toute la largeur */
-    .sticky-variation-label {
-        order: 1;
-        flex-basis: 100%;
-        text-align: center;
-    }
-
-    .sticky-variation-label .variation-name {
-        display: block;
-    }
-
-    /* Pas de pseudo-éléments */
-    .sticky-variation-label::before,
-    .sticky-variation-label::after {
-        display: none;
-    }
-
-    /* Ligne 2 : Image + Nom + Boutons sur la même ligne */
-    .sticky-left-block {
-        display: flex;
-        order: 2;
-        align-items: center;
-        gap: 10px;
-        flex-shrink: 0;
-    }
-
-    .sticky-product-image {
-        width: 40px;
-        height: 40px;
-        flex-shrink: 0;
-    }
-
-    .sticky-product-name {
-        font-size: 12px;
-        max-width: none;
-        flex-shrink: 0;
-    }
-
-    .sticky-variation-buttons {
-        order: 2;
-        justify-content: center;
-    }
-
-    .sticky-variation-btn {
-        flex: 0 0 auto;
-        padding: 6px 10px;
-        font-size: 12px;
-    }
-
-    /* Ligne 3 : Bouton ajouter au panier - prend toute la largeur */
-    .sticky-add-to-cart {
-        order: 3;
-        flex-basis: 100%;
-        width: 100%;
-        padding: 14px 20px;
-    }
-
-    .sticky-variation-bar {
-        padding: 12px 0;
-
-    }
-
-    /* ====== Produits simples (sans variations) ====== */
-    .sticky-variation-bar.simple-product .sticky-variation-options {
-        display: none !important;
-    }
-
-    .sticky-variation-bar.simple-product .sticky-variation-label {
-        display: none !important;
-    }
-
-    .sticky-variation-bar.simple-product .sticky-left-block {
-        order: 1 !important;
-        justify-content: center;
-        flex-basis: 100%;
-    }
-
-    .sticky-variation-bar.simple-product .sticky-right-block {
-        order: 2 !important;
-        display: flex;
-        flex-basis: 100%;
-        justify-content: center;
-    }
-
-    .sticky-variation-bar.simple-product .sticky-add-to-cart {
-        width: 100%;
-    }
-}
-
-/* Très petits écrans en portrait */
-@media (max-width: 380px) and (orientation: portrait) {
-    .sticky-product-image {
-        width: 35px;
-        height: 35px;
-    }
-
-    .sticky-product-name {
-        font-size: 11px;
-    }
-
-    .sticky-variation-btn {
-        padding: 5px 8px;
-        font-size: 11px;
-    }
-
-    .sticky-var-img {
-        width: 20px;
-        height: 20px;
-    }
-
-    .sticky-variation-label {
-        font-size: 10px;
-    }
-
-    .sticky-variation-bar {
-        margin: 10px;
-
-    }
 }
 
 /* Animation d'entrée */
@@ -463,12 +280,11 @@
 }
 
 .sticky-variation-bar.visible {
-    animation: bubbleReveal 1.25s cubic-bezier(0.2, 0.85, 0.25, 1);
-    animation-delay: 0.06s;
+    animation: bubbleReveal 0.35s cubic-bezier(0.2, 0.85, 0.25, 1);
 }
 
 .sticky-variation-bar.visible .sticky-variation-content {
-    animation: contentFade 0.45s ease-out 0.2s both;
+    animation: contentFade 0.3s ease-out 0.08s both;
 }
 
 @keyframes contentFade {
@@ -484,7 +300,7 @@
 
 @media (prefers-reduced-motion: reduce) {
     .sticky-variation-bar {
-        transition: bottom 0.2s ease-out;
+        transition: opacity 0.2s ease-out;
         transform: none;
         opacity: 1;
         animation: none;
