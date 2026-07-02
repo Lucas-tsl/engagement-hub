@@ -16,7 +16,7 @@
     background: #111;
     color: #fff;
     cursor: pointer;
-    box-shadow: 0 4px 14px rgb(0 0 0 / 25%);
+    box-shadow: 0 1px 4px rgb(0 0 0 / 18%);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -24,32 +24,31 @@
 }
 
 .eh-fab-toggle:hover {
-    box-shadow: 0 6px 18px rgb(0 0 0 / 35%);
+    box-shadow: 0 2px 6px rgb(0 0 0 / 22%);
 }
 
 /* Signale visuellement que la fonctionnalité affichée sur la page (ex. la
    barre sticky d'ajout au panier) est pilotée par ce même bouton, plutôt
    que de laisser croire à deux systèmes séparés. */
 .eh-fab-linked .eh-fab-toggle {
-    box-shadow: 0 0 0 0 rgb(17 17 17 / 35%), 0 4px 14px rgb(0 0 0 / 25%);
     animation: eh-fab-pulse 1.8s ease-out infinite;
 }
 
 @keyframes eh-fab-pulse {
     0% {
-        box-shadow: 0 0 0 0 rgb(17 17 17 / 35%), 0 4px 14px rgb(0 0 0 / 25%);
+        box-shadow: 0 0 0 0 rgb(17 17 17 / 30%);
     }
     70% {
-        box-shadow: 0 0 0 10px rgb(17 17 17 / 0%), 0 4px 14px rgb(0 0 0 / 25%);
+        box-shadow: 0 0 0 8px rgb(17 17 17 / 0%);
     }
     100% {
-        box-shadow: 0 0 0 0 rgb(17 17 17 / 0%), 0 4px 14px rgb(0 0 0 / 25%);
+        box-shadow: 0 0 0 0 rgb(17 17 17 / 0%);
     }
 }
 
 .eh-fab-gear {
     display: inline-block;
-    font-size: 26px;
+    font-size: 24px;
     line-height: 1;
     transform: rotate(calc(var(--eh-scroll, 0) * 1.8deg));
     transition: transform 0.6s ease;
@@ -67,6 +66,15 @@
     flex-direction: column;
     align-items: center;
     gap: 10px;
+    /* Même fermé, les .eh-fab-item restent dans le DOM (translateY + scale,
+       pas display:none) pour pouvoir se réanimer à la prochaine ouverture.
+       Sans ce pointer-events:none, ce conteneur invisible mais toujours en
+       place interceptait les clics destinés aux panneaux juste en dessous. */
+    pointer-events: none;
+}
+
+.eh-fab-open .eh-fab-menu {
+    pointer-events: auto;
 }
 
 .eh-fab-item {
@@ -78,7 +86,7 @@
     color: #111;
     font-size: 20px;
     cursor: pointer;
-    box-shadow: 0 3px 10px rgb(0 0 0 / 20%);
+    box-shadow: 0 1px 3px rgb(0 0 0 / 15%);
     display: flex;
     align-items: center;
     justify-content: center;
