@@ -1,0 +1,492 @@
+/**
+ * Sticky Variation Bar - Style Adopt Parfum
+ * Version 4 : Deux blocs - gauche (image + nom) et droite (variations + bouton)
+ */
+
+.sticky-variation-bar {
+    position: fixed;
+    bottom: -200px;
+    left: 0;
+    right: 0;
+    background-color: rgb(196 196 196 / 24%); /* couleur semi-transparente */
+    backdrop-filter: blur(14px);
+    margin : 20px;
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    z-index: 999;
+    transition: bottom 0.7s ease-in-out, opacity 1.2s ease-out, transform 1.2s ease-out;
+    padding: 10px 0;
+    opacity: 0;
+    transform: scaleX(0.2);
+    transform-origin: center;
+    will-change: transform, opacity;
+
+}
+
+/* Tablette et desktop */
+@media (min-width: 768px) {
+    .sticky-variation-bar {
+        margin-left: 15%;
+        margin-right: 15%;
+    }
+}
+
+
+.sticky-variation-bar.visible {
+    bottom: 0;
+    opacity: 1;
+    transform: scaleX(1);
+}
+
+.sticky-variation-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    opacity: 0;
+    will-change: opacity, transform;
+}
+
+/* ========================================
+   BLOC GAUCHE : Image + Nom du produit
+   ======================================== */
+.sticky-left-block {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex-shrink: 0;
+}
+
+.sticky-product-image {
+    width: 50px;
+    height: 50px;
+    flex-shrink: 0;
+}
+
+.sticky-product-img {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+.sticky-product-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+    max-width: 200px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-family: 'Gotu', sans-serif;
+}
+
+/* ========================================
+   BLOC DROITE : Variations + Bouton
+   ======================================== */
+.sticky-right-block {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex: 1;
+    justify-content: flex-end;
+}
+
+.sticky-variation-options {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.sticky-variation-label {
+    font-size: 12px;
+    color: #666;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+}
+
+.sticky-variation-buttons {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+
+}
+
+.sticky-variation-btn {
+    padding: 6px 10px;
+    border: 2px solid #e0e0e0;
+    background: #fff;
+    color: #333;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+}
+
+.sticky-var-left {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+}
+
+.sticky-var-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+}
+
+.sticky-variation-btn:hover {
+    border-color: #333;
+}
+
+.sticky-variation-btn.active {
+    background: #fff;
+    color: #333;
+    border-color: #333;
+}
+
+/* Image de variation dans les boutons */
+.sticky-var-img {
+    width: 32px;
+    height: 32px;
+    object-fit: cover;
+    border-radius: 2px;
+}
+
+.sticky-var-label {
+    font-size: 13px;
+    display: block;
+}
+
+.sticky-var-unit-price {
+    font-size: 10px;
+    font-weight: 400;
+    color: #666;
+    display: block;
+}
+
+.sticky-variation-btn.active .sticky-var-unit-price {
+    color: #333;
+}
+
+.sticky-add-to-cart {
+    font-family: 'Gotu', sans-serif;
+    padding: 10px 15px;
+    background: #2c2c2c;
+    color: #fff;
+    border: none;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+    min-width: 150px;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sticky-add-to-cart:hover:not(:disabled) {
+    background: #fff;
+    color: #2c2c2c;
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.25);
+}
+
+.sticky-add-to-cart:disabled {
+    background: #2c2c2c;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+/* État de chargement du bouton */
+.sticky-add-to-cart.loading {
+    background: #000;
+    cursor: wait;
+    pointer-events: none;
+}
+
+.sticky-add-to-cart .loading-text {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.sticky-add-to-cart .loading-text::after {
+    content: '';
+    width: 14px;
+    height: 14px;
+    border: 2px solid #fff;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.sticky-price {
+    font-weight: 600;
+}
+
+/* ========================================
+   PRODUITS SIMPLES - Desktop
+   ======================================== */
+.sticky-variation-bar.simple-product .sticky-variation-options {
+    display: none !important;
+}
+
+.sticky-variation-bar.simple-product .sticky-right-block {
+    display: flex !important;
+    justify-content: flex-end;
+}
+
+.sticky-variation-bar.simple-product .sticky-product-name {
+    max-width: 400px;
+}
+
+.sticky-variation-bar.simple-product .sticky-add-to-cart {
+    display: flex !important;
+    min-width: 200px;
+}
+
+/* ========================================
+   Responsive Design
+   ======================================== */
+
+/* Mode paysage mobile et tablette */
+@media (max-width: 926px) and (orientation: landscape) {
+    .sticky-variation-bar {
+        margin: 10px;
+        padding: 10px 0;
+        bottom: -200px;
+    }
+
+    .sticky-variation-content {
+        padding: 0 10px;
+        gap: 12px;
+    }
+
+    .sticky-product-image {
+        width: 35px;
+        height: 35px;
+    }
+
+    .sticky-product-name {
+        font-size: 11px;
+        max-width: 120px;
+    }
+
+    .sticky-variation-btn {
+        padding: 5px 8px;
+        font-size: 11px;
+    }
+
+    .sticky-var-img {
+        width: 24px;
+        height: 24px;
+    }
+
+    .sticky-add-to-cart {
+        padding: 10px 20px;
+        font-size: 12px;
+        min-width: 130px;
+    }
+}
+
+/* Mode portrait mobile - version compacte verticale */
+@media (max-width: 768px) and (orientation: portrait),
+       (max-width: 480px) {
+    .sticky-variation-content {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        padding: 0 15px;
+        justify-content: center;
+    }
+
+    .sticky-right-block {
+        display: contents;
+    }
+
+    .sticky-variation-options {
+        display: contents;
+    }
+
+    /* Ligne 1 : "Sélectionner une option" - prend toute la largeur */
+    .sticky-variation-label {
+        order: 1;
+        flex-basis: 100%;
+        text-align: center;
+    }
+
+    .sticky-variation-label .variation-name {
+        display: block;
+    }
+
+    /* Pas de pseudo-éléments */
+    .sticky-variation-label::before,
+    .sticky-variation-label::after {
+        display: none;
+    }
+
+    /* Ligne 2 : Image + Nom + Boutons sur la même ligne */
+    .sticky-left-block {
+        display: flex;
+        order: 2;
+        align-items: center;
+        gap: 10px;
+        flex-shrink: 0;
+    }
+
+    .sticky-product-image {
+        width: 40px;
+        height: 40px;
+        flex-shrink: 0;
+    }
+
+    .sticky-product-name {
+        font-size: 12px;
+        max-width: none;
+        flex-shrink: 0;
+    }
+
+    .sticky-variation-buttons {
+        order: 2;
+        justify-content: center;
+    }
+
+    .sticky-variation-btn {
+        flex: 0 0 auto;
+        padding: 6px 10px;
+        font-size: 12px;
+    }
+
+    /* Ligne 3 : Bouton ajouter au panier - prend toute la largeur */
+    .sticky-add-to-cart {
+        order: 3;
+        flex-basis: 100%;
+        width: 100%;
+        padding: 14px 20px;
+    }
+
+    .sticky-variation-bar {
+        padding: 12px 0;
+
+    }
+
+    /* ====== Produits simples (sans variations) ====== */
+    .sticky-variation-bar.simple-product .sticky-variation-options {
+        display: none !important;
+    }
+
+    .sticky-variation-bar.simple-product .sticky-variation-label {
+        display: none !important;
+    }
+
+    .sticky-variation-bar.simple-product .sticky-left-block {
+        order: 1 !important;
+        justify-content: center;
+        flex-basis: 100%;
+    }
+
+    .sticky-variation-bar.simple-product .sticky-right-block {
+        order: 2 !important;
+        display: flex;
+        flex-basis: 100%;
+        justify-content: center;
+    }
+
+    .sticky-variation-bar.simple-product .sticky-add-to-cart {
+        width: 100%;
+    }
+}
+
+/* Très petits écrans en portrait */
+@media (max-width: 380px) and (orientation: portrait) {
+    .sticky-product-image {
+        width: 35px;
+        height: 35px;
+    }
+
+    .sticky-product-name {
+        font-size: 11px;
+    }
+
+    .sticky-variation-btn {
+        padding: 5px 8px;
+        font-size: 11px;
+    }
+
+    .sticky-var-img {
+        width: 20px;
+        height: 20px;
+    }
+
+    .sticky-variation-label {
+        font-size: 10px;
+    }
+
+    .sticky-variation-bar {
+        margin: 10px;
+
+    }
+}
+
+/* Animation d'entrée */
+@keyframes bubbleReveal {
+    0% {
+        transform: scaleX(0.18);
+        opacity: 0;
+    }
+    100% {
+        transform: scaleX(1);
+        opacity: 1;
+    }
+}
+
+.sticky-variation-bar.visible {
+    animation: bubbleReveal 1.25s cubic-bezier(0.2, 0.85, 0.25, 1);
+    animation-delay: 0.06s;
+}
+
+.sticky-variation-bar.visible .sticky-variation-content {
+    animation: contentFade 0.45s ease-out 0.2s both;
+}
+
+@keyframes contentFade {
+    from {
+        opacity: 0;
+        transform: translateY(4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .sticky-variation-bar {
+        transition: bottom 0.2s ease-out;
+        transform: none;
+        opacity: 1;
+        animation: none;
+    }
+    .sticky-variation-bar.visible {
+        animation: none;
+    }
+}

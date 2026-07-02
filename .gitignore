@@ -1,0 +1,10 @@
+/vendor/
+/node_modules/
+/build/
+*.zip
+
+# Fichiers personnels non liés au plugin (photos, brouillons)
+*.heic
+
+# Image de travail d'origine : copiée dans docs/schema.png, qui est la version suivie par Git
+/shema.png

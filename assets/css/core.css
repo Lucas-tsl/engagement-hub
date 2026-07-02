@@ -1,0 +1,94 @@
+/* Engagement Hub - Bouton flottant (FAB) et menu des modules */
+.eh-fab {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    z-index: 999997;
+    font-family: sans-serif;
+    --eh-scroll: 0;
+}
+
+.eh-fab-toggle {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    border: none;
+    background: #111;
+    color: #fff;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgb(0 0 0 / 25%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: box-shadow 0.2s ease;
+}
+
+.eh-fab-toggle:hover {
+    box-shadow: 0 6px 18px rgb(0 0 0 / 35%);
+}
+
+.eh-fab-gear {
+    display: inline-block;
+    font-size: 26px;
+    line-height: 1;
+    transform: rotate(calc(var(--eh-scroll, 0) * 1.8deg));
+    transition: transform 0.6s ease;
+}
+
+.eh-fab-open .eh-fab-gear {
+    transform: rotate(120deg);
+}
+
+.eh-fab-menu {
+    position: absolute;
+    right: 0;
+    bottom: 70px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.eh-fab-item {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    border: none;
+    background: #fff;
+    color: #111;
+    font-size: 20px;
+    cursor: pointer;
+    box-shadow: 0 3px 10px rgb(0 0 0 / 20%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transform: translateY(10px) scale(0.6);
+    pointer-events: none;
+    transition: opacity 0.25s ease, transform 0.25s ease;
+    transition-delay: calc(var(--eh-index, 0) * 40ms);
+}
+
+.eh-fab-open .eh-fab-item {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
+}
+
+.eh-fab-item:hover {
+    transform: translateY(0) scale(1.08);
+}
+
+@media (max-width: 480px) {
+    .eh-fab {
+        right: 14px;
+        bottom: 14px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .eh-fab-gear,
+    .eh-fab-item {
+        transition: none;
+    }
+}

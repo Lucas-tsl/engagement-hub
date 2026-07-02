@@ -1,0 +1,82 @@
+name: CI/CD
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+    branches: [main]
+
+jobs:
+  php:
+    name: PHP (syntaxe + WordPress Coding Standards)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+          tools: composer
+          coverage: none
+
+      - name: Vérification de la syntaxe PHP
+        run: find . -name "*.php" -not -path "./vendor/*" -print0 | xargs -0 -n1 -I{} php -l {}
+
+      - name: Cache Composer
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/composer
+          key: composer-${{ hashFiles('composer.json') }}
+
+      - name: Installer les dépendances Composer
+        run: composer install --no-progress --prefer-dist
+
+      - name: WordPress Coding Standards (PHPCS)
+        run: vendor/bin/phpcs
+
+  js-css:
+    name: JS & CSS Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Installer les dépendances npm
+        run: npm install
+
+      - name: ESLint
+        run: npm run lint:js
+
+      - name: Stylelint
+        run: npm run lint:css
+
+  build:
+    name: Build du plugin (zip)
+    needs: [php, js-css]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Assembler le dossier du plugin (fichiers de dev exclus via .distignore)
+        run: |
+          mkdir -p build/engagement-hub
+          rsync -a --exclude-from='.distignore' ./ build/engagement-hub/
+          cd build && zip -r engagement-hub.zip engagement-hub
+
+      - name: Uploader l'artefact de build
+        uses: actions/upload-artifact@v4
+        with:
+          name: engagement-hub
+          path: build/engagement-hub.zip
+
+      - name: Créer la release GitHub (sur tag vX.Y.Z)
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: build/engagement-hub.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
