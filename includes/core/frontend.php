@@ -7,15 +7,15 @@ function eh_enqueue_core_assets() {
     eh_enqueue_script( 'eh-core-js', EH_PLUGIN_URL . 'assets/js/core.js', array(), EH_VERSION, true );
 
     // Icône "retour en haut" : toujours proposée par le noyau, visible uniquement
-    // après 70% de scroll (cf. schéma : "icone flèche -> ouverture si 70% hauteur
-    // page dépassé"). Ce n'est pas un module car elle n'a pas d'état activable.
+    // après 50% de scroll. Ce n'est pas un module car elle n'a pas d'état activable.
     $items = array(
         array(
-            'id'        => 'top',
-            'icon'      => '↑',
-            'label'     => __( 'Haut de page', 'engagement-hub' ),
-            'action'    => 'scroll-top',
-            'condition' => 'scroll70',
+            'id'              => 'top',
+            'icon'            => '↑',
+            'label'           => __( 'Haut de page', 'engagement-hub' ),
+            'action'          => 'scroll-top',
+            'condition'       => 'scroll',
+            'scrollThreshold' => 50,
         ),
     );
 

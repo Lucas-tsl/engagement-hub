@@ -27,6 +27,26 @@
     box-shadow: 0 6px 18px rgb(0 0 0 / 35%);
 }
 
+/* Signale visuellement que la fonctionnalité affichée sur la page (ex. la
+   barre sticky d'ajout au panier) est pilotée par ce même bouton, plutôt
+   que de laisser croire à deux systèmes séparés. */
+.eh-fab-linked .eh-fab-toggle {
+    box-shadow: 0 0 0 0 rgb(17 17 17 / 35%), 0 4px 14px rgb(0 0 0 / 25%);
+    animation: eh-fab-pulse 1.8s ease-out infinite;
+}
+
+@keyframes eh-fab-pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgb(17 17 17 / 35%), 0 4px 14px rgb(0 0 0 / 25%);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgb(17 17 17 / 0%), 0 4px 14px rgb(0 0 0 / 25%);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgb(17 17 17 / 0%), 0 4px 14px rgb(0 0 0 / 25%);
+    }
+}
+
 .eh-fab-gear {
     display: inline-block;
     font-size: 26px;
@@ -90,5 +110,9 @@
     .eh-fab-gear,
     .eh-fab-item {
         transition: none;
+    }
+
+    .eh-fab-linked .eh-fab-toggle {
+        animation: none;
     }
 }

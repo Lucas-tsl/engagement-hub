@@ -645,6 +645,16 @@
         let isUpdating = false; // Verrouillage pendant les mises à jour WooCommerce
         let clickedFromStickyBar = false; // Indicateur si le clic vient de la sticky bar
 
+        // Garde le bouton engrenage visuellement "lié" tant que la sticky bar
+        // est affichée, pour que l'ouverture se lise comme un seul système
+        // plutôt qu'une barre qui apparaît de nulle part.
+        function setStickyBarVisible(visible) {
+            $stickyBar.toggleClass('visible', visible);
+            if (window.ehHub && typeof window.ehHub.setLinked === 'function') {
+                window.ehHub.setLinked(visible);
+            }
+        }
+
         function findAddToCartBtn() {
             // Chercher le bouton d'ajout au panier dans tous les contextes possibles
             // Priorité 1: Dans le conteneur de variations
@@ -704,7 +714,7 @@
                 // Si on chevauche le footer, masquer
                 if (windowBottom >= footerTop) {
                     console.log('>>> ACTION: HIDING - near/in footer');
-                    $stickyBar.removeClass('visible');
+                    setStickyBarVisible(false);
                     return;
                 }
             } else {
@@ -713,7 +723,7 @@
                 console.log('No footer found, near end:', nearEnd);
                 if (nearEnd) {
                     console.log('>>> ACTION: HIDING - near end of page');
-                    $stickyBar.removeClass('visible');
+                    setStickyBarVisible(false);
                     return;
                 }
             }
@@ -738,7 +748,7 @@
 
                 if (isBtnInViewport) {
                     console.log('>>> ACTION: HIDING - button is visible');
-                    $stickyBar.removeClass('visible');
+                    setStickyBarVisible(false);
                     return;
                 }
             } else {
@@ -747,7 +757,7 @@
 
             // 3. Sinon, AFFICHER la sticky bar
             console.log('>>> ACTION: SHOWING sticky bar');
-            $stickyBar.addClass('visible');
+            setStickyBarVisible(true);
             console.log('');
         }
 
@@ -784,7 +794,7 @@
 
              // Si le clic vient de la sticky bar, ne pas la masquer
              if (!clickedFromStickyBar) {
-                 $stickyBar.removeClass('visible'); // Masquer pendant la mise à jour
+                 setStickyBarVisible(false); // Masquer pendant la mise à jour
              } else {
                  console.log('✅ Click from sticky bar - keeping it visible');
              }
@@ -798,7 +808,7 @@
              console.log('🔒 Variation button clicked - Locking updates');
              isUpdating = true; // Verrouiller immédiatement
              clickedFromStickyBar = false; // Ce clic vient de la page
-             $stickyBar.removeClass('visible'); // Masquer pendant la mise à jour
+             setStickyBarVisible(false); // Masquer pendant la mise à jour
              debouncedCheckVisibility(500);
          });
 

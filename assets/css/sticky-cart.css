@@ -14,20 +14,23 @@
     box-shadow: 0 8px 28px rgba(0, 0, 0, 0.12);
     border: 1px solid rgba(255, 255, 255, 0.35);
     z-index: 999;
-    transition: bottom 0.7s ease-in-out, opacity 1.2s ease-out, transform 1.2s ease-out;
+    transition: bottom 0.7s ease-in-out, opacity 0.6s ease-out, transform 0.6s cubic-bezier(0.2, 0.85, 0.25, 1);
     padding: 10px 0;
     opacity: 0;
-    transform: scaleX(0.2);
-    transform-origin: center;
+    /* La barre grandit depuis le coin bas-droit, là où se trouve le bouton
+       engrenage (assets/css/core.css), pour se lire comme une seule et même
+       fonctionnalité plutôt que deux éléments indépendants. */
+    transform: scale(0.15);
+    transform-origin: bottom right;
     will-change: transform, opacity;
 
 }
 
-/* Tablette et desktop */
+/* Tablette et desktop : on laisse la place au bouton engrenage à droite */
 @media (min-width: 768px) {
     .sticky-variation-bar {
         margin-left: 15%;
-        margin-right: 15%;
+        margin-right: calc(15% + 76px);
     }
 }
 
@@ -35,7 +38,7 @@
 .sticky-variation-bar.visible {
     bottom: 0;
     opacity: 1;
-    transform: scaleX(1);
+    transform: scale(1);
 }
 
 .sticky-variation-content {
@@ -450,11 +453,11 @@
 /* Animation d'entrée */
 @keyframes bubbleReveal {
     0% {
-        transform: scaleX(0.18);
+        transform: scale(0.15);
         opacity: 0;
     }
     100% {
-        transform: scaleX(1);
+        transform: scale(1);
         opacity: 1;
     }
 }

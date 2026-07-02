@@ -22,7 +22,7 @@
     function visibleItems() {
         return config.items.filter(function (item) {
             if (item.condition === 'is_product') return !!config.isProduct;
-            if (item.condition === 'scroll70') return scrollPercent >= 70;
+            if (item.condition === 'scroll') return scrollPercent >= (item.scrollThreshold || 100);
             return true;
         });
     }
@@ -98,4 +98,13 @@
     }, { passive: true });
 
     updateScrollPercent();
+
+    // API publique minimale : permet à un module (ex. sticky-cart) de relier
+    // visuellement le bouton engrenage à sa propre fonctionnalité pendant
+    // qu'elle est affichée, sans que le noyau ait à connaître ce module.
+    window.ehHub = {
+        setLinked: function (active) {
+            fab.classList.toggle('eh-fab-linked', !!active);
+        }
+    };
 })();
