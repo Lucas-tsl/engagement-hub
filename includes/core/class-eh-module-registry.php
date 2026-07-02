@@ -3,7 +3,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 /**
  * Registre central des modules du hub. Chaque module s'y déclare une fois
- * (voir includes/modules/*/module.php) ; le menu admin et le bouton flottant
+ * (voir includes/modules/.../module.php) ; le menu admin et le bouton flottant
  * du front-end lisent ce registre pour savoir quoi afficher, sans se
  * connaître les uns les autres.
  */
