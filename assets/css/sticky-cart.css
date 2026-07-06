@@ -31,10 +31,12 @@
     box-shadow: 0 16px 40px rgba(0, 0, 0, 0.18);
     border: 1px solid rgba(255, 255, 255, 0.5);
     z-index: 999996; /* juste sous le bouton engrenage (999997) */
-    /* Pas de transition CSS ici : c'est la View Transitions API (assets/js/core.js)
-       qui anime la fusion avec l'engrenage. Une transition locale en plus
-       ferait doublon/entrerait en conflit avec cette animation. */
     opacity: 0;
+    /* Grandit depuis le point exact de la bulle cliquée dans le menu
+       (transform-origin posé dynamiquement par assets/js/core.js, en
+       coordonnées pixel) plutôt qu'un coin fixe du panneau. */
+    transform: scale(0.05);
+    transition: opacity 0.25s ease, transform 0.3s cubic-bezier(0.2, 0.85, 0.25, 1);
     pointer-events: none;
     /* Le conteneur externe ne défile jamais : c'est lui qui porte la croix
        de fermeture, pour qu'elle reste toujours à un endroit stable et
@@ -45,6 +47,7 @@
 
 .sticky-variation-bar.visible {
     opacity: 1;
+    transform: scale(1);
     pointer-events: auto;
 }
 
@@ -323,8 +326,8 @@
     display: none !important;
 }
 
-/* Léger fondu du contenu (la fusion de la boîte elle-même avec l'engrenage
-   est gérée par la View Transitions API, assets/js/core.js). */
+/* Léger fondu du contenu (la fusion de la boîte elle-même avec la bulle
+   cliquée est gérée par le transform scale() ci-dessus, assets/js/core.js). */
 .sticky-variation-bar.visible .sticky-variation-content {
     animation: contentFade 0.3s ease-out 0.08s both;
 }
@@ -341,6 +344,10 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+    .sticky-variation-bar {
+        transition: opacity 0.2s ease-out;
+        transform: none;
+    }
     .sticky-variation-bar.visible .sticky-variation-content {
         animation: none;
     }

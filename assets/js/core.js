@@ -123,59 +123,61 @@
     // le panneau précédent et de "lier" visuellement l'engrenage (pulsation)
     // tant qu'un panneau est ouvert. L'engrenage lui-même reste toujours
     // visible et stable — c'est la BULLE du menu qu'on vient de cliquer
-    // (lastActiveItemEl, capturée dans renderMenu() ci-dessus) qui se
-    // transforme visuellement en panneau, pas l'engrenage.
+    // (lastActiveItemEl, capturée dans renderMenu() ci-dessus) qui doit
+    // visuellement "devenir" le panneau.
+    //
+    // Technique : au lieu d'une API expérimentale (View Transitions, retirée
+    // ici faute de rendu fiable/vérifiable), on calcule la position réelle de
+    // la bulle cliquée (getBoundingClientRect) et on positionne le point
+    // d'origine ("transform-origin") du panneau exactement dessus avant de
+    // lancer sa propre transition CSS scale() — 100% CSS/JS standard, sans
+    // dépendance à un support navigateur incertain.
     var activePanel = null;
     var lastActiveItemEl = null;
 
-    // Nom de transition partagé : au moment où on l'assigne au panneau (et
-    // qu'on le retire de la bulle cliquée, ou l'inverse), la View Transitions
-    // API du navigateur interpole automatiquement position/taille/rayon
-    // entre les deux — la bulle "devient" littéralement le panneau, sans
-    // qu'on ait à coder l'animation image par image. Navigateur sans
-    // support : repli silencieux sur un affichage instantané (rien ne casse).
-    var MORPH_NAME = 'eh-fab-morph';
-
-    function morph( applyFn ) {
-        if ( typeof document.startViewTransition === 'function' ) {
-            document.startViewTransition( applyFn );
-        } else {
-            applyFn();
+    function setMorphOrigin(panelEl, sourceEl) {
+        if (!panelEl) return;
+        if (!sourceEl || !document.contains(sourceEl)) {
+            // Pas de bulle d'origine connue (ex. panneau ouvert automatiquement,
+            // sans clic sur le menu) : repli sur le coin bas-droit du panneau,
+            // là où se trouve l'engrenage.
+            panelEl.style.transformOrigin = '100% 100%';
+            return;
         }
+        // Le panneau est actuellement réduit (transform: scale(0.05) tant que
+        // .visible/.open n'est pas encore ajouté) : getBoundingClientRect()
+        // refléterait cette taille réduite, pas la taille réelle du panneau
+        // ouvert. On neutralise le transform le temps de la mesure (toujours
+        // invisible, opacity:0, donc aucun flash visuel).
+        var previousTransform = panelEl.style.transform;
+        panelEl.style.transform = 'none';
+        var sourceRect = sourceEl.getBoundingClientRect();
+        var panelRect = panelEl.getBoundingClientRect();
+        panelEl.style.transform = previousTransform;
+        var originX = (sourceRect.left + sourceRect.width / 2) - panelRect.left;
+        var originY = (sourceRect.top + sourceRect.height / 2) - panelRect.top;
+        panelEl.style.transformOrigin = originX + 'px ' + originY + 'px';
     }
 
     window.ehHub = {
-        // panelEl : l'élément DOM du panneau (pour la fusion visuelle avec
-        // la bulle cliquée). applyFn : callback du module qui bascule SA
-        // propre classe d'affichage — doit s'exécuter à l'intérieur du morph
-        // pour que le navigateur capture les bons états "avant/après".
+        // panelEl : l'élément DOM du panneau (pour calculer le point de
+        // départ de l'animation). applyFn : callback du module qui bascule
+        // SA propre classe d'affichage.
         openPanel: function (id, panelEl, applyFn) {
             if (activePanel && activePanel !== id) {
                 document.dispatchEvent(new CustomEvent('eh:panel-close', { detail: { id: activePanel } }));
             }
             activePanel = id;
-            var sourceEl = (lastActiveItemEl && document.contains(lastActiveItemEl)) ? lastActiveItemEl : null;
-            morph(function () {
-                fab.classList.add('eh-fab-linked');
-                if (sourceEl) sourceEl.style.viewTransitionName = '';
-                if (panelEl) panelEl.style.viewTransitionName = MORPH_NAME;
-                if (typeof applyFn === 'function') applyFn();
-            });
+            fab.classList.add('eh-fab-linked');
+            setMorphOrigin(panelEl, lastActiveItemEl);
+            if (typeof applyFn === 'function') applyFn();
             document.dispatchEvent(new CustomEvent('eh:panel-open', { detail: { id: id } }));
         },
         closePanel: function (id, panelEl, applyFn) {
             if (activePanel !== id) return;
             activePanel = null;
-            // La bulle d'origine n'existe peut-être plus (menu rouvert entre
-            // temps, qui régénère ses boutons) : dans ce cas repli sur un
-            // simple fondu, sans point de départ précis pour la fusion.
-            var sourceEl = (lastActiveItemEl && document.contains(lastActiveItemEl)) ? lastActiveItemEl : null;
-            morph(function () {
-                fab.classList.remove('eh-fab-linked');
-                if (panelEl) panelEl.style.viewTransitionName = '';
-                if (sourceEl) sourceEl.style.viewTransitionName = MORPH_NAME;
-                if (typeof applyFn === 'function') applyFn();
-            });
+            fab.classList.remove('eh-fab-linked');
+            if (typeof applyFn === 'function') applyFn();
             document.dispatchEvent(new CustomEvent('eh:panel-close', { detail: { id: id } }));
             lastActiveItemEl = null;
         },
