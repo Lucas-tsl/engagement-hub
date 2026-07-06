@@ -21,11 +21,15 @@
     border: 1px solid rgba(255, 255, 255, 0.5);
     box-shadow: 0 1px 4px rgb(0 0 0 / 18%);
     overflow: hidden;
-    transition: width 0.3s cubic-bezier(0.2, 0.85, 0.25, 1),
-                max-height 0.3s cubic-bezier(0.2, 0.85, 0.25, 1),
-                border-radius 0.3s ease,
-                background-color 0.3s ease,
-                box-shadow 0.3s ease;
+
+    /* Durée allongée + courbe plus douce (décélération progressive) qu'un
+       simple ease : l'agrandissement de l'objet se voyait comme un
+       à-coup trop brusque avec la version précédente, plus courte et vive. */
+    transition: width 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+                max-height 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+                border-radius 0.35s ease,
+                background-color 0.35s ease,
+                box-shadow 0.35s ease;
 }
 
 .eh-fab[data-state="menu"],
@@ -128,13 +132,20 @@
     justify-content: center;
     opacity: 0;
     transform: scale(0.6);
+    /* Pas de délai par défaut : à la fermeture, les bulles doivent
+       disparaître tout de suite, pendant que la boîte se rétrécit. */
     transition: opacity 0.2s ease, transform 0.2s ease;
-    transition-delay: calc(var(--eh-index, 0) * 40ms);
 }
 
 .eh-fab[data-state="menu"] .eh-fab-item {
     opacity: 1;
     transform: scale(1);
+    /* Délai à l'ouverture seulement : le temps que #eh-fab ait fini de
+       s'élargir (transition width, ~0.45s) avant de révéler les bulles —
+       sinon on voit le réagencement flex en cours de route (les icônes
+       passent brièvement à la ligne, verticales, avant de se remettre en
+       ligne une fois la largeur finale atteinte). */
+    transition-delay: calc(220ms + var(--eh-index, 0) * 40ms);
 }
 
 /* Croix de sortie de l'état 2 (choix des icônes), affichée à droite des
@@ -158,7 +169,6 @@
     opacity: 0;
     transform: scale(0.6);
     transition: opacity 0.2s ease, transform 0.2s ease, background 0.2s ease;
-    transition-delay: calc(var(--eh-index, 0) * 40ms);
 }
 
 .eh-fab-menu-close:hover {
@@ -168,6 +178,7 @@
 .eh-fab[data-state="menu"] .eh-fab-menu-close {
     opacity: 1;
     transform: scale(1);
+    transition-delay: calc(220ms + var(--eh-index, 0) * 40ms);
 }
 
 .eh-fab-item:hover {

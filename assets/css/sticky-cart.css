@@ -49,7 +49,7 @@
 .sticky-panel-close {
     position: absolute;
     top: 8px;
-    right: 8px;
+    right: 14px;
     width: 28px;
     height: 28px;
     border-radius: 0;
@@ -81,7 +81,10 @@
        certains navigateurs activent aussi une barre horizontale dès que le
        contenu déborde d'un pixel, même avec le retour à la ligne des boutons. */
     overflow: hidden auto;
-    padding: 34px 16px 16px;
+    /* Marge droite plus large que les autres côtés : laisse de la place à la
+       barre de défilement, pour qu'elle n'arrive pas juste sous la croix de
+       fermeture (position: absolute, hors de cette zone qui défile). */
+    padding: 34px 20px 16px 16px;
 }
 
 .sticky-variation-content {

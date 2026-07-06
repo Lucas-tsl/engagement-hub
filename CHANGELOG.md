@@ -3,6 +3,18 @@
 Toutes les versions notables du plugin sont documentées ici. Ce fichier est
 mis à jour à chaque Release (voir README, section Workflow).
 
+## [1.3.3]
+
+- Croix de fermeture des panneaux (cookies/panier/accessibilité) éloignée
+  de la barre de défilement, qui pouvait la rendre difficile à cliquer
+  précisément une fois le contenu assez long pour défiler.
+- Agrandissement de l'objet ralenti et adouci (durée plus longue, courbe de
+  décélération progressive) : le mouvement précédent était jugé trop brusque.
+- Corrigé un effet de bord perturbant à l'ouverture du menu : les icônes
+  apparaissaient brièvement à la ligne (verticales) avant que la largeur
+  finale ne soit atteinte et qu'elles ne se remettent en ligne. Elles restent
+  maintenant invisibles le temps que l'agrandissement soit terminé.
+
 ## [1.3.2]
 
 - Fond du menu (choix des icônes) redevenu transparent (`0%` d'opacité,
