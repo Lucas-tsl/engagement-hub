@@ -101,12 +101,15 @@
 }
 
 /* Les emojis (🍪 🛒 ♿ ...) sont rendus en couleur par le système
-   d'exploitation ; on les force en noir uni pour rester cohérent avec le
-   reste de l'interface, sans toucher au fond blanc du bouton. */
+   d'exploitation ; on retire la couleur et on assombrit pour rester cohérent
+   avec le reste de l'interface, sans toucher au fond blanc du bouton.
+   brightness(0) seul écrasait tout le détail interne du dessin (silhouette
+   noire méconnaissable) : on garde du contraste pour que l'icône reste
+   identifiable. */
 .eh-fab-item-icon {
     display: inline-block;
     line-height: 1;
-    filter: grayscale(1) brightness(0);
+    filter: grayscale(1) contrast(1.3) brightness(0.55);
 }
 
 .eh-fab-open .eh-fab-item {

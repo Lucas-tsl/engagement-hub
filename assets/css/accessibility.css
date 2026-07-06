@@ -1,5 +1,12 @@
 /* Panneau Accessibilité, ancré au bouton engrenage (même position que les
    panneaux panier et cookies : assets/css/sticky-cart.css / cookie-consent.css). */
+.eh-a11y-panel,
+.eh-a11y-panel *,
+.eh-a11y-panel *::before,
+.eh-a11y-panel *::after {
+    box-sizing: border-box;
+}
+
 .eh-a11y-panel {
     display: flex;
     flex-direction: column;
@@ -94,17 +101,6 @@
     border: 1px solid #ccc;
     border-radius: 6px;
     background: #fff;
-}
-
-.eh-a11y-lang-status {
-    margin: -4px 0 6px;
-    font-size: 11px;
-    color: #b45309;
-    min-height: 14px;
-}
-
-.eh-a11y-lang-status:empty {
-    display: none;
 }
 
 .eh-a11y-switch {

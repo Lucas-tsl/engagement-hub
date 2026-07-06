@@ -5,6 +5,16 @@
  * là où se trouve le bouton engrenage (assets/css/core.css).
  */
 
+/* Sans ce reset, "width: 100%" + "padding" sur un bouton/texte du panneau
+   (ex. .sticky-add-to-cart, .sticky-out-of-stock) additionne le padding à
+   la largeur au lieu de l'inclure dedans, et déborde du panneau. */
+.sticky-variation-bar,
+.sticky-variation-bar *,
+.sticky-variation-bar *::before,
+.sticky-variation-bar *::after {
+    box-sizing: border-box;
+}
+
 .sticky-variation-bar {
     position: fixed;
     right: 20px;

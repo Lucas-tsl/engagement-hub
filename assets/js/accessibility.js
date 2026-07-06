@@ -10,11 +10,6 @@
     var contrastToggle = document.getElementById('eh-a11y-contrast-toggle');
     var cursorToggle = document.getElementById('eh-a11y-cursor-toggle');
     var langSelect = document.getElementById('eh-a11y-lang');
-    var langStatus = document.getElementById('eh-a11y-lang-status');
-
-    function setLangStatus(text) {
-        if (langStatus) langStatus.textContent = text || '';
-    }
 
     // --- Préférences persistantes (contraste / curseur), appliquées dès le chargement ---
     function readPref(key) {
@@ -61,62 +56,15 @@
         });
     }
 
-    // --- Traduction ---
-    // L'ancien widget "Google Website Translator" embarqué dans la page est
-    // un service que Google a cessé d'ouvrir aux nouveaux domaines : il se
-    // charge sans erreur mais ne traduit jamais rien, en silence. On utilise
-    // à la place le proxy translate.goog — le mécanisme que Google emploie
-    // lui-même aujourd'hui pour ses liens "Traduire cette page" — nettement
-    // plus fiable, au prix d'une navigation vers ce domaine proxy plutôt
-    // qu'une traduction en place sur le site.
-    function isOnTranslateProxy() {
-        return /\.translate\.goog$/.test(window.location.hostname);
-    }
-
-    function buildProxyUrl(targetLang) {
-        var loc = window.location;
-        var proxyHost = loc.hostname.replace(/\./g, '-') + '.translate.goog';
-        var params = new URLSearchParams(loc.search);
-        params.set('_x_tr_sl', 'auto');
-        params.set('_x_tr_tl', targetLang);
-        params.set('_x_tr_hl', 'fr');
-        params.set('_x_tr_pto', 'wapp');
-        return loc.protocol + '//' + proxyHost + loc.pathname + '?' + params.toString() + loc.hash;
-    }
-
-    function buildOriginalUrlFromProxy() {
-        var loc = window.location;
-        var originalHost = loc.hostname.replace(/\.translate\.goog$/, '').replace(/-/g, '.');
-        var params = new URLSearchParams(loc.search);
-        params.delete('_x_tr_sl');
-        params.delete('_x_tr_tl');
-        params.delete('_x_tr_hl');
-        params.delete('_x_tr_pto');
-        var query = params.toString();
-        return loc.protocol + '//' + originalHost + loc.pathname + (query ? '?' + query : '') + loc.hash;
-    }
-
-    function preselectLangFromUrl() {
-        if (!langSelect) return;
-        if (isOnTranslateProxy()) {
-            var params = new URLSearchParams(window.location.search);
-            langSelect.value = params.get('_x_tr_tl') || '';
-        } else {
-            langSelect.value = '';
-        }
-    }
-
+    // --- Traduction (WPML) ---
+    // Les options du sélecteur contiennent déjà l'URL traduite calculée par
+    // WPML côté serveur (voir includes/modules/accessibility/public-display.php,
+    // filtre officiel 'wpml_active_languages') : il n'y a qu'à naviguer.
+    // Le sélecteur n'existe même pas dans le HTML si WPML n'est pas actif.
     if (langSelect) {
-        preselectLangFromUrl();
         langSelect.addEventListener('change', function () {
-            var value = langSelect.value;
-            if (value) {
-                setLangStatus('Redirection…');
-                window.location.href = buildProxyUrl(value);
-            } else if (isOnTranslateProxy()) {
-                setLangStatus('Redirection…');
-                window.location.href = buildOriginalUrlFromProxy();
-            }
+            var url = langSelect.value;
+            if (url) window.location.href = url;
         });
     }
 
@@ -125,7 +73,6 @@
 
     function openPanel() {
         panel.classList.add('eh-a11y-panel-open');
-        preselectLangFromUrl();
         if (window.ehHub) window.ehHub.openPanel('accessibility');
     }
 
