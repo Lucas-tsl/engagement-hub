@@ -48,8 +48,7 @@
 .eh-a11y-scroll {
     flex: 1;
     min-height: 0;
-    overflow-y: auto;
-    overflow-x: hidden;
+    overflow: hidden auto;
     padding: 34px 16px 16px;
 }
 

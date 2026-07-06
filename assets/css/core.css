@@ -11,6 +11,7 @@
     bottom: 20px;
     z-index: 999997;
     font-family: sans-serif;
+
     --eh-scroll: 0;
 
     width: 56px;
@@ -95,8 +96,7 @@
    ============================================================ */
 .eh-fab-menu {
     display: none;
-    flex-direction: row;
-    flex-wrap: wrap;
+    flex-flow: row wrap;
     align-items: center;
     justify-content: center;
     gap: 10px;
