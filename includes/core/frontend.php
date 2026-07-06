@@ -58,7 +58,7 @@ function eh_render_fab_markup() {
     ?>
     <div id="eh-fab" class="eh-fab" data-state="closed">
         <button type="button" id="eh-fab-toggle" class="eh-fab-toggle" aria-expanded="false" aria-label="<?php esc_attr_e( 'Ouvrir le menu', 'engagement-hub' ); ?>">
-            <span class="eh-fab-gear" aria-hidden="true"><?php echo EH_GEAR_SVG; ?></span>
+            <span class="eh-fab-gear" aria-hidden="true"><?php echo EH_GEAR_SVG; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- constante SVG interne, pas une entrée utilisateur. ?></span>
         </button>
         <div id="eh-fab-menu" class="eh-fab-menu" role="menu"></div>
         <div id="eh-fab-detail" class="eh-fab-detail"></div>

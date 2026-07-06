@@ -15,7 +15,7 @@
     function readPref(key) {
         try {
             return window.localStorage.getItem(key) === '1';
-        } catch (e) {
+        } catch {
             return false;
         }
     }
@@ -23,7 +23,7 @@
     function writePref(key, active) {
         try {
             window.localStorage.setItem(key, active ? '1' : '0');
-        } catch (e) {
+        } catch {
             // Stockage indisponible (navigation privée...) : le réglage ne sera
             // simplement pas mémorisé d'une page à l'autre.
         }

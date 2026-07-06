@@ -175,7 +175,6 @@
          const $stickyAddToCart = $stickyBar.find('.sticky-add-to-cart');
          const $productName = $stickyBar.find('.sticky-product-name');
          const $productImg = $stickyBar.find('.sticky-product-img');
-         const $variationLabel = $stickyBar.find('.variation-name');
 
          if (!$variationForm.length) return;
 
@@ -519,12 +518,10 @@
      // ================================================================
      function syncSimpleProduct() {
          const $stickyBar = $('#stickyVariationBar');
-         const $stickyContent = $stickyBar.find('.sticky-variation-content');
          const $stickyPrice = $stickyBar.find('.sticky-price');
          const $stickyAddToCart = $stickyBar.find('.sticky-add-to-cart');
          const $productName = $stickyBar.find('.sticky-product-name');
          const $productImg = $stickyBar.find('.sticky-product-img');
-         const $rightBlock = $stickyBar.find('.sticky-right-block');
          const $variationOptions = $stickyBar.find('.sticky-variation-options');
 
          // Ajouter une classe pour identifier les produits simples
