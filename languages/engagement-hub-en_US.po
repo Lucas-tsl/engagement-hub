@@ -1,0 +1,224 @@
+# Copyright (C) 2026 Lucas Troteseil
+# This file is distributed under the GPL-2.0-or-later license.
+msgid ""
+msgstr ""
+"Project-Id-Version: Engagement Hub 1.0.0\n"
+"Report-Msgid-Bugs-To: https://github.com/Lucas-tsl/engagement-hub/issues\n"
+"POT-Creation-Date: 2026-07-06T00:00:00+00:00\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2026-07-06T00:00:00+00:00\n"
+"Language: en_US\n"
+"Language-Team: English\n"
+"X-Domain: engagement-hub\n"
+
+#: includes/core/frontend.php:15
+msgid "Haut de page"
+msgstr "Back to top"
+
+#: includes/core/frontend.php:52
+msgid "Ouvrir le menu"
+msgstr "Open menu"
+
+#: includes/modules/cookie-consent/module.php:11
+msgid "Nous utilisons des cookies pour assurer le bon fonctionnement du site, analyser notre trafic et personnaliser nos publicités. Vous pouvez choisir vos préférences ci-dessous."
+msgstr "We use cookies to ensure the site works properly, analyze our traffic, and personalize our ads. You can choose your preferences below."
+
+#: includes/modules/cookie-consent/module.php:17
+msgid "Consentement cookies"
+msgstr "Cookie consent"
+
+#: includes/modules/cookie-consent/module.php:20
+msgid "Bannière RGPD et Google Consent Mode V2, connectée au DataLayer GTM."
+msgstr "GDPR banner and Google Consent Mode V2, connected to the GTM DataLayer."
+
+#: includes/modules/cookie-consent/public-display.php:57
+msgid "Logo"
+msgstr "Logo"
+
+#: includes/modules/cookie-consent/public-display.php:58
+msgid "Gérer le consentement"
+msgstr "Manage consent"
+
+#: includes/modules/cookie-consent/public-display.php:61
+msgid "Politique de confidentialité"
+msgstr "Privacy policy"
+
+#: includes/modules/cookie-consent/public-display.php:61
+msgid "Mentions légales"
+msgstr "Legal notice"
+
+#: includes/modules/cookie-consent/public-display.php:64
+msgid "Tout Accepter"
+msgstr "Accept All"
+
+#: includes/modules/cookie-consent/public-display.php:65
+msgid "Tout Refuser"
+msgstr "Reject All"
+
+#: includes/modules/cookie-consent/public-display.php:66
+msgid "Personnaliser"
+msgstr "Customize"
+
+#: includes/modules/cookie-consent/public-display.php:72
+msgid "Préférences des cookies"
+msgstr "Cookie preferences"
+
+#: includes/modules/cookie-consent/public-display.php:75
+msgid "Strictement Nécessaires"
+msgstr "Strictly Necessary"
+
+#: includes/modules/cookie-consent/public-display.php:76
+msgid "Requis pour le site (panier, sécurité). Non désactivables."
+msgstr "Required for the site (cart, security). Cannot be disabled."
+
+#: includes/modules/cookie-consent/public-display.php:82
+msgid "Statistiques (Google Analytics)"
+msgstr "Statistics (Google Analytics)"
+
+#: includes/modules/cookie-consent/public-display.php:83
+msgid "Pour mesurer l'audience de la boutique."
+msgstr "To measure the store's audience."
+
+#: includes/modules/cookie-consent/public-display.php:89
+msgid "Marketing (Pixel Facebook, Google Ads)"
+msgstr "Marketing (Facebook Pixel, Google Ads)"
+
+#: includes/modules/cookie-consent/public-display.php:90
+msgid "Pour afficher des publicités ciblées."
+msgstr "To display targeted ads."
+
+#: includes/modules/cookie-consent/public-display.php:95
+msgid "Enregistrer mes choix"
+msgstr "Save my choices"
+
+#: includes/modules/cookie-consent/public-display.php:96
+msgid "Annuler"
+msgstr "Cancel"
+
+#: includes/modules/accessibility/module.php:7
+#: includes/modules/accessibility/public-display.php:26
+msgid "Accessibilité"
+msgstr "Accessibility"
+
+#: includes/modules/accessibility/module.php:10
+msgid "Langue (via WPML), contraste élevé et curseur agrandi."
+msgstr "Language (via WPML), high contrast and enlarged cursor."
+
+#: includes/core/admin-menu.php:11
+#: includes/core/admin-menu.php:12
+#: includes/core/admin-menu.php:21
+#: includes/core/admin-menu.php:22
+#: includes/core/admin-menu.php:54
+msgid "Engagement Hub"
+msgstr "Engagement Hub"
+
+#: includes/core/admin-menu.php:50
+#: includes/modules/cookie-consent/admin-settings.php:29
+msgid "Vous n'avez pas les permissions nécessaires pour accéder à cette page."
+msgstr "You do not have sufficient permissions to access this page."
+
+#: includes/core/admin-menu.php:55
+msgid "Activez ou désactivez les modules pilotés par le bouton flottant du site."
+msgstr "Enable or disable the modules driven by the site's floating button."
+
+#: includes/core/admin-menu.php:62
+msgid "Module"
+msgstr "Module"
+
+#: includes/core/admin-menu.php:63
+msgid "Description"
+msgstr "Description"
+
+#: includes/core/admin-menu.php:64
+msgid "Actif"
+msgstr "Active"
+
+#: includes/core/admin-menu.php:75
+msgid "Bientôt disponible"
+msgstr "Coming soon"
+
+#: includes/core/admin-menu.php:91
+msgid "Réglages"
+msgstr "Settings"
+
+#: includes/modules/cookie-consent/admin-settings.php:11
+msgid "Réglages Bannière Cookie"
+msgstr "Cookie Banner Settings"
+
+#: includes/modules/cookie-consent/admin-settings.php:12
+msgid "Cookies"
+msgstr "Cookies"
+
+#: includes/modules/cookie-consent/admin-settings.php:34
+msgid "Configuration de la Bannière Cookie (GTM Edition)"
+msgstr "Cookie Banner Configuration (GTM Edition)"
+
+#: includes/modules/cookie-consent/admin-settings.php:35
+msgid "Note : ce module communique directement avec Google Tag Manager via le Google Consent Mode V2."
+msgstr "Note: this module communicates directly with Google Tag Manager via Google Consent Mode V2."
+
+#: includes/modules/cookie-consent/admin-settings.php:39
+msgid "URL du Logo"
+msgstr "Logo URL"
+
+#: includes/modules/cookie-consent/admin-settings.php:40
+msgid "Texte de la bannière"
+msgstr "Banner text"
+
+#: includes/modules/cookie-consent/admin-settings.php:41
+msgid "URL Politique de confidentialité"
+msgstr "Privacy Policy URL"
+
+#: includes/modules/cookie-consent/admin-settings.php:42
+msgid "URL Mentions légales"
+msgstr "Legal Notice URL"
+
+#: includes/modules/accessibility/public-display.php:24
+msgid "Fermer"
+msgstr "Close"
+
+#: includes/modules/accessibility/public-display.php:30
+msgid "Langue de la page"
+msgstr "Page language"
+
+#: includes/modules/accessibility/public-display.php:40
+msgid "Langues gérées par WPML."
+msgstr "Languages managed by WPML."
+
+#: includes/modules/accessibility/public-display.php:44
+msgid "Contraste élevé"
+msgstr "High contrast"
+
+#: includes/modules/accessibility/public-display.php:51
+msgid "Curseur agrandi"
+msgstr "Enlarged cursor"
+
+#: includes/modules/video-ads/module.php:12
+msgid "Vidéo à la une"
+msgstr "Featured video"
+
+#: includes/modules/video-ads/module.php:14
+msgid "Vidéo courte (short/reel) associée à une annonce produit, déclenchable depuis le hub."
+msgstr "Short video (short/reel) linked to a product ad, triggerable from the hub."
+
+#: includes/modules/sticky-cart/module.php:7
+msgid "Ajout au panier"
+msgstr "Add to cart"
+
+#: includes/modules/sticky-cart/module.php:10
+msgid "Panneau produit (image, variation, ajout au panier) ancré au bouton, qui suit l'utilisateur sur les fiches produit."
+msgstr "Product panel (image, variation, add to cart) anchored to the button, following the user on product pages."
+
+#: includes/modules/sticky-cart/sticky-frontend.php:33
+msgid "Ajouter au panier - "
+msgstr "Add to cart - "
+
+#: includes/modules/sticky-cart/sticky-frontend.php:34
+msgid "Ajout en cours..."
+msgstr "Adding..."
+
+#: includes/modules/sticky-cart/sticky-frontend.php:35
+msgid "Rupture de stock"
+msgstr "Out of stock"

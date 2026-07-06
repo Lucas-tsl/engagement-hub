@@ -48,13 +48,19 @@
             btn.setAttribute('role', 'menuitem');
             btn.setAttribute('title', item.label);
             btn.setAttribute('aria-label', item.label);
-            // Icône dans un span dédié : le filtre CSS qui la rend monochrome
-            // (assets/css/core.css) ne doit pas s'appliquer au fond blanc du
-            // bouton lui-même.
+            // Icône dans un span dédié, séparé du fond blanc du bouton.
+            // Un SVG (currentColor) est préféré à l'emoji : le rendu des
+            // emojis varie trop d'un système à l'autre pour rester lisible
+            // une fois désaturé — voir includes/core/class-eh-module-registry.php.
             var icon = document.createElement('span');
-            icon.className = 'eh-fab-item-icon';
             icon.setAttribute('aria-hidden', 'true');
-            icon.textContent = item.icon;
+            if (item.iconSvg) {
+                icon.className = 'eh-fab-item-icon eh-fab-item-icon--svg';
+                icon.innerHTML = item.iconSvg;
+            } else {
+                icon.className = 'eh-fab-item-icon eh-fab-item-icon--emoji';
+                icon.textContent = item.icon;
+            }
             btn.appendChild(icon);
             btn.addEventListener('click', function () {
                 handleAction(item);

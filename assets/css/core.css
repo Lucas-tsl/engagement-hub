@@ -100,15 +100,27 @@
     transition-delay: calc(var(--eh-index, 0) * 40ms);
 }
 
-/* Les emojis (🍪 🛒 ♿ ...) sont rendus en couleur par le système
-   d'exploitation ; on retire la couleur et on assombrit pour rester cohérent
-   avec le reste de l'interface, sans toucher au fond blanc du bouton.
-   brightness(0) seul écrasait tout le détail interne du dessin (silhouette
-   noire méconnaissable) : on garde du contraste pour que l'icône reste
-   identifiable. */
 .eh-fab-item-icon {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     line-height: 1;
+}
+
+/* Icônes SVG dessinées maison (voir includes/core/class-eh-module-registry.php) :
+   currentColor suit directement la couleur du bouton, sans filtre nécessaire
+   et sans dépendre du rendu des emojis selon l'OS/le navigateur. */
+.eh-fab-item-icon--svg svg {
+    width: 18px;
+    height: 18px;
+    display: block;
+}
+
+/* Repli emoji pour un module qui n'a pas encore d'icône SVG dédiée (ex. la
+   flèche "haut de page" ↑, déjà monochrome). grayscale/contraste/luminosité
+   reste un compromis : brightness(0) seul écrase tout le détail interne du
+   dessin en silhouette noire méconnaissable pour un emoji illustré. */
+.eh-fab-item-icon--emoji {
     filter: grayscale(1) contrast(1.3) brightness(0.55);
 }
 

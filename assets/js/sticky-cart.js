@@ -7,6 +7,30 @@
          outOfStockText: 'Rupture de stock'
      };
 
+     // De nombreux thèmes chargent les images de galerie en lazy-loading :
+     // l'attribut "src" contient alors un espace réservé (vide, ou un tout
+     // petit data-URI) tant que l'image n'est pas entrée dans le viewport, et
+     // la vraie URL est dans un attribut data-*. On essaie plusieurs noms
+     // usuels avant de se rabattre sur "src".
+     function getImgSrc($img) {
+         if (!$img || !$img.length) return '';
+         const candidates = [
+             $img.attr('data-lazy-src'),
+             $img.attr('data-src'),
+             $img.attr('data-srcset') ? $img.attr('data-srcset').split(' ')[0] : null,
+             $img.attr('srcset') ? $img.attr('srcset').split(' ')[0] : null,
+             $img.attr('src')
+         ];
+         for (let i = 0; i < candidates.length; i++) {
+             const value = candidates[i];
+             // Ignore les placeholders data-URI (souvent un gif/svg transparent 1x1).
+             if (value && value.indexOf('data:image') !== 0) {
+                 return value;
+             }
+         }
+         return '';
+     }
+
      // Pour un produit simple (sans variations), WooCommerce n'expose pas de
      // stock par variation : on se base sur ce qu'il affiche déjà sur la page.
      function isSimpleProductOutOfStock() {
@@ -263,15 +287,17 @@
          // ==========================================================
          // Récupérer l'image du produit
          // ==========================================================
-         let productImgSrc = $('.wc-block-woocommerce-product-gallery-large-image__image').first().attr('src');
-         if (!productImgSrc) {
-             productImgSrc = $('.wc-block-product-gallery-large-image__image-element img').first().attr('src');
-         }
-         if (!productImgSrc) {
-             productImgSrc = $('.woocommerce-product-gallery__image img').first().attr('src');
-         }
-         if (!productImgSrc) {
-             productImgSrc = $('.wp-post-image').first().attr('src');
+         const imgSelectorsVariable = [
+             '.wc-block-woocommerce-product-gallery-large-image__image',
+             '.wc-block-product-gallery-large-image__image-element img',
+             '.woocommerce-product-gallery__image img',
+             '.woocommerce-product-gallery__wrapper img',
+             '.wp-post-image'
+         ];
+         let productImgSrc = '';
+         for (let selector of imgSelectorsVariable) {
+             productImgSrc = getImgSrc($(selector).first());
+             if (productImgSrc) break;
          }
 
          // Ajouter l'image en background pour le mobile (via style inline)
@@ -328,6 +354,12 @@
              // d'activer le bouton en aveugle pour une variation en rupture.
              const chosenVariation = variationsByValue[value];
              setStickyOutOfStock($stickyBar, chosenVariation ? chosenVariation.is_in_stock === false : false);
+
+             // Vider le prix affiché tout de suite : sans ça, le prix de
+             // l'ANCIENNE variation reste visible pendant les ~200-400ms où
+             // WooCommerce n'a pas encore mis à jour le DOM, ce qui donne
+             // l'impression trompeuse qu'on voit encore la variation précédente.
+             $stickyPrice.empty();
 
              // Mettre à jour le prix après les délais de WooCommerce
              setTimeout(function() {
@@ -533,11 +565,8 @@
          ];
 
          for (let selector of imgSelectors) {
-             const $img = $(selector).first();
-             if ($img.length && $img.attr('src')) {
-                 productImgSrc = $img.attr('src');
-                 break;
-             }
+             productImgSrc = getImgSrc($(selector).first());
+             if (productImgSrc) break;
          }
 
          if (productImgSrc) {

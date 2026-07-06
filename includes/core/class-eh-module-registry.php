@@ -15,6 +15,11 @@ class EH_Module_Registry {
         $defaults = array(
             'label'           => $id,
             'icon'            => '⚙️',
+            // SVG monochrome (chaîne de balisage, currentColor) à préférer à
+            // 'icon' pour le menu du bouton flottant : le rendu des emojis
+            // varie trop d'un système à l'autre pour rester lisible une fois
+            // désaturé. 'icon' reste utilisé tel quel dans le tableau de bord.
+            'icon_svg'        => '',
             'description'     => '',
             'option_name'     => 'eh_module_active_' . $id,
             'default_active'  => true,

@@ -78,6 +78,22 @@ vendor/bin/phpcs    # Lint PHP
 npm run lint        # Lint JS + CSS
 ```
 
+## 🌍 Traduction du plugin (indépendante de WPML)
+
+Toutes les chaînes du plugin passent par les fonctions `__()`/`_e()`/`esc_html__()`/`esc_html_e()`/`esc_attr__()`/`esc_attr_e()` avec le text-domain `engagement-hub`, chargé depuis `languages/` (voir `load_plugin_textdomain()` dans `engagement-hub.php`). C'est volontairement indépendant de WPML String Translation : si le plugin est réutilisé sur un site sans WPML, ses propres textes restent traduisibles.
+
+- `languages/engagement-hub.pot` — modèle à jour listant toutes les chaînes du plugin (généré manuellement ici, faute d'environnement avec `wp i18n make-pot` ; à régénérer avec cet outil si de nouvelles chaînes sont ajoutées).
+- `languages/engagement-hub-en_US.po` — traduction anglaise déjà rédigée.
+
+**Il manque le fichier compilé `.mo`** (WordPress charge des `.mo`, pas des `.po`) : aucun outil `msgfmt`/PHP/Python n'était disponible dans l'environnement où ce plugin a été préparé pour le compiler. Pour l'activer :
+1. Installer l'extension gratuite **Loco Translate** sur le site.
+2. Aller dans Loco Translate > ouvrir "Engagement Hub" > importer `languages/engagement-hub-en_US.po`.
+3. Cliquer "Enregistrer" : Loco Translate compile automatiquement le `.mo` à côté.
+
+Alternative sans plugin : ouvrir le `.po` avec **Poedit** (gratuit) et l'enregistrer, ou lancer `wp i18n make-mo languages/` via WP-CLI si disponible sur l'hébergement.
+
+Pour ajouter une nouvelle langue, dupliquer `engagement-hub-en_US.po` en `engagement-hub-{locale}.po` (ex. `engagement-hub-de_DE.po`), traduire les `msgstr`, puis compiler de la même façon.
+
 ## 🚀 CI/CD
 
 `.github/workflows/ci.yml` :

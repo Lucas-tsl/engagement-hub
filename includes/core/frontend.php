@@ -27,6 +27,7 @@ function eh_enqueue_core_assets() {
         $items[] = array(
             'id'        => $module_id,
             'icon'      => $module['icon'],
+            'iconSvg'   => $module['icon_svg'],
             'label'     => $module['label'],
             'action'    => $module['fab_action'],
             'condition' => $module['fab_condition'],
