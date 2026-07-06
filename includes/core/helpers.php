@@ -18,14 +18,39 @@ function eh_sanitize_checkbox( $value ) {
 }
 
 /**
- * Slug du menu admin sous lequel Engagement Hub (et ses sous-pages, comme
- * les réglages du module cookies) doivent se rattacher.
+ * Vérifie que le menu "Saito" a réellement été enregistré (présent dans le
+ * $menu global de WordPress), pas seulement que sa fonction existe.
  *
- * Si le plugin "Saito Toolkit" est actif (détecté via sa fonction de menu
- * saito_core_create_menu), tout se range comme sous-menu de son menu "Saito"
- * plutôt que d'ajouter une entrée de plus au premier niveau du back-office.
- * Sinon, Engagement Hub garde son propre menu de premier niveau ('eh-main').
+ * function_exists('saito_core_create_menu') ne suffit pas : le fichier peut
+ * se charger sans erreur alors qu'une autre partie du même plugin (un autre
+ * module bogué) empêche l'appel add_menu_page('saito-main', ...) de
+ * réellement aboutir pendant le hook 'admin_menu'. S'y fier aveuglément a
+ * déjà rendu 'eh-main' inaccessible (rattaché à un parent qui n'existait
+ * pas vraiment) le jour où Saito Toolkit avait une erreur fatale ailleurs.
+ *
+ * Nécessite d'être appelée après que Saito ait eu l'occasion de s'enregistrer
+ * (voir la priorité 20 sur 'admin_menu' dans admin-menu.php et
+ * cookie-consent/admin-settings.php).
+ */
+function eh_saito_menu_exists() {
+    global $menu;
+    if ( empty( $menu ) || ! is_array( $menu ) ) {
+        return false;
+    }
+    foreach ( $menu as $item ) {
+        if ( isset( $item[2] ) && 'saito-main' === $item[2] ) {
+            return true;
+        }
+    }
+    return false;
+}
+
+/**
+ * Slug du menu admin sous lequel Engagement Hub (et ses sous-pages, comme
+ * les réglages du module cookies) doivent se rattacher : le menu "Saito"
+ * s'il est réellement présent, sinon le menu de premier niveau propre à
+ * Engagement Hub ('eh-main').
  */
 function eh_admin_parent_slug() {
-    return function_exists( 'saito_core_create_menu' ) ? 'saito-main' : 'eh-main';
+    return eh_saito_menu_exists() ? 'saito-main' : 'eh-main';
 }

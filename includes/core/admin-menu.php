@@ -1,11 +1,17 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-add_action( 'admin_menu', 'eh_add_admin_menu' );
+// Priorité tardive (20) : laisse le temps à "Saito Toolkit" de s'enregistrer
+// avant qu'on vérifie sa présence réelle (eh_saito_menu_exists()), plutôt
+// que de se fier à l'ordre de chargement des plugins.
+add_action( 'admin_menu', 'eh_add_admin_menu', 20 );
 function eh_add_admin_menu() {
-    // Si "Saito Toolkit" est actif, on se range dans son menu au lieu de
-    // créer une entrée de premier niveau supplémentaire (voir eh_admin_parent_slug()).
-    if ( function_exists( 'saito_core_create_menu' ) ) {
+    // Si le menu "Saito" est réellement enregistré, on s'y range au lieu de
+    // créer une entrée de premier niveau supplémentaire (voir eh_admin_parent_slug()
+    // et eh_saito_menu_exists() : ne pas se fier à function_exists() seul,
+    // qui a déjà laissé 'eh-main' orphelin quand Saito Toolkit plantait
+    // ailleurs sans empêcher son fichier de se charger).
+    if ( eh_saito_menu_exists() ) {
         add_submenu_page(
             eh_admin_parent_slug(),
             __( 'Engagement Hub', 'engagement-hub' ),

@@ -82,6 +82,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const btnPrefs = document.getElementById("bcc-btn-prefs");
     const btnSavePrefs = document.getElementById("bcc-btn-save-prefs");
     const btnCloseModal = document.getElementById("bcc-btn-close-modal");
+    const btnModalCross = modal ? modal.querySelector(".bcc-modal-close") : null;
 
     if(btnAccepter) btnAccepter.addEventListener("click", () => setConsent(1, 1));
     if(btnRefuser) btnRefuser.addEventListener("click", () => setConsent(0, 0));
@@ -102,6 +103,13 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 
     if(btnCloseModal) btnCloseModal.addEventListener("click", () => {
+        if(!document.cookie.includes('bcc_consent_all')) banner.style.display = "block";
+        closeModal();
+    });
+
+    // Croix de fermeture en coin, cohérente avec les panneaux panier et
+    // accessibilité (assets/js/sticky-cart.js, assets/js/accessibility.js).
+    if(btnModalCross) btnModalCross.addEventListener("click", () => {
         if(!document.cookie.includes('bcc_consent_all')) banner.style.display = "block";
         closeModal();
     });

@@ -183,3 +183,12 @@
         animation: none;
     }
 }
+
+/* Focus clavier visible, cohérent avec les panneaux (assets/css/*-cart.css,
+   cookie-consent.css, accessibility.css) : couleur unique repérable sur
+   fond clair comme sur fond sombre. */
+.eh-fab-toggle:focus-visible,
+.eh-fab-item:focus-visible {
+    outline: 2px solid #2563eb;
+    outline-offset: 2px;
+}

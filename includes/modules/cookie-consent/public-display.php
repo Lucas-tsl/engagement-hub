@@ -69,31 +69,34 @@ function eh_cookie_afficher_banniere() {
 
     <div id="bcc-modal-overlay" class="bcc-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="bcc-modal-title">
         <div class="bcc-modal" tabindex="-1">
-            <h3 class="bcc-title" id="bcc-modal-title"><?php esc_html_e( 'Préférences des cookies', 'engagement-hub' ); ?></h3>
-            <div class="bcc-cookie-type">
-                <div>
-                    <strong><?php esc_html_e( 'Strictement Nécessaires', 'engagement-hub' ); ?></strong>
-                    <p class="bcc-desc"><?php esc_html_e( 'Requis pour le site (panier, sécurité). Non désactivables.', 'engagement-hub' ); ?></p>
+            <button type="button" class="bcc-modal-close" aria-label="<?php esc_attr_e( 'Fermer', 'engagement-hub' ); ?>">✕</button>
+            <div class="bcc-modal-scroll">
+                <h3 class="bcc-title" id="bcc-modal-title"><?php esc_html_e( 'Préférences des cookies', 'engagement-hub' ); ?></h3>
+                <div class="bcc-cookie-type">
+                    <div>
+                        <strong><?php esc_html_e( 'Strictement Nécessaires', 'engagement-hub' ); ?></strong>
+                        <p class="bcc-desc"><?php esc_html_e( 'Requis pour le site (panier, sécurité). Non désactivables.', 'engagement-hub' ); ?></p>
+                    </div>
+                    <input type="checkbox" checked disabled>
                 </div>
-                <input type="checkbox" checked disabled>
-            </div>
-            <div class="bcc-cookie-type">
-                <label for="chk-stats">
-                    <strong><?php esc_html_e( 'Statistiques (Google Analytics)', 'engagement-hub' ); ?></strong>
-                    <p class="bcc-desc"><?php esc_html_e( "Pour mesurer l'audience de la boutique.", 'engagement-hub' ); ?></p>
-                </label>
-                <input type="checkbox" id="chk-stats" <?php echo ( '1' === eh_cookie_cookie_value( 'bcc_consent_stats' ) ) ? 'checked' : ''; ?>>
-            </div>
-            <div class="bcc-cookie-type">
-                <label for="chk-mkt">
-                    <strong><?php esc_html_e( 'Marketing (Pixel Facebook, Google Ads)', 'engagement-hub' ); ?></strong>
-                    <p class="bcc-desc"><?php esc_html_e( 'Pour afficher des publicités ciblées.', 'engagement-hub' ); ?></p>
-                </label>
-                <input type="checkbox" id="chk-mkt" <?php echo ( '1' === eh_cookie_cookie_value( 'bcc_consent_mkt' ) ) ? 'checked' : ''; ?>>
-            </div>
-            <div class="bcc-actions" style="margin-top: 20px;">
-                <button id="bcc-btn-save-prefs" class="bcc-btn bcc-btn-accepter"><?php esc_html_e( 'Enregistrer mes choix', 'engagement-hub' ); ?></button>
-                <button id="bcc-btn-close-modal" class="bcc-btn bcc-btn-refuser"><?php esc_html_e( 'Annuler', 'engagement-hub' ); ?></button>
+                <div class="bcc-cookie-type">
+                    <label for="chk-stats">
+                        <strong><?php esc_html_e( 'Statistiques (Google Analytics)', 'engagement-hub' ); ?></strong>
+                        <p class="bcc-desc"><?php esc_html_e( "Pour mesurer l'audience de la boutique.", 'engagement-hub' ); ?></p>
+                    </label>
+                    <input type="checkbox" id="chk-stats" <?php echo ( '1' === eh_cookie_cookie_value( 'bcc_consent_stats' ) ) ? 'checked' : ''; ?>>
+                </div>
+                <div class="bcc-cookie-type">
+                    <label for="chk-mkt">
+                        <strong><?php esc_html_e( 'Marketing (Pixel Facebook, Google Ads)', 'engagement-hub' ); ?></strong>
+                        <p class="bcc-desc"><?php esc_html_e( 'Pour afficher des publicités ciblées.', 'engagement-hub' ); ?></p>
+                    </label>
+                    <input type="checkbox" id="chk-mkt" <?php echo ( '1' === eh_cookie_cookie_value( 'bcc_consent_mkt' ) ) ? 'checked' : ''; ?>>
+                </div>
+                <div class="bcc-actions" style="margin-top: 20px;">
+                    <button id="bcc-btn-save-prefs" class="bcc-btn bcc-btn-accepter"><?php esc_html_e( 'Enregistrer mes choix', 'engagement-hub' ); ?></button>
+                    <button id="bcc-btn-close-modal" class="bcc-btn bcc-btn-refuser"><?php esc_html_e( 'Annuler', 'engagement-hub' ); ?></button>
+                </div>
             </div>
         </div>
     </div>
