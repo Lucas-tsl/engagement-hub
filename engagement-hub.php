@@ -25,6 +25,7 @@ function eh_charger_traductions() {
 // Noyau : registre de modules, helpers, menu admin, bouton flottant (FAB)
 require_once EH_PLUGIN_DIR . 'includes/core/class-eh-module-registry.php';
 require_once EH_PLUGIN_DIR . 'includes/core/helpers.php';
+require_once EH_PLUGIN_DIR . 'includes/core/i18n.php';
 require_once EH_PLUGIN_DIR . 'includes/core/admin-menu.php';
 require_once EH_PLUGIN_DIR . 'includes/core/frontend.php';
 
