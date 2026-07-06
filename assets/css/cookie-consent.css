@@ -46,6 +46,7 @@
     width: 100%;
     max-height: calc(100vh - 140px);
     overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .bcc-cookie-type { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #ddd; gap: 15px; }

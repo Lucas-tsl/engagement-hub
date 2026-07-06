@@ -48,7 +48,14 @@
             btn.setAttribute('role', 'menuitem');
             btn.setAttribute('title', item.label);
             btn.setAttribute('aria-label', item.label);
-            btn.textContent = item.icon;
+            // Icône dans un span dédié : le filtre CSS qui la rend monochrome
+            // (assets/css/core.css) ne doit pas s'appliquer au fond blanc du
+            // bouton lui-même.
+            var icon = document.createElement('span');
+            icon.className = 'eh-fab-item-icon';
+            icon.setAttribute('aria-hidden', 'true');
+            icon.textContent = item.icon;
+            btn.appendChild(icon);
             btn.addEventListener('click', function () {
                 handleAction(item);
                 closeMenu();

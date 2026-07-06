@@ -58,6 +58,7 @@
     flex: 1;
     min-height: 0;
     overflow-y: auto;
+    overflow-x: hidden;
     padding: 34px 16px 16px;
 }
 
@@ -144,14 +145,6 @@
     font-size: 11px;
     color: #888;
     line-height: 1.4;
-}
-
-.eh-a11y-google-widget {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip: rect(0 0 0 0);
 }
 
 /* Écrans laptop : panneau un peu trop imposant tel que dimensionné pour un

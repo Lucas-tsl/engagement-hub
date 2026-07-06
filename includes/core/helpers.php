@@ -16,3 +16,16 @@ function eh_user_can_manage() {
 function eh_sanitize_checkbox( $value ) {
     return empty( $value ) ? 0 : 1;
 }
+
+/**
+ * Slug du menu admin sous lequel Engagement Hub (et ses sous-pages, comme
+ * les réglages du module cookies) doivent se rattacher.
+ *
+ * Si le plugin "Saito Toolkit" est actif (détecté via sa fonction de menu
+ * saito_core_create_menu), tout se range comme sous-menu de son menu "Saito"
+ * plutôt que d'ajouter une entrée de plus au premier niveau du back-office.
+ * Sinon, Engagement Hub garde son propre menu de premier niveau ('eh-main').
+ */
+function eh_admin_parent_slug() {
+    return function_exists( 'saito_core_create_menu' ) ? 'saito-main' : 'eh-main';
+}

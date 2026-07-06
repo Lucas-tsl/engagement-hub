@@ -3,8 +3,11 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 add_action( 'admin_menu', 'eh_cookie_ajouter_menu' );
 function eh_cookie_ajouter_menu() {
+    // 'eh-main' n'est un menu de premier niveau valide comme parent que si
+    // Engagement Hub n'est pas déjà rattaché au menu "Saito" (WordPress ne
+    // supporte pas les sous-menus de sous-menus) : voir eh_admin_parent_slug().
     add_submenu_page(
-        'eh-main',
+        eh_admin_parent_slug(),
         __( 'Réglages Bannière Cookie', 'engagement-hub' ),
         __( 'Cookies', 'engagement-hub' ),
         'manage_options',

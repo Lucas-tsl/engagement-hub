@@ -36,10 +36,7 @@ function eh_a11y_render_panel() {
                 </button>
             </div>
 
-            <p class="eh-a11y-note"><?php esc_html_e( 'La traduction est fournie par Google et peut différer du texte original.', 'engagement-hub' ); ?></p>
-
-            <!-- Widget Google Traduction, chargé à la demande et piloté par le sélecteur ci-dessus. -->
-            <div id="google_translate_element" class="eh-a11y-google-widget"></div>
+            <p class="eh-a11y-note"><?php esc_html_e( 'La traduction est fournie par Google (via translate.goog) et peut différer du texte original.', 'engagement-hub' ); ?></p>
         </div>
     </div>
     <?php

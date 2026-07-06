@@ -90,6 +90,10 @@
     flex: 1;
     min-height: 0;
     overflow-y: auto;
+    /* Sans ceci, le simple fait de fixer overflow-y force certains
+       navigateurs à activer aussi une barre horizontale dès que le contenu
+       déborde d'un pixel, même avec le retour à la ligne des boutons. */
+    overflow-x: hidden;
     padding: 34px 16px 16px;
 }
 

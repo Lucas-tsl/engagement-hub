@@ -61,108 +61,61 @@
         });
     }
 
-    // --- Traduction (widget Google, chargé à la demande uniquement) ---
-    function getGoogTransCookie() {
-        var match = document.cookie.match(/(?:^|; )googtrans=([^;]*)/);
-        return match ? decodeURIComponent(match[1]) : '';
+    // --- Traduction ---
+    // L'ancien widget "Google Website Translator" embarqué dans la page est
+    // un service que Google a cessé d'ouvrir aux nouveaux domaines : il se
+    // charge sans erreur mais ne traduit jamais rien, en silence. On utilise
+    // à la place le proxy translate.goog — le mécanisme que Google emploie
+    // lui-même aujourd'hui pour ses liens "Traduire cette page" — nettement
+    // plus fiable, au prix d'une navigation vers ce domaine proxy plutôt
+    // qu'une traduction en place sur le site.
+    function isOnTranslateProxy() {
+        return /\.translate\.goog$/.test(window.location.hostname);
     }
 
-    function preselectLangFromCookie() {
+    function buildProxyUrl(targetLang) {
+        var loc = window.location;
+        var proxyHost = loc.hostname.replace(/\./g, '-') + '.translate.goog';
+        var params = new URLSearchParams(loc.search);
+        params.set('_x_tr_sl', 'auto');
+        params.set('_x_tr_tl', targetLang);
+        params.set('_x_tr_hl', 'fr');
+        params.set('_x_tr_pto', 'wapp');
+        return loc.protocol + '//' + proxyHost + loc.pathname + '?' + params.toString() + loc.hash;
+    }
+
+    function buildOriginalUrlFromProxy() {
+        var loc = window.location;
+        var originalHost = loc.hostname.replace(/\.translate\.goog$/, '').replace(/-/g, '.');
+        var params = new URLSearchParams(loc.search);
+        params.delete('_x_tr_sl');
+        params.delete('_x_tr_tl');
+        params.delete('_x_tr_hl');
+        params.delete('_x_tr_pto');
+        var query = params.toString();
+        return loc.protocol + '//' + originalHost + loc.pathname + (query ? '?' + query : '') + loc.hash;
+    }
+
+    function preselectLangFromUrl() {
         if (!langSelect) return;
-        var current = getGoogTransCookie(); // format "/fr/en"
-        var target = current.split('/')[2] || '';
-        langSelect.value = target;
-    }
-
-    function loadGoogleTranslate(onReady, onError) {
-        if (window.google && window.google.translate && window.google.translate.TranslateElement) {
-            onReady();
-            return;
+        if (isOnTranslateProxy()) {
+            var params = new URLSearchParams(window.location.search);
+            langSelect.value = params.get('_x_tr_tl') || '';
+        } else {
+            langSelect.value = '';
         }
-        if (window.__ehGoogTranslateLoading) {
-            // Un chargement est déjà en cours (ex. sélection rapide de plusieurs
-            // langues) : on attend qu'il aboutisse plutôt que d'injecter le
-            // script Google une deuxième fois.
-            var wait = window.setInterval(function () {
-                if (window.google && window.google.translate && window.google.translate.TranslateElement) {
-                    window.clearInterval(wait);
-                    onReady();
-                }
-            }, 200);
-            return;
-        }
-        window.__ehGoogTranslateLoading = true;
-        window.googleTranslateElementInit = function () {
-            try {
-                new window.google.translate.TranslateElement(
-                    {
-                        pageLanguage: 'fr',
-                        includedLanguages: 'en,es,de,it,pt,fr',
-                        layout: window.google.translate.TranslateElement.InlineLayout.SIMPLE,
-                        autoDisplay: false
-                    },
-                    'google_translate_element'
-                );
-                onReady();
-            } catch (err) {
-                console.error('Engagement Hub — le widget Google Traduction a échoué à s\'initialiser :', err);
-                if (onError) onError();
-            }
-        };
-        var script = document.createElement('script');
-        script.src = 'https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
-        script.onerror = function () {
-            console.error("Engagement Hub — impossible de charger le script Google Traduction (bloqué par un bloqueur de publicité, un pare-feu, ou le service est indisponible).");
-            window.__ehGoogTranslateLoading = false;
-            if (onError) onError();
-        };
-        document.body.appendChild(script);
-    }
-
-    function resetTranslation() {
-        var expire = 'expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-        document.cookie = 'googtrans=; ' + expire;
-        document.cookie = 'googtrans=; ' + expire + ' domain=.' + window.location.hostname + ';';
-        window.location.reload();
-    }
-
-    function translateTo(langCode) {
-        setLangStatus('Chargement de la traduction…');
-        loadGoogleTranslate(
-            function () {
-                var tries = 0;
-                var interval = window.setInterval(function () {
-                    var combo = document.querySelector('select.goog-te-combo');
-                    tries++;
-                    if (combo) {
-                        window.clearInterval(interval);
-                        combo.value = langCode;
-                        combo.dispatchEvent(new Event('change', { bubbles: true }));
-                        // Le widget Google modifie le DOM de façon asynchrone :
-                        // on ne peut pas confirmer instantanément le succès, on
-                        // efface juste le message de chargement après un délai.
-                        window.setTimeout(function () { setLangStatus(''); }, 1500);
-                    } else if (tries > 40) {
-                        window.clearInterval(interval); // ~10s : le widget n'a pas répondu.
-                        setLangStatus('La traduction est indisponible pour le moment.');
-                    }
-                }, 250);
-            },
-            function () {
-                setLangStatus('La traduction est indisponible pour le moment.');
-            }
-        );
     }
 
     if (langSelect) {
-        preselectLangFromCookie();
+        preselectLangFromUrl();
         langSelect.addEventListener('change', function () {
             var value = langSelect.value;
             if (value) {
-                translateTo(value);
-            } else {
-                setLangStatus('');
-                resetTranslation();
+                setLangStatus('Redirection…');
+                window.location.href = buildProxyUrl(value);
+            } else if (isOnTranslateProxy()) {
+                setLangStatus('Redirection…');
+                window.location.href = buildOriginalUrlFromProxy();
             }
         });
     }
@@ -172,7 +125,7 @@
 
     function openPanel() {
         panel.classList.add('eh-a11y-panel-open');
-        preselectLangFromCookie();
+        preselectLangFromUrl();
         if (window.ehHub) window.ehHub.openPanel('accessibility');
     }
 

@@ -14,6 +14,7 @@ module.exports = [
         gtag: "readonly",
         CustomEvent: "readonly",
         Event: "readonly",
+        URLSearchParams: "readonly",
         ehCookieConfig: "readonly",
         ehStickyCartI18n: "readonly",
         ehHubConfig: "readonly",

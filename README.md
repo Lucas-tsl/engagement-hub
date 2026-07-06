@@ -92,7 +92,7 @@ git push origin v1.0.0
 
 ## ⚠️ À savoir : module Accessibilité
 
-La traduction utilise le widget public **Google Website Translator** (`translate.google.com/translate_a/element.js`), chargé à la demande seulement (pas au chargement de chaque page). C'est un service non documenté officiellement par Google et qu'il peut faire évoluer sans préavis — à surveiller si la traduction cesse de fonctionner. Le contraste élevé et le curseur agrandi sont, eux, 100% CSS/JS maison (pas de dépendance externe) et mémorisés via `localStorage`.
+La traduction redirige vers le proxy **translate.goog** de Google (ex. `monsite-fr.translate.goog`) — le mécanisme utilisé par Google lui-même pour ses liens "Traduire cette page". L'ancien widget intégré à la page (`Google Website Translator`) a été abandonné : Google ne l'ouvre plus aux nouveaux domaines, il se charge sans erreur mais ne traduit jamais rien. Le proxy est plus fiable, mais implique une vraie navigation vers ce domaine Google le temps de la traduction ; les appels AJAX du thème/WooCommerce (ex. ajout au panier) peuvent s'y comporter différemment puisque la page n'est plus servie directement par le site. Si ça pose problème, WPML (déjà installé sur le site) resterait une alternative plus robuste pour ce module. Le contraste élevé et le curseur agrandi sont, eux, 100% CSS/JS maison (pas de dépendance externe) et mémorisés via `localStorage`.
 
 ## 📦 Installation sur le site
 

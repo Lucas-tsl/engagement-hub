@@ -3,6 +3,20 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 add_action( 'admin_menu', 'eh_add_admin_menu' );
 function eh_add_admin_menu() {
+    // Si "Saito Toolkit" est actif, on se range dans son menu au lieu de
+    // créer une entrée de premier niveau supplémentaire (voir eh_admin_parent_slug()).
+    if ( function_exists( 'saito_core_create_menu' ) ) {
+        add_submenu_page(
+            eh_admin_parent_slug(),
+            __( 'Engagement Hub', 'engagement-hub' ),
+            __( 'Engagement Hub', 'engagement-hub' ),
+            'manage_options',
+            'eh-main',
+            'eh_render_dashboard_page'
+        );
+        return;
+    }
+
     add_menu_page(
         __( 'Engagement Hub', 'engagement-hub' ),
         __( 'Engagement Hub', 'engagement-hub' ),
