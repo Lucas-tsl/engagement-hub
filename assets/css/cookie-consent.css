@@ -44,7 +44,10 @@
     display: flex;
     position: fixed;
     right: 20px;
-    bottom: 90px;
+    /* Aligné pour toucher (léger recouvrement de 2px) le haut du bouton
+       engrenage (56px de haut, posé à 20px du bas : assets/css/core.css),
+       sans espace visuel entre les deux. */
+    bottom: 74px;
     width: 420px;
     max-width: calc(100vw - 40px);
     max-height: calc(100vh - 140px);
@@ -99,7 +102,8 @@
 @media (max-width: 1440px) {
     .bcc-modal-overlay {
         width: 340px;
-        bottom: 74px;
+        /* Engrenage à 44px de haut sur cet écran (assets/css/core.css). */
+        bottom: 62px;
         max-height: calc(100vh - 120px);
     }
 }
@@ -112,7 +116,8 @@
         right: 12px;
         left: 12px;
         width: auto;
-        bottom: 70px;
+        /* Engrenage décalé à 14px du bord sur mobile (assets/css/core.css). */
+        bottom: 56px;
         max-height: calc(100vh - 110px);
     }
 }
