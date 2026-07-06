@@ -193,3 +193,14 @@
     outline: 2px solid #2563eb;
     outline-offset: 2px;
 }
+
+/* Filet de sécurité : certains navigateurs affichent quand même l'anneau de
+   focus après un clic souris malgré :focus-visible. La modalité réelle est
+   détectée en JS (assets/js/core.js) ; on masque ici l'anneau sur nos
+   propres composants seulement (pas sur le reste du site). */
+html.eh-mouse-user #eh-fab *:focus-visible,
+html.eh-mouse-user .bcc-modal-overlay *:focus-visible,
+html.eh-mouse-user .sticky-variation-bar *:focus-visible,
+html.eh-mouse-user .eh-a11y-panel *:focus-visible {
+    outline: none;
+}

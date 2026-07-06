@@ -1,6 +1,21 @@
 (function () {
     'use strict';
 
+    // :focus-visible seul ne suffit pas partout : certains navigateurs
+    // affichent quand même l'anneau de focus après un clic souris sur nos
+    // boutons (croix de fermeture, etc.). On détecte nous-mêmes la dernière
+    // modalité utilisée (souris vs clavier) pour le masquer de façon fiable
+    // (voir la règle html.eh-mouse-user dans assets/css/core.css).
+    var htmlEl = document.documentElement;
+    document.addEventListener('mousedown', function () {
+        htmlEl.classList.add('eh-mouse-user');
+    }, true);
+    document.addEventListener('keydown', function (event) {
+        if (event.key === 'Tab') {
+            htmlEl.classList.remove('eh-mouse-user');
+        }
+    }, true);
+
     var config = window.ehHubConfig || { items: [], isProduct: false };
     var fab = document.getElementById('eh-fab');
     var toggle = document.getElementById('eh-fab-toggle');
