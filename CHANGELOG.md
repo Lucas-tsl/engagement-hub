@@ -3,6 +3,16 @@
 Toutes les versions notables du plugin sont documentées ici. Ce fichier est
 mis à jour à chaque Release (voir README, section Workflow).
 
+## [1.3.1]
+
+- Correctif : dans le panneau détaillé (cookies/panier/accessibilité), la
+  zone de défilement ne s'activait jamais (bouton "Annuler" inaccessible)
+  car elle dépendait d'une hauteur en pourcentage résolue contre un ancêtre
+  en `height: auto`. Chaque panneau porte maintenant sa propre limite de
+  hauteur (`max-height`), indépendante de `#eh-fab`.
+- Contraste renforcé entre le fond du menu (choix des icônes) et les bulles
+  blanches, difficiles à distinguer l'une de l'autre.
+
 ## [1.3.0]
 
 - Refonte du bouton flottant : engrenage, choix des icônes et contenu d'un

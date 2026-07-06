@@ -44,8 +44,11 @@
    bordure) sont désormais portés par #eh-fab lui-même. */
 .bcc-modal-overlay {
     width: 100%;
-    height: 100%;
-    min-height: 0;
+    /* max-height (pas height:100%) : #eh-fab grandit selon son propre contenu
+       (height: auto), donc un pourcentage ici ne se résoudrait jamais et la
+       zone de défilement plus bas ne saurait jamais quand s'activer — le
+       bouton "Annuler" se retrouvait coupé, sans aucun moyen d'y accéder. */
+    max-height: calc(100vh - 140px);
     font-family: sans-serif;
 }
 
@@ -56,7 +59,6 @@
     display: flex;
     flex-direction: column;
     width: 100%;
-    height: 100%;
     min-height: 0;
 }
 
@@ -115,10 +117,21 @@
     cursor: pointer;
 }
 
-/* Responsive Mobile (bannière de 1er consentement uniquement : la taille du
-   panneau de préférences est désormais gérée par #eh-fab, assets/css/core.css). */
+/* Largeur du panneau de préférences gérée par #eh-fab (assets/css/core.css) ;
+   seule sa hauteur max doit rester alignée sur les mêmes points de rupture,
+   pour que la zone de défilement ci-dessus sache quand s'activer. */
+@media (max-width: 1440px) {
+    .bcc-modal-overlay {
+        max-height: calc(100vh - 120px);
+    }
+}
+
 @media (max-width: 480px) {
     .bcc-banner-card { width: 100%; bottom: 0; right: 0; border: none; border-top: 2px solid #000; box-shadow: none; }
+
+    .bcc-modal-overlay {
+        max-height: calc(100vh - 110px);
+    }
 }
 
 /* Focus clavier visible, cohérent avec les panneaux panier/accessibilité. */

@@ -13,9 +13,24 @@
        d'ordre de cascade avec la règle qui masque ce panneau par défaut. */
     flex-direction: column;
     width: 100%;
-    height: 100%;
+    /* max-height (pas height:100%) : #eh-fab grandit selon son propre contenu
+       (height: auto), donc un pourcentage ici ne se résoudrait jamais et la
+       zone de défilement plus bas ne saurait jamais quand s'activer. */
+    max-height: calc(100vh - 140px);
     min-height: 0;
     font-family: sans-serif;
+}
+
+@media (max-width: 1440px) {
+    .eh-a11y-panel {
+        max-height: calc(100vh - 120px);
+    }
+}
+
+@media (max-width: 480px) {
+    .eh-a11y-panel {
+        max-height: calc(100vh - 110px);
+    }
 }
 
 .eh-a11y-close {

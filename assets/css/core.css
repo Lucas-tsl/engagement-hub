@@ -31,7 +31,10 @@
 .eh-fab[data-state="menu"],
 .eh-fab[data-state="detail"] {
     border-radius: 0;
-    background-color: rgb(255 255 255 / 92%);
+    /* Légèrement plus gris que blanc pur : les bulles du menu (fond blanc,
+       voir .eh-fab-item plus bas) doivent rester nettement détachables du
+       fond, pas s'y fondre. */
+    background-color: rgb(230 230 232 / 94%);
     backdrop-filter: blur(14px);
     box-shadow: 0 16px 40px rgba(0, 0, 0, 0.18);
 }
@@ -113,12 +116,14 @@
     width: 46px;
     height: 46px;
     border-radius: 50%;
-    border: none;
+    /* Bordure + ombre plus marquée : sur le fond gris clair du menu, un
+       simple fond blanc ne suffisait pas à distinguer nettement la bulle. */
+    border: 1px solid rgba(0, 0, 0, 0.08);
     background: #fff;
     color: #111;
     font-size: 20px;
     cursor: pointer;
-    box-shadow: 0 1px 3px rgb(0 0 0 / 15%);
+    box-shadow: 0 2px 6px rgb(0 0 0 / 22%);
     display: flex;
     align-items: center;
     justify-content: center;
