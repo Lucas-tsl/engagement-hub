@@ -63,6 +63,11 @@
             }
             btn.appendChild(icon);
             btn.addEventListener('click', function () {
+                // Retenu pour que le panneau ouvert par cette action "prenne
+                // la forme" précisément de CETTE bulle (voir ehHub plus bas),
+                // et non de l'engrenage lui-même, qui doit rester stable et
+                // toujours visible.
+                lastActiveItemEl = btn;
                 handleAction(item);
                 closeMenu();
             });
@@ -113,18 +118,22 @@
     updateScrollPercent();
 
     // Coordination des panneaux : chaque module (cookie, sticky cart, futurs
-    // modules) affiche son propre panneau ancré à l'engrenage, mais un seul
-    // peut être ouvert à la fois. Le noyau ne connaît pas leur contenu : il
-    // se contente de fermer le panneau précédent et de "lier" visuellement
-    // l'engrenage (pulsation) tant qu'un panneau est ouvert.
+    // modules) affiche son propre panneau, mais un seul peut être ouvert à la
+    // fois. Le noyau ne connaît pas leur contenu : il se contente de fermer
+    // le panneau précédent et de "lier" visuellement l'engrenage (pulsation)
+    // tant qu'un panneau est ouvert. L'engrenage lui-même reste toujours
+    // visible et stable — c'est la BULLE du menu qu'on vient de cliquer
+    // (lastActiveItemEl, capturée dans renderMenu() ci-dessus) qui se
+    // transforme visuellement en panneau, pas l'engrenage.
     var activePanel = null;
+    var lastActiveItemEl = null;
 
-    // Nom de transition partagé : au moment où on l'assigne à un panneau (et
-    // qu'on le retire de l'engrenage, ou l'inverse), la View Transitions API
-    // du navigateur interpole automatiquement position/taille/rayon entre
-    // les deux — l'engrenage "devient" littéralement le panneau, sans qu'on
-    // ait à coder l'animation image par image. Navigateur sans support :
-    // repli silencieux sur un affichage instantané (rien ne casse).
+    // Nom de transition partagé : au moment où on l'assigne au panneau (et
+    // qu'on le retire de la bulle cliquée, ou l'inverse), la View Transitions
+    // API du navigateur interpole automatiquement position/taille/rayon
+    // entre les deux — la bulle "devient" littéralement le panneau, sans
+    // qu'on ait à coder l'animation image par image. Navigateur sans
+    // support : repli silencieux sur un affichage instantané (rien ne casse).
     var MORPH_NAME = 'eh-fab-morph';
 
     function morph( applyFn ) {
@@ -137,17 +146,18 @@
 
     window.ehHub = {
         // panelEl : l'élément DOM du panneau (pour la fusion visuelle avec
-        // l'engrenage). applyFn : callback du module qui bascule SA propre
-        // classe d'affichage — doit s'exécuter à l'intérieur du morph pour
-        // que le navigateur capture les bons états "avant/après".
+        // la bulle cliquée). applyFn : callback du module qui bascule SA
+        // propre classe d'affichage — doit s'exécuter à l'intérieur du morph
+        // pour que le navigateur capture les bons états "avant/après".
         openPanel: function (id, panelEl, applyFn) {
             if (activePanel && activePanel !== id) {
                 document.dispatchEvent(new CustomEvent('eh:panel-close', { detail: { id: activePanel } }));
             }
             activePanel = id;
+            var sourceEl = (lastActiveItemEl && document.contains(lastActiveItemEl)) ? lastActiveItemEl : null;
             morph(function () {
                 fab.classList.add('eh-fab-linked');
-                toggle.classList.add('eh-fab-toggle-hidden');
+                if (sourceEl) sourceEl.style.viewTransitionName = '';
                 if (panelEl) panelEl.style.viewTransitionName = MORPH_NAME;
                 if (typeof applyFn === 'function') applyFn();
             });
@@ -156,13 +166,18 @@
         closePanel: function (id, panelEl, applyFn) {
             if (activePanel !== id) return;
             activePanel = null;
+            // La bulle d'origine n'existe peut-être plus (menu rouvert entre
+            // temps, qui régénère ses boutons) : dans ce cas repli sur un
+            // simple fondu, sans point de départ précis pour la fusion.
+            var sourceEl = (lastActiveItemEl && document.contains(lastActiveItemEl)) ? lastActiveItemEl : null;
             morph(function () {
                 fab.classList.remove('eh-fab-linked');
-                toggle.classList.remove('eh-fab-toggle-hidden');
                 if (panelEl) panelEl.style.viewTransitionName = '';
+                if (sourceEl) sourceEl.style.viewTransitionName = MORPH_NAME;
                 if (typeof applyFn === 'function') applyFn();
             });
             document.dispatchEvent(new CustomEvent('eh:panel-close', { detail: { id: id } }));
+            lastActiveItemEl = null;
         },
         // Conservé pour compatibilité : un module peut encore piloter le
         // "lien" visuel sans passer par un panneau à proprement parler.
