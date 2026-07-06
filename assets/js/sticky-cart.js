@@ -3,31 +3,58 @@
 
      const stickyI18n = window.ehStickyCartI18n || {
          addToCartText: 'Ajouter au panier - ',
-         addingText: 'Ajout en cours...'
+         addingText: 'Ajout en cours...',
+         outOfStockText: 'Rupture de stock'
      };
+
+     // Pour un produit simple (sans variations), WooCommerce n'expose pas de
+     // stock par variation : on se base sur ce qu'il affiche déjà sur la page.
+     function isSimpleProductOutOfStock() {
+         if ($('body').hasClass('outofstock')) return true;
+         return $('.stock.out-of-stock').not('#stickyVariationBar *').length > 0;
+     }
+
+     // Applique/retire l'état "rupture de stock" sur le bouton du panneau :
+     // désactivé, texte remplacé, pour ne jamais permettre un ajout au
+     // panier d'un produit (ou d'une variation) indisponible.
+     function setStickyOutOfStock($stickyBar, outOfStock) {
+         const $btn = $stickyBar.find('.sticky-add-to-cart');
+         const $text = $btn.find('.sticky-button-text');
+         $btn.toggleClass('out-of-stock', outOfStock);
+         if (outOfStock) {
+             $btn.prop('disabled', true);
+             if ($text.length) $text.text(stickyI18n.outOfStockText);
+             $btn.find('.sticky-price').hide();
+         } else {
+             if ($text.length) $text.text(stickyI18n.addToCartText);
+             $btn.find('.sticky-price').show();
+         }
+     }
 
      // Créer le HTML du sticky bar
      function createStickyBar() {
          const stickyHTML = `
              <div class="sticky-variation-bar" id="stickyVariationBar">
                  <button type="button" class="sticky-panel-close" aria-label="Fermer">✕</button>
-                 <div class="sticky-variation-content">
-                     <!-- Bloc gauche : Image + Nom du produit -->
-                     <div class="sticky-left-block">
-                         <div class="sticky-product-image">
-                             <img src="" alt="" class="sticky-product-img">
+                 <div class="sticky-panel-scroll">
+                     <div class="sticky-variation-content">
+                         <!-- Bloc gauche : Image + Nom du produit -->
+                         <div class="sticky-left-block">
+                             <div class="sticky-product-image">
+                                 <img src="" alt="" class="sticky-product-img">
+                             </div>
+                             <div class="sticky-product-name"></div>
                          </div>
-                         <div class="sticky-product-name"></div>
-                     </div>
-                     <!-- Bloc droite : Variations + Bouton -->
-                     <div class="sticky-right-block">
-                         <div class="sticky-variation-options">
-                              <!--  <div class="sticky-variation-label"><span class="variation-name">Sélectionner une option</span></div>-->                            <div class="sticky-variation-buttons"></div>
+                         <!-- Bloc droite : Variations + Bouton -->
+                         <div class="sticky-right-block">
+                             <div class="sticky-variation-options">
+                                  <!--  <div class="sticky-variation-label"><span class="variation-name">Sélectionner une option</span></div>-->                            <div class="sticky-variation-buttons"></div>
+                             </div>
+                             <button class="sticky-add-to-cart" disabled>
+                                <span class="sticky-button-text">${stickyI18n.addToCartText}</span> &nbsp;
+                                 <span class="sticky-price"></span>
+                             </button>
                          </div>
-                         <button class="sticky-add-to-cart" disabled>
-                            <span class="sticky-button-text">${stickyI18n.addToCartText}</span> &nbsp;
-                             <span class="sticky-price"></span>
-                         </button>
                      </div>
                  </div>
              </div>
@@ -295,8 +322,11 @@
                  $(window).scrollTop(savedScrollTop);
              }, 100);
 
-             // Activer le bouton d'ajout au panier
-             $stickyAddToCart.prop('disabled', false);
+             // Refléter immédiatement la disponibilité de la variation choisie
+             // (found_variation la confirmera juste après) plutôt que
+             // d'activer le bouton en aveugle pour une variation en rupture.
+             const chosenVariation = variationsByValue[value];
+             setStickyOutOfStock($stickyBar, chosenVariation ? chosenVariation.is_in_stock === false : false);
 
              // Mettre à jour le prix après les délais de WooCommerce
              setTimeout(function() {
@@ -318,7 +348,7 @@
 
              // Mettre à jour immédiatement ET après plusieurs délais pour être sûr
              updateStickyPrice();
-             $stickyAddToCart.prop('disabled', false);
+             setStickyOutOfStock($stickyBar, variation.is_in_stock === false);
 
              // Re-vérifier après plusieurs délais
              setTimeout(function() {
@@ -572,8 +602,8 @@
             console.warn('Prix vide ou invalide');
         }
 
-        // Activer le bouton pour les produits simples
-        $stickyAddToCart.prop('disabled', false);
+        // Activer le bouton pour les produits simples, sauf rupture de stock
+        setStickyOutOfStock($stickyBar, isSimpleProductOutOfStock());
 
          // ========================================
          // Gérer le clic sur le bouton

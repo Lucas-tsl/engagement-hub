@@ -68,6 +68,16 @@
     cursor: pointer;
 }
 
+/* Écrans laptop : panneau un peu trop imposant tel que dimensionné pour un
+   grand écran, on réduit d'un cran (voir aussi assets/css/core.css). */
+@media (max-width: 1440px) {
+    .bcc-modal-overlay {
+        width: 280px;
+        bottom: 74px;
+        max-height: calc(100vh - 120px);
+    }
+}
+
 /* Responsive Mobile */
 @media (max-width: 480px) {
     .bcc-banner-card { width: 100%; bottom: 0; right: 0; border: none; border-top: 2px solid #000; box-shadow: none; }
@@ -76,8 +86,8 @@
         right: 12px;
         left: 12px;
         width: auto;
-        bottom: 84px;
-        max-height: calc(100vh - 120px);
+        bottom: 70px;
+        max-height: calc(100vh - 110px);
     }
 }
 

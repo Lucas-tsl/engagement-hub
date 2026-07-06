@@ -32,6 +32,7 @@ function eh_sticky_enqueue_assets() {
         array(
             'addToCartText' => __( 'Ajouter au panier - ', 'engagement-hub' ),
             'addingText'    => __( 'Ajout en cours...', 'engagement-hub' ),
+            'outOfStockText' => __( 'Rupture de stock', 'engagement-hub' ),
         )
     );
 }
