@@ -44,6 +44,7 @@
    bordure) sont désormais portés par #eh-fab lui-même. */
 .bcc-modal-overlay {
     width: 100%;
+
     /* max-height (pas height:100%) : #eh-fab grandit selon son propre contenu
        (height: auto), donc un pourcentage ici ne se résoudrait jamais et la
        zone de défilement plus bas ne saurait jamais quand s'activer — le

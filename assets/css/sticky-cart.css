@@ -21,6 +21,7 @@
    bordure) sont portés par #eh-fab lui-même, qui EST l'objet visuel unique. */
 .sticky-variation-bar {
     width: 100%;
+
     /* max-height (pas height:100%) : #eh-fab grandit selon son propre contenu
        (height: auto), donc un pourcentage ici ne se résoudrait jamais et la
        zone de défilement plus bas ne saurait jamais quand s'activer. */
