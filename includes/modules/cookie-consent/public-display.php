@@ -44,7 +44,7 @@ function eh_cookie_inject_consent_mode() {
 // qui déclenche l'événement 'eh:action' écouté dans assets/js/cookie-consent.js.
 add_action( 'wp_footer', 'eh_cookie_afficher_banniere' );
 function eh_cookie_afficher_banniere() {
-    $logo          = get_option( 'eh_cookie_logo_url' );
+    $logo          = get_option( 'eh_cookie_logo_url', eh_cookie_logo_url_par_defaut() );
     $texte         = get_option( 'eh_cookie_texte_banniere', eh_cookie_texte_par_defaut() );
     $url_politique = get_option( 'eh_cookie_url_politique', '#' );
     $url_mentions  = get_option( 'eh_cookie_url_mentions', '#' );

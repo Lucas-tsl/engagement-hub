@@ -11,6 +11,14 @@ function eh_cookie_texte_par_defaut() {
     return __( "Nous utilisons des cookies pour assurer le bon fonctionnement du site, analyser notre trafic et personnaliser nos publicités. Vous pouvez choisir vos préférences ci-dessous.", 'engagement-hub' );
 }
 
+// Logo par défaut, fourni avec le plugin (assets/img/) : évite d'avoir à
+// renseigner une URL manuellement dans les réglages. Réutilisable sur un
+// autre site en changeant simplement ce fichier ou en indiquant une autre
+// URL dans Réglages > Cookies.
+function eh_cookie_logo_url_par_defaut() {
+    return EH_PLUGIN_URL . 'assets/img/logo-LSG-1-ligne-signature-light.png';
+}
+
 EH_Module_Registry::register(
     'cookie-consent',
     array(

@@ -36,7 +36,7 @@ function eh_cookie_page_reglages_html() {
         <form method="post" action="options.php">
             <?php settings_fields( 'eh_cookie_options_group' ); ?>
             <table class="form-table">
-                <tr valign="top"><th scope="row"><?php esc_html_e( 'URL du Logo', 'engagement-hub' ); ?></th><td><input type="text" name="eh_cookie_logo_url" value="<?php echo esc_attr( get_option( 'eh_cookie_logo_url' ) ); ?>" class="regular-text" /></td></tr>
+                <tr valign="top"><th scope="row"><?php esc_html_e( 'URL du Logo', 'engagement-hub' ); ?></th><td><input type="text" name="eh_cookie_logo_url" value="<?php echo esc_attr( get_option( 'eh_cookie_logo_url', eh_cookie_logo_url_par_defaut() ) ); ?>" class="regular-text" /></td></tr>
                 <tr valign="top"><th scope="row"><?php esc_html_e( 'Texte de la bannière', 'engagement-hub' ); ?></th><td><textarea name="eh_cookie_texte_banniere" rows="4" cols="60"><?php echo esc_textarea( get_option( 'eh_cookie_texte_banniere', $texte_defaut ) ); ?></textarea></td></tr>
                 <tr valign="top"><th scope="row"><?php esc_html_e( 'URL Politique de confidentialité', 'engagement-hub' ); ?></th><td><input type="text" name="eh_cookie_url_politique" value="<?php echo esc_attr( get_option( 'eh_cookie_url_politique' ) ); ?>" class="regular-text" /></td></tr>
                 <tr valign="top"><th scope="row"><?php esc_html_e( 'URL Mentions légales', 'engagement-hub' ); ?></th><td><input type="text" name="eh_cookie_url_mentions" value="<?php echo esc_attr( get_option( 'eh_cookie_url_mentions' ) ); ?>" class="regular-text" /></td></tr>
