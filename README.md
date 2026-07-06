@@ -90,17 +90,48 @@ Toutes les chaînes du plugin passent par `__()`/`_e()`/`esc_html__()`/`esc_html
 
 **Ajouter une langue** : dupliquer le motif de `eh_dictionary_en()` dans `includes/core/i18n.php` (ex. `eh_dictionary_de()`), l'ajouter au tableau `$dictionaries` dans `eh_translate_strings()` avec la clé de langue WPML correspondante (ex. `'de'`), et traduire les valeurs.
 
-## 🚀 CI/CD
+## 🚀 Workflow de contribution & CI/CD
 
-`.github/workflows/ci.yml` :
-- **CI** : à chaque push/PR sur `main` — syntaxe PHP, PHPCS, ESLint, Stylelint.
-- **CD** : job `build` qui assemble un zip installable du plugin (fichiers de dev exclus via `.distignore`), publié comme artefact de build à chaque push, et attaché à une **Release GitHub** automatique quand un tag `vX.Y.Z` est poussé.
+### Branches, issues, PR
 
+- Une idée/un bug → une **Issue** GitHub (modèles disponibles : Bug, Fonctionnalité).
+- Une branche par sujet, préfixée par son type : `feat/xxx`, `fix/xxx`, `style/xxx`, `chore/xxx`.
+- Une **Pull Request** vers `main` pour chaque branche (même en solo : ça déclenche la CI — lint PHP/JS/CSS + build — avant la fusion, et garde un historique clair). `main` doit rester dans un état déployable en permanence : c'est ce qui part automatiquement en staging.
+
+### Versions
+
+- Numéro de version tenu à jour à **deux endroits synchronisés** dans `engagement-hub.php` : l'en-tête `Version:` et la constante `EH_VERSION`.
+- `CHANGELOG.md` : une entrée par version, résumant les changements côté utilisateur (pas un copier-coller des messages de commit).
+- Semver simple : `MAJOR.MINOR.PATCH` (`PATCH` pour un correctif, `MINOR` pour une fonctionnalité, `MAJOR` pour un changement qui casse la compatibilité).
+
+### CI/CD (`.github/workflows/ci.yml`)
+
+| Déclencheur | Jobs exécutés |
+|---|---|
+| Push ou PR sur `main` | `php`, `js-css` (lint), `build` (assemble le zip, sans déployer) |
+| Push sur `main` | + `deploy-staging` (SFTP automatique) |
+| Release GitHub publiée (tag `vX.Y.Z`) | + `deploy-production` (SFTP, gate manuelle possible — voir ci-dessous) |
+
+**Mettre en production** (une fois le staging vérifié) :
 ```bash
-git tag v1.0.0
-git push origin v1.0.0
-# -> Release GitHub avec engagement-hub.zip prêt à uploader dans wp-content/plugins/
+# 1. Bumper la version dans engagement-hub.php (en-tête + EH_VERSION) et CHANGELOG.md, commiter sur main
+# 2. Créer la release (déclenche deploy-production) :
+git tag v1.1.0
+git push origin v1.1.0
+gh release create v1.1.0 --title "v1.1.0" --generate-notes
 ```
+
+### Mise en place des secrets SFTP (à faire une seule fois, dans GitHub)
+
+Cette partie ne peut être faite que par toi, dans les réglages du dépôt — je n'ai jamais accès à tes identifiants SFTP.
+
+1. **Settings > Environments** du dépôt GitHub → créer deux environnements : `staging` et `production`.
+2. Dans **production**, cocher **Required reviewers** et t'ajouter toi-même : chaque déploiement production sera alors mis en pause jusqu'à ce que tu cliques "Approve" dans l'onglet Actions — c'est le "après vérification du staging, on peut ou non lancer en prod" demandé.
+3. Dans chaque environnement, ajouter ces secrets (Settings > Environments > *nom* > Environment secrets) :
+   - `STAGING_SFTP_HOST` / `STAGING_SFTP_USERNAME` / `STAGING_SFTP_PASSWORD` / `STAGING_SFTP_REMOTE_PATH` (ex. `/www/lessenteursgourmandesv2_421/public/wp-content/plugins/engagement-hub`)
+   - `PRODUCTION_SFTP_HOST` / `PRODUCTION_SFTP_USERNAME` / `PRODUCTION_SFTP_PASSWORD` / `PRODUCTION_SFTP_REMOTE_PATH`
+
+Une fois ces 8 secrets renseignés, chaque merge sur `main` se déploie seul en staging, et chaque Release GitHub se déploie en production après ton approbation.
 
 ## ⚠️ À savoir : module Accessibilité
 

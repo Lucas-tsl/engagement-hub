@@ -3,9 +3,10 @@ name: CI/CD
 on:
   push:
     branches: [main]
-    tags: ['v*']
   pull_request:
     branches: [main]
+  release:
+    types: [published]
 
 jobs:
   php:
@@ -73,10 +74,68 @@ jobs:
           name: engagement-hub
           path: build/engagement-hub.zip
 
-      - name: Créer la release GitHub (sur tag vX.Y.Z)
-        if: startsWith(github.ref, 'refs/tags/v')
+      - name: Attacher le zip à la Release GitHub
+        if: github.event_name == 'release'
         uses: softprops/action-gh-release@v2
         with:
           files: build/engagement-hub.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # Staging : automatique à chaque merge sur main. Secrets à créer dans
+  # Settings > Environments > staging (voir README, section Workflow).
+  deploy-staging:
+    name: Déploiement Staging (SFTP)
+    needs: build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: staging
+    steps:
+      - name: Télécharger l'artefact de build
+        uses: actions/download-artifact@v4
+        with:
+          name: engagement-hub
+          path: dist
+
+      - name: Décompresser le zip
+        run: unzip dist/engagement-hub.zip -d dist
+
+      - name: Déployer vers le staging via SFTP
+        uses: wlixcc/SFTP-Deploy-Action@v1.2.4
+        with:
+          username: ${{ secrets.STAGING_SFTP_USERNAME }}
+          server: ${{ secrets.STAGING_SFTP_HOST }}
+          password: ${{ secrets.STAGING_SFTP_PASSWORD }}
+          port: 22
+          local_path: './dist/engagement-hub/*'
+          remote_path: ${{ secrets.STAGING_SFTP_REMOTE_PATH }}
+
+  # Production : uniquement à la publication d'une Release GitHub (tag
+  # vX.Y.Z), jamais automatique sur un simple push. Si l'environnement
+  # "production" a des reviewers obligatoires configurés (recommandé, voir
+  # README), ce job attend une validation manuelle avant de s'exécuter.
+  deploy-production:
+    name: Déploiement Production (SFTP)
+    needs: build
+    if: github.event_name == 'release'
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Télécharger l'artefact de build
+        uses: actions/download-artifact@v4
+        with:
+          name: engagement-hub
+          path: dist
+
+      - name: Décompresser le zip
+        run: unzip dist/engagement-hub.zip -d dist
+
+      - name: Déployer vers la production via SFTP
+        uses: wlixcc/SFTP-Deploy-Action@v1.2.4
+        with:
+          username: ${{ secrets.PRODUCTION_SFTP_USERNAME }}
+          server: ${{ secrets.PRODUCTION_SFTP_HOST }}
+          password: ${{ secrets.PRODUCTION_SFTP_PASSWORD }}
+          port: 22
+          local_path: './dist/engagement-hub/*'
+          remote_path: ${{ secrets.PRODUCTION_SFTP_REMOTE_PATH }}
