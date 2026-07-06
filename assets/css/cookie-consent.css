@@ -45,7 +45,7 @@
     position: fixed;
     right: 20px;
     bottom: 90px;
-    width: 340px;
+    width: 420px;
     max-width: calc(100vw - 40px);
     max-height: calc(100vh - 140px);
     z-index: 999996; /* juste sous le bouton engrenage (999997) */
@@ -98,7 +98,7 @@
    grand écran, on réduit d'un cran (voir aussi assets/css/core.css). */
 @media (max-width: 1440px) {
     .bcc-modal-overlay {
-        width: 280px;
+        width: 340px;
         bottom: 74px;
         max-height: calc(100vh - 120px);
     }
