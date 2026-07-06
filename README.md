@@ -17,9 +17,7 @@ Le design vient du croquis dans [`docs/schema.png`](docs/schema.png) :
   - ♿ **Accessibilité** — toujours visible, ouvre le panneau langue (Google Traduction) / contraste / curseur agrandi.
   - ▶️ **Vidéo à la une** *(à venir)* — vidéo courte associée à une annonce produit.
 
-L'implémentation actuelle du menu est un "speed dial" (pile d'icônes qui apparaît au-dessus du bouton) plutôt que le tracé radial en toile du croquis — même logique de déclenchement conditionnel, rendu plus simple à maintenir. Le style visuel (disposition en éventail, courbes) peut évoluer plus tard sans toucher à la mécanique.
-
-**Panneaux ancrés, pas de widgets indépendants.** Cookies, panier et accessibilité s'affichent tous comme un panneau compact qui apparaît depuis le coin bas-droit du bouton engrenage (`transform-origin: bottom right`, même position `right: 20px; bottom: 90px`), et l'engrenage "pulse" tant qu'un panneau est ouvert — pour que tout se lise comme un seul système. Le panier reste **automatique** (s'ouvre au scroll sur fiche produit, comme avant) ; la toute première bannière de consentement cookie reste **indépendante et immédiate** (exigence RGPD : elle ne doit pas nécessiter un clic sur l'engrenage) — seule sa réouverture après coup passe par le panneau.
+**Un seul objet, 3 états, pas trois blocs séparés.** Le bouton engrenage (`#eh-fab`) n'ouvre pas un menu flottant au-dessus d'un panneau lui-même indépendant : c'est le même élément DOM qui grandit successivement — (1) fermé (petit cercle avec l'engrenage), (2) menu (le cercle s'agrandit et révèle le choix des icônes en son sein), (3) détail (il s'agrandit encore pour montrer le contenu du module choisi : cookies, panier ou accessibilité). Une croix de fermeture dans le contenu détaillé revient à l'étape 2 (choix des icônes) ; un clic en dehors ou Échap referme tout d'un coup. Le panier reste **automatique** (s'ouvre au scroll sur fiche produit, en sautant directement à l'étape 3) ; la toute première bannière de consentement cookie reste **indépendante et immédiate** (exigence RGPD : elle ne doit pas nécessiter un clic sur l'engrenage) — seule sa réouverture après coup passe par le panneau.
 
 ## 🏗️ Architecture
 
@@ -52,12 +50,14 @@ document.dispatchEvent(new CustomEvent('eh:action', { detail: item }));
 
 Chaque module écoute cet événement et réagit s'il reconnaît l'action (voir `assets/js/cookie-consent.js`, `assets/js/sticky-cart.js`, `assets/js/accessibility.js`). Ce découplage est ce qui permet d'ajouter un module sans modifier le noyau.
 
-Le noyau expose aussi une petite API (`assets/js/core.js`) pour coordonner l'ouverture des panneaux, afin qu'un seul soit visible à la fois et que le bouton engrenage "pulse" tant que c'est le cas :
+Le noyau expose aussi une petite API (`assets/js/core.js`) pour afficher le contenu d'un module dans le slot partagé `#eh-fab-detail`, seul endroit où `#eh-fab` grandit jusqu'à l'état 3 :
 
 ```js
-window.ehHub.openPanel('mon-module');   // ferme le panneau précédent, fait pulser l'engrenage
-window.ehHub.closePanel('mon-module');
-// tout module doit écouter 'eh:panel-close' et se fermer si detail.id === son propre id
+window.ehHub.showDetail('mon-module', applyFn);   // affiche le module, fait grandir #eh-fab (état 3)
+window.ehHub.backToMenu('mon-module', applyFn);   // fermeture MANUELLE (croix) : revient au choix des icônes (état 2)
+window.ehHub.hideDetail('mon-module', applyFn);   // fermeture AUTOMATIQUE (ex. scroll) : referme entièrement (état 1)
+// applyFn bascule la classe d'affichage propre au module (ex. .visible) ; à écouter aussi : 'eh:closed'
+// (le hub s'est refermé alors que ce module était actif, ex. clic en dehors) pour remettre à jour cette classe.
 ```
 
 ### Ajouter un nouveau module
@@ -65,8 +65,8 @@ window.ehHub.closePanel('mon-module');
 1. Créer `includes/modules/mon-module/module.php`, y appeler `EH_Module_Registry::register('mon-module', [...])` avec une `icon`, une `fab_action`, et `'available' => true`.
 2. Ajouter le require dans `engagement-hub.php`.
 3. Créer les assets `assets/css/mon-module.css` / `assets/js/mon-module.js`, enqueués depuis le module comme le fait `sticky-frontend.php`.
-4. Dessiner le panneau comme un panneau ancré (voir `assets/css/accessibility.css` pour le patron : `position: fixed; right: 20px; bottom: 90px; transform-origin: bottom right;`), avec un bouton de fermeture.
-5. Dans le JS du module, écouter `document.addEventListener('eh:action', ...)` pour ouvrir le panneau (`window.ehHub.openPanel('mon-module')`), et `eh:panel-close` pour le refermer si un autre panneau s'ouvre.
+4. Le contenu du panneau (rendu en PHP dans `wp_footer`) est un simple bloc qui remplit son conteneur (`width: 100%; height: 100%;`, voir `assets/css/accessibility.css` pour le patron) : position, taille et habillage viennent de `#eh-fab` lui-même, pas du module. `assets/js/core.js` déplace automatiquement tout élément rendu en PHP vers `#eh-fab-detail` au chargement (voir la liste d'ids à la fin de ce fichier) ; un panneau créé dynamiquement en JS (comme `sticky-cart.js`) doit s'y injecter directement.
+5. Dans le JS du module, écouter `document.addEventListener('eh:action', ...)` pour afficher le panneau (`window.ehHub.showDetail('mon-module', applyFn)`), avec un bouton de fermeture qui appelle `window.ehHub.backToMenu('mon-module', applyFn)`.
 
 Le module `video-ads` est déjà déclaré avec `'available' => false` : il apparaît dans le tableau de bord admin ("Bientôt disponible") mais n'a ni assets ni logique — prêt à être complété en suivant ce schéma (c'est exactement comme ça qu'`accessibility` a été construit).
 

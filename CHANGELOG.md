@@ -3,6 +3,21 @@
 Toutes les versions notables du plugin sont documentées ici. Ce fichier est
 mis à jour à chaque Release (voir README, section Workflow).
 
+## [1.3.0]
+
+- Refonte du bouton flottant : engrenage, choix des icônes et contenu d'un
+  module ne sont plus 3 éléments visuels distincts, mais un seul objet
+  (`#eh-fab`) qui grandit à travers 3 états (fermé → choix des icônes →
+  contenu détaillé), plutôt qu'un menu séparé flottant au-dessus d'un panneau
+  lui-même séparé.
+- La croix de fermeture d'un panneau (cookies/panier/accessibilité) revient
+  désormais au choix des icônes plutôt que de tout refermer d'un coup ; un
+  clic en dehors ou Échap referme entièrement.
+- Les panneaux ne sont plus des éléments `position: fixed` indépendants avec
+  leur propre habillage (fond flouté, ombre, bordure) : ce sont maintenant de
+  simples blocs de contenu affichés dans le même objet visuel que
+  l'engrenage, qui seul porte la position et l'habillage.
+
 ## [1.2.0]
 
 - Renommé "LSG Hub" (en-tête du plugin, menu admin) — reste identifié en

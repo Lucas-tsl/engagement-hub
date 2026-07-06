@@ -51,12 +51,17 @@ define( 'EH_GEAR_SVG', '<svg viewBox="0 0 24 24" fill="none" stroke="currentColo
 
 add_action( 'wp_footer', 'eh_render_fab_markup', 5 );
 function eh_render_fab_markup() {
+    // Un seul objet DOM traverse les 3 états (fermé / menu / détail) : voir
+    // assets/css/core.css et assets/js/core.js. #eh-fab-detail est le slot
+    // partagé où chaque module vient afficher son propre contenu (déplacé ou
+    // injecté par assets/js/core.js), plutôt que de flotter indépendamment.
     ?>
-    <div id="eh-fab" class="eh-fab">
-        <div id="eh-fab-menu" class="eh-fab-menu" role="menu"></div>
+    <div id="eh-fab" class="eh-fab" data-state="closed">
         <button type="button" id="eh-fab-toggle" class="eh-fab-toggle" aria-expanded="false" aria-label="<?php esc_attr_e( 'Ouvrir le menu', 'engagement-hub' ); ?>">
             <span class="eh-fab-gear" aria-hidden="true"><?php echo EH_GEAR_SVG; ?></span>
         </button>
+        <div id="eh-fab-menu" class="eh-fab-menu" role="menu"></div>
+        <div id="eh-fab-detail" class="eh-fab-detail"></div>
     </div>
     <?php
 }

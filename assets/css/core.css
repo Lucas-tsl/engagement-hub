@@ -1,4 +1,10 @@
-/* Engagement Hub - Bouton flottant (FAB) et menu des modules */
+/* Engagement Hub - Bouton flottant (FAB), unifié en un seul objet qui
+   grandit à travers 3 états (voir assets/js/core.js pour la machine à états) :
+   1. fermé   : petit cercle avec l'engrenage
+   2. menu    : le MÊME élément s'agrandit pour révéler le choix des icônes
+   3. détail  : le MÊME élément s'agrandit encore pour le contenu du module
+   Il n'y a plus deux blocs séparés (engrenage + panneau) : #eh-fab EST le
+   panneau, à chaque état. */
 .eh-fab {
     position: fixed;
     right: 20px;
@@ -6,48 +12,68 @@
     z-index: 999997;
     font-family: sans-serif;
     --eh-scroll: 0;
-}
 
-.eh-fab-toggle {
     width: 56px;
     height: 56px;
     border-radius: 50%;
+    background-color: #111;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    box-shadow: 0 1px 4px rgb(0 0 0 / 18%);
+    overflow: hidden;
+    transition: width 0.3s cubic-bezier(0.2, 0.85, 0.25, 1),
+                max-height 0.3s cubic-bezier(0.2, 0.85, 0.25, 1),
+                border-radius 0.3s ease,
+                background-color 0.3s ease,
+                box-shadow 0.3s ease;
+}
+
+.eh-fab[data-state="menu"],
+.eh-fab[data-state="detail"] {
+    border-radius: 0;
+    background-color: rgb(255 255 255 / 92%);
+    backdrop-filter: blur(14px);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.18);
+}
+
+.eh-fab[data-state="menu"] {
+    width: 260px;
+    height: auto;
+    max-height: 320px;
+}
+
+.eh-fab[data-state="detail"] {
+    width: 340px;
+    height: auto;
+    max-height: calc(100vh - 140px);
+}
+
+/* Largeur adaptée par module affiché en détail (repli 340px ci-dessus). */
+.eh-fab[data-state="detail"][data-detail="cookie-consent"] { width: 420px; }
+.eh-fab[data-state="detail"][data-detail="accessibility"] { width: 320px; }
+
+/* ============================================================
+   État 1 : bouton fermé (engrenage)
+   ============================================================ */
+.eh-fab-toggle {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
     border: none;
-    background: #111;
+    background: transparent;
     color: #fff;
     cursor: pointer;
-    box-shadow: 0 1px 4px rgb(0 0 0 / 18%);
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: box-shadow 0.2s ease, transform 0.25s cubic-bezier(0.2, 0.85, 0.25, 1);
-    transform-origin: bottom right;
+    opacity: 1;
+    transition: opacity 0.15s ease;
 }
 
-.eh-fab-toggle:hover {
-    box-shadow: 0 2px 6px rgb(0 0 0 / 22%);
-}
-
-
-/* Signale visuellement que la fonctionnalité affichée sur la page (ex. la
-   barre sticky d'ajout au panier) est pilotée par ce même bouton, plutôt
-   que de laisser croire à deux systèmes séparés. Le bouton rétrécit aussi
-   pendant qu'un panneau est ouvert, pour lui laisser davantage de place. */
-.eh-fab-linked .eh-fab-toggle {
-    animation: eh-fab-pulse 1.8s ease-out infinite;
-    transform: scale(0.7);
-}
-
-@keyframes eh-fab-pulse {
-    0% {
-        box-shadow: 0 0 0 0 rgb(17 17 17 / 30%);
-    }
-    70% {
-        box-shadow: 0 0 0 8px rgb(17 17 17 / 0%);
-    }
-    100% {
-        box-shadow: 0 0 0 0 rgb(17 17 17 / 0%);
-    }
+.eh-fab[data-state="menu"] .eh-fab-toggle,
+.eh-fab[data-state="detail"] .eh-fab-toggle {
+    opacity: 0;
+    pointer-events: none;
 }
 
 .eh-fab-gear {
@@ -64,27 +90,23 @@
     display: block;
 }
 
-.eh-fab-open .eh-fab-gear {
-    transform: rotate(120deg);
-}
-
+/* ============================================================
+   État 2 : choix des icônes, à l'intérieur du même objet
+   ============================================================ */
 .eh-fab-menu {
-    position: absolute;
-    right: 0;
-    bottom: 70px;
-    display: flex;
-    flex-direction: column;
+    display: none;
+    flex-direction: row;
+    flex-wrap: wrap;
     align-items: center;
+    justify-content: center;
     gap: 10px;
-    /* Même fermé, les .eh-fab-item restent dans le DOM (translateY + scale,
-       pas display:none) pour pouvoir se réanimer à la prochaine ouverture.
-       Sans ce pointer-events:none, ce conteneur invisible mais toujours en
-       place interceptait les clics destinés aux panneaux juste en dessous. */
-    pointer-events: none;
+    width: 100%;
+    height: 100%;
+    padding: 16px;
 }
 
-.eh-fab-open .eh-fab-menu {
-    pointer-events: auto;
+.eh-fab[data-state="menu"] .eh-fab-menu {
+    display: flex;
 }
 
 .eh-fab-item {
@@ -101,10 +123,18 @@
     align-items: center;
     justify-content: center;
     opacity: 0;
-    transform: translateY(10px) scale(0.6);
-    pointer-events: none;
-    transition: opacity 0.25s ease, transform 0.25s ease;
+    transform: scale(0.6);
+    transition: opacity 0.2s ease, transform 0.2s ease;
     transition-delay: calc(var(--eh-index, 0) * 40ms);
+}
+
+.eh-fab[data-state="menu"] .eh-fab-item {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.eh-fab-item:hover {
+    transform: scale(1.08);
 }
 
 .eh-fab-item-icon {
@@ -131,20 +161,38 @@
     filter: grayscale(1) contrast(1.3) brightness(0.55);
 }
 
-.eh-fab-open .eh-fab-item {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-    pointer-events: auto;
+/* ============================================================
+   État 3 : contenu détaillé d'un module, injecté dans ce slot
+   ============================================================ */
+.eh-fab-detail {
+    display: none;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
 }
 
-.eh-fab-item:hover {
-    transform: translateY(0) scale(1.08);
+.eh-fab[data-state="detail"] .eh-fab-detail {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Un seul module visible à la fois dans le slot détail, celui désigné par
+   data-detail sur #eh-fab (voir includes/core/frontend.php pour la liste
+   des ids : cookie-consent, sticky-cart, accessibility). */
+.eh-fab-detail > * {
+    display: none;
+}
+
+.eh-fab[data-detail="cookie-consent"] .eh-fab-detail > #bcc-modal-overlay,
+.eh-fab[data-detail="sticky-cart"] .eh-fab-detail > #stickyVariationBar,
+.eh-fab[data-detail="accessibility"] .eh-fab-detail > #eh-a11y-panel {
+    display: flex;
 }
 
 /* Écrans laptop : le bouton et ses icônes sont un peu trop imposants tels
    que dimensionnés pour un grand écran, on réduit d'un cran. */
 @media (max-width: 1440px) {
-    .eh-fab-toggle {
+    .eh-fab {
         width: 44px;
         height: 44px;
     }
@@ -154,10 +202,18 @@
         height: 19px;
     }
 
-    .eh-fab-menu {
-        bottom: 56px;
-        gap: 8px;
+    .eh-fab[data-state="menu"] {
+        width: 220px;
+        max-height: 280px;
     }
+
+    .eh-fab[data-state="detail"] {
+        width: 280px;
+        max-height: calc(100vh - 120px);
+    }
+
+    .eh-fab[data-state="detail"][data-detail="cookie-consent"] { width: 340px; }
+    .eh-fab[data-state="detail"][data-detail="accessibility"] { width: 270px; }
 
     .eh-fab-item {
         width: 38px;
@@ -171,21 +227,32 @@
         right: 14px;
         bottom: 14px;
     }
+
+    .eh-fab[data-state="menu"],
+    .eh-fab[data-state="detail"] {
+        width: auto;
+        max-width: calc(100vw - 28px);
+    }
+
+    .eh-fab[data-state="menu"] {
+        max-height: 260px;
+    }
+
+    .eh-fab[data-state="detail"] {
+        max-height: calc(100vh - 110px);
+    }
 }
 
 @media (prefers-reduced-motion: reduce) {
+    .eh-fab,
     .eh-fab-gear,
     .eh-fab-item,
     .eh-fab-toggle {
         transition: none;
     }
-
-    .eh-fab-linked .eh-fab-toggle {
-        animation: none;
-    }
 }
 
-/* Focus clavier visible, cohérent avec les panneaux (assets/css/*-cart.css,
+/* Focus clavier visible, cohérent avec le contenu des modules (assets/css/*-cart.css,
    cookie-consent.css, accessibility.css) : couleur unique repérable sur
    fond clair comme sur fond sombre. */
 .eh-fab-toggle:focus-visible,
@@ -198,9 +265,6 @@
    focus après un clic souris malgré :focus-visible. La modalité réelle est
    détectée en JS (assets/js/core.js) ; on masque ici l'anneau sur nos
    propres composants seulement (pas sur le reste du site). */
-html.eh-mouse-user #eh-fab *:focus-visible,
-html.eh-mouse-user .bcc-modal-overlay *:focus-visible,
-html.eh-mouse-user .sticky-variation-bar *:focus-visible,
-html.eh-mouse-user .eh-a11y-panel *:focus-visible {
+html.eh-mouse-user #eh-fab *:focus-visible {
     outline: none;
 }

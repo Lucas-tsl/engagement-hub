@@ -20,11 +20,36 @@
     var fab = document.getElementById('eh-fab');
     var toggle = document.getElementById('eh-fab-toggle');
     var menu = document.getElementById('eh-fab-menu');
+    var detail = document.getElementById('eh-fab-detail');
 
-    if (!fab || !toggle || !menu) return;
+    if (!fab || !toggle || !menu || !detail) return;
 
+    // #eh-fab est UN SEUL objet qui traverse 3 états (voir assets/css/core.css) :
+    // 'closed' (engrenage), 'menu' (choix des icônes), 'detail' (contenu du
+    // module choisi). Ce n'est jamais deux blocs distincts qui se suivent.
+    var state = 'closed';
+    var activeDetail = null;
     var scrollPercent = 0;
-    var isOpen = false;
+
+    // Les panneaux de cookie-consent et accessibilité sont rendus par PHP
+    // ailleurs dans la page (wp_footer) : on les déplace une fois dans le
+    // slot partagé #eh-fab-detail, pour qu'ils deviennent littéralement une
+    // partie du même objet plutôt que des éléments fixed indépendants. Le
+    // panneau sticky-cart, lui, est créé plus tard par assets/js/sticky-cart.js
+    // directement à l'intérieur de #eh-fab-detail (rien à déplacer).
+    ['bcc-modal-overlay', 'eh-a11y-panel'].forEach(function (id) {
+        var el = document.getElementById(id);
+        if (el) detail.appendChild(el);
+    });
+
+    function setState(newState) {
+        state = newState;
+        fab.setAttribute('data-state', newState);
+        toggle.setAttribute('aria-expanded', newState === 'closed' ? 'false' : 'true');
+        if (newState === 'closed') {
+            fab.removeAttribute('data-detail');
+        }
+    }
 
     function updateScrollPercent() {
         var doc = document.documentElement;
@@ -40,16 +65,6 @@
             if (item.condition === 'scroll') return scrollPercent >= (item.scrollThreshold || 100);
             return true;
         });
-    }
-
-    function handleAction(item) {
-        if (item.action === 'scroll-top') {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-            return;
-        }
-        // Chaque module écoute cet événement pour déclencher sa propre action
-        // (ex. ouvrir sa modale) sans que le noyau ait besoin de le connaître.
-        document.dispatchEvent(new CustomEvent('eh:action', { detail: item }));
     }
 
     function renderMenu() {
@@ -78,45 +93,54 @@
             }
             btn.appendChild(icon);
             btn.addEventListener('click', function () {
-                // Retenu pour que le panneau ouvert par cette action "prenne
-                // la forme" précisément de CETTE bulle (voir ehHub plus bas),
-                // et non de l'engrenage lui-même, qui doit rester stable et
-                // toujours visible.
-                lastActiveItemEl = btn;
-                handleAction(item);
-                closeMenu();
+                if (item.action === 'scroll-top') {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                    forceClose();
+                    return;
+                }
+                // Le module concerné écoute cet événement pour afficher son
+                // propre contenu dans le slot détail (ehHub.showDetail), sans
+                // que le noyau ait besoin de connaître ce contenu.
+                document.dispatchEvent(new CustomEvent('eh:action', { detail: item }));
             });
             menu.appendChild(btn);
         });
     }
 
     function openMenu() {
-        isOpen = true;
         renderMenu();
-        fab.classList.add('eh-fab-open');
-        toggle.setAttribute('aria-expanded', 'true');
+        setState('menu');
     }
 
-    function closeMenu() {
-        isOpen = false;
-        fab.classList.remove('eh-fab-open');
-        toggle.setAttribute('aria-expanded', 'false');
+    // Fermeture complète (état 1) : utilisée pour le clic en dehors, Échap,
+    // et un nouveau clic sur l'engrenage pendant que menu/détail est ouvert.
+    function forceClose() {
+        if (state === 'closed') return;
+        var closingId = activeDetail;
+        activeDetail = null;
+        setState('closed');
+        if (closingId) {
+            // Le module qui était affiché doit remettre à jour son propre
+            // indicateur interne (ex. classe .visible), même s'il n'est pas
+            // celui qui a demandé cette fermeture (clic extérieur, Échap...).
+            document.dispatchEvent(new CustomEvent('eh:closed', { detail: { id: closingId } }));
+        }
     }
 
     toggle.addEventListener('click', function () {
-        if (isOpen) {
-            closeMenu();
-        } else {
+        if (state === 'closed') {
             openMenu();
+        } else {
+            forceClose();
         }
     });
 
     document.addEventListener('click', function (event) {
-        if (isOpen && !fab.contains(event.target)) closeMenu();
+        if (state !== 'closed' && !fab.contains(event.target)) forceClose();
     });
 
     document.addEventListener('keydown', function (event) {
-        if (event.key === 'Escape' && isOpen) closeMenu();
+        if (event.key === 'Escape' && state !== 'closed') forceClose();
     });
 
     var ticking = false;
@@ -125,81 +149,46 @@
         ticking = true;
         window.requestAnimationFrame(function () {
             updateScrollPercent();
-            if (isOpen) renderMenu();
+            if (state === 'menu') renderMenu();
             ticking = false;
         });
     }, { passive: true });
 
     updateScrollPercent();
 
-    // Coordination des panneaux : chaque module (cookie, sticky cart, futurs
-    // modules) affiche son propre panneau, mais un seul peut être ouvert à la
-    // fois. Le noyau ne connaît pas leur contenu : il se contente de fermer
-    // le panneau précédent et de "lier" visuellement l'engrenage (pulsation)
-    // tant qu'un panneau est ouvert. L'engrenage lui-même reste toujours
-    // visible et stable — c'est la BULLE du menu qu'on vient de cliquer
-    // (lastActiveItemEl, capturée dans renderMenu() ci-dessus) qui doit
-    // visuellement "devenir" le panneau.
-    //
-    // Technique : au lieu d'une API expérimentale (View Transitions, retirée
-    // ici faute de rendu fiable/vérifiable), on calcule la position réelle de
-    // la bulle cliquée (getBoundingClientRect) et on positionne le point
-    // d'origine ("transform-origin") du panneau exactement dessus avant de
-    // lancer sa propre transition CSS scale() — 100% CSS/JS standard, sans
-    // dépendance à un support navigateur incertain.
-    var activePanel = null;
-    var lastActiveItemEl = null;
-
-    function setMorphOrigin(panelEl, sourceEl) {
-        if (!panelEl) return;
-        if (!sourceEl || !document.contains(sourceEl)) {
-            // Pas de bulle d'origine connue (ex. panneau ouvert automatiquement,
-            // sans clic sur le menu) : repli sur le coin bas-droit du panneau,
-            // là où se trouve l'engrenage.
-            panelEl.style.transformOrigin = '100% 100%';
-            return;
-        }
-        // Le panneau est actuellement réduit (transform: scale(0.05) tant que
-        // .visible/.open n'est pas encore ajouté) : getBoundingClientRect()
-        // refléterait cette taille réduite, pas la taille réelle du panneau
-        // ouvert. On neutralise le transform le temps de la mesure (toujours
-        // invisible, opacity:0, donc aucun flash visuel).
-        var previousTransform = panelEl.style.transform;
-        panelEl.style.transform = 'none';
-        var sourceRect = sourceEl.getBoundingClientRect();
-        var panelRect = panelEl.getBoundingClientRect();
-        panelEl.style.transform = previousTransform;
-        var originX = (sourceRect.left + sourceRect.width / 2) - panelRect.left;
-        var originY = (sourceRect.top + sourceRect.height / 2) - panelRect.top;
-        panelEl.style.transformOrigin = originX + 'px ' + originY + 'px';
-    }
-
+    // API exposée aux modules (cookie, sticky cart, accessibilité...) pour
+    // afficher/masquer LEUR contenu dans le slot #eh-fab-detail. Le noyau ne
+    // connaît pas ce contenu : chaque module bascule sa propre classe
+    // d'affichage via applyFn, le noyau se charge uniquement de faire
+    // grandir/rétrécir l'objet partagé et de choisir quel contenu montrer.
     window.ehHub = {
-        // panelEl : l'élément DOM du panneau (pour calculer le point de
-        // départ de l'animation). applyFn : callback du module qui bascule
-        // SA propre classe d'affichage.
-        openPanel: function (id, panelEl, applyFn) {
-            if (activePanel && activePanel !== id) {
-                document.dispatchEvent(new CustomEvent('eh:panel-close', { detail: { id: activePanel } }));
-            }
-            activePanel = id;
-            fab.classList.add('eh-fab-linked');
-            setMorphOrigin(panelEl, lastActiveItemEl);
+        // Affiche le contenu du module `id` (état 3). À utiliser aussi bien
+        // pour une ouverture manuelle (icône cliquée) qu'automatique (ex. le
+        // panier qui apparaît au scroll sur une fiche produit).
+        showDetail: function (id, applyFn) {
+            activeDetail = id;
+            fab.setAttribute('data-detail', id);
+            setState('detail');
             if (typeof applyFn === 'function') applyFn();
-            document.dispatchEvent(new CustomEvent('eh:panel-open', { detail: { id: id } }));
         },
-        closePanel: function (id, panelEl, applyFn) {
-            if (activePanel !== id) return;
-            activePanel = null;
-            fab.classList.remove('eh-fab-linked');
+        // Fermeture AUTOMATIQUE (ex. la barre panier qui se masque au scroll,
+        // sans action explicite de l'utilisateur) : retour direct à l'état
+        // fermé, pas d'intérêt à réafficher le choix des icônes.
+        hideDetail: function (id, applyFn) {
+            if (activeDetail !== id) return;
+            activeDetail = null;
+            setState('closed');
             if (typeof applyFn === 'function') applyFn();
-            document.dispatchEvent(new CustomEvent('eh:panel-close', { detail: { id: id } }));
-            lastActiveItemEl = null;
         },
-        // Conservé pour compatibilité : un module peut encore piloter le
-        // "lien" visuel sans passer par un panneau à proprement parler.
-        setLinked: function (active) {
-            fab.classList.toggle('eh-fab-linked', !!active);
+        // Croix de fermeture À L'INTÉRIEUR du contenu détaillé (état 3) :
+        // revient au choix des icônes (état 2), comportement confirmé plutôt
+        // qu'une fermeture totale.
+        backToMenu: function (id, applyFn) {
+            if (activeDetail !== id) return;
+            activeDetail = null;
+            renderMenu();
+            setState('menu');
+            if (typeof applyFn === 'function') applyFn();
         }
     };
 })();

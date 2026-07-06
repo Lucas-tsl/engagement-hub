@@ -31,22 +31,21 @@ document.addEventListener("DOMContentLoaded", function() {
     function openModal(trigger) {
         if (!modal || !modalBox) return;
         lastFocusedElement = trigger || document.activeElement;
-        // Le basculement de classe doit se faire À L'INTÉRIEUR du callback
-        // transmis au noyau : c'est ce qui permet à la View Transitions API
-        // de capturer le bon état "avant" (engrenage) et "après" (panneau)
-        // pour l'animation de fusion (voir assets/js/core.js).
         function apply() {
             modal.classList.add("bcc-modal-overlay-open");
             modalBox.focus();
             document.addEventListener("keydown", handleModalKeydown);
         }
         if (window.ehHub) {
-            window.ehHub.openPanel("cookie-consent", modal, apply);
+            window.ehHub.showDetail("cookie-consent", apply);
         } else {
             apply();
         }
     }
 
+    // Fermeture manuelle (croix, "Annuler") : revient au choix des icônes
+    // (état 2), voir assets/js/core.js — comportement confirmé plutôt qu'une
+    // fermeture totale directe depuis le contenu détaillé.
     function closeModal() {
         if (!modal) return;
         function apply() {
@@ -55,7 +54,7 @@ document.addEventListener("DOMContentLoaded", function() {
             if (lastFocusedElement) lastFocusedElement.focus();
         }
         if (window.ehHub) {
-            window.ehHub.closePanel("cookie-consent", modal, apply);
+            window.ehHub.backToMenu("cookie-consent", apply);
         } else {
             apply();
         }
@@ -106,15 +105,10 @@ document.addEventListener("DOMContentLoaded", function() {
         openModal(btnPrefs);
     });
 
-    // Clic en dehors du panneau (mais pas sur le bouton engrenage lui-même,
-    // qui gère déjà ses propres clics) : on referme.
-    document.addEventListener("click", (event) => {
-        if (!modal || !modal.classList.contains("bcc-modal-overlay-open")) return;
-        if (modal.contains(event.target)) return;
-        const fab = document.getElementById("eh-fab");
-        if (fab && fab.contains(event.target)) return;
-        closeModal();
-    });
+    // Le clic en dehors et la touche Échap sont désormais gérés de façon
+    // centralisée par le noyau (assets/js/core.js), puisque ce panneau est
+    // maintenant un contenu du même objet #eh-fab plutôt qu'un élément
+    // indépendant.
 
     if(btnCloseModal) btnCloseModal.addEventListener("click", () => {
         if(!document.cookie.includes('bcc_consent_all')) banner.style.display = "block";
@@ -142,8 +136,10 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     });
 
-    // Un autre panneau du hub (ex. panier) vient de s'ouvrir : on se referme.
-    document.addEventListener("eh:panel-close", function(event) {
+    // Le hub s'est refermé entièrement (clic extérieur, Échap, un autre
+    // module affiché...) pendant que ce panneau était actif : on remet à
+    // jour notre propre état d'affichage sans redéclencher de fermeture.
+    document.addEventListener("eh:closed", function(event) {
         if (event.detail && event.detail.id === "cookie-consent") {
             if (modal) modal.classList.remove("bcc-modal-overlay-open");
             document.removeEventListener("keydown", handleModalKeydown);

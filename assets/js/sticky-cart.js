@@ -85,7 +85,16 @@
              </div>
          `;
 
-         $('body').append(stickyHTML);
+         // Injecté directement dans le slot partagé #eh-fab-detail (voir
+         // includes/core/frontend.php, assets/css/core.css) : ce panneau
+         // n'est plus un élément fixed indépendant, mais un contenu du même
+         // objet visuel que l'engrenage.
+         var $detailSlot = $('#eh-fab-detail');
+         if ($detailSlot.length) {
+             $detailSlot.append(stickyHTML);
+         } else {
+             $('body').append(stickyHTML);
+         }
      }
 
 
@@ -712,32 +721,36 @@
         let isUpdating = false; // Verrouillage pendant les mises à jour WooCommerce
         let clickedFromStickyBar = false; // Indicateur si le clic vient de la sticky bar
 
-        // Le panneau panier est coordonné avec le bouton engrenage : l'ouvrir
-        // ferme tout autre panneau du hub (cookies, etc.) et fait "pulser"
-        // l'engrenage, pour que ça se lise comme un seul système plutôt
-        // qu'une barre qui apparaît de nulle part.
-        function setStickyBarVisible(visible) {
-            // Le basculement de classe doit se faire À L'INTÉRIEUR du callback
-            // transmis au noyau : c'est ce qui permet à la View Transitions API
-            // de capturer le bon état "avant" (engrenage) et "après" (panneau)
-            // pour l'animation de fusion (voir assets/js/core.js).
+        // Le panneau panier est le même objet visuel que l'engrenage (voir
+        // assets/js/core.js) : l'afficher fait grandir #eh-fab jusqu'à l'état
+        // détail. `manual` distingue une fermeture voulue par l'utilisateur
+        // (croix : revient au choix des icônes) d'une fermeture automatique
+        // liée au scroll (referme entièrement, pas d'intérêt à rouvrir le
+        // menu tout seul).
+        function setStickyBarVisible(visible, manual) {
             if (!window.ehHub) {
                 $stickyBar.toggleClass('visible', visible);
                 return;
             }
             if (visible) {
-                window.ehHub.openPanel('sticky-cart', $stickyBar[0], function () {
+                window.ehHub.showDetail('sticky-cart', function () {
                     $stickyBar.addClass('visible');
                 });
+            } else if (manual) {
+                window.ehHub.backToMenu('sticky-cart', function () {
+                    $stickyBar.removeClass('visible');
+                });
             } else {
-                window.ehHub.closePanel('sticky-cart', $stickyBar[0], function () {
+                window.ehHub.hideDetail('sticky-cart', function () {
                     $stickyBar.removeClass('visible');
                 });
             }
         }
 
-        // Un autre panneau du hub (ex. cookies) vient de s'ouvrir : on se referme.
-        document.addEventListener('eh:panel-close', function (event) {
+        // Le hub s'est refermé entièrement (clic extérieur, Échap, un autre
+        // module affiché...) pendant que ce panneau était actif : on remet à
+        // jour notre propre état d'affichage sans redéclencher de fermeture.
+        document.addEventListener('eh:closed', function (event) {
             if (event.detail && event.detail.id === 'sticky-cart') {
                 $stickyBar.removeClass('visible');
             }
@@ -751,7 +764,7 @@
         });
 
         $stickyBar.on('click', '.sticky-panel-close', function () {
-            setStickyBarVisible(false);
+            setStickyBarVisible(false, true);
         });
 
         function findAddToCartBtn() {

@@ -72,26 +72,24 @@
     if (!panel) return;
 
     function openPanel() {
-        // Le basculement de classe doit se faire À L'INTÉRIEUR du callback
-        // transmis au noyau : c'est ce qui permet à la View Transitions API
-        // de capturer le bon état "avant" (engrenage) et "après" (panneau)
-        // pour l'animation de fusion (voir assets/js/core.js).
         function apply() {
             panel.classList.add('eh-a11y-panel-open');
         }
         if (window.ehHub) {
-            window.ehHub.openPanel('accessibility', panel, apply);
+            window.ehHub.showDetail('accessibility', apply);
         } else {
             apply();
         }
     }
 
+    // Fermeture manuelle (croix) : revient au choix des icônes (état 2),
+    // voir assets/js/core.js.
     function closePanel() {
         function apply() {
             panel.classList.remove('eh-a11y-panel-open');
         }
         if (window.ehHub) {
-            window.ehHub.closePanel('accessibility', panel, apply);
+            window.ehHub.backToMenu('accessibility', apply);
         } else {
             apply();
         }
@@ -103,7 +101,10 @@
         }
     });
 
-    document.addEventListener('eh:panel-close', function (event) {
+    // Le hub s'est refermé entièrement pendant que ce panneau était actif
+    // (clic extérieur, Échap, un autre module affiché...) : on remet à jour
+    // notre propre état d'affichage sans redéclencher de fermeture.
+    document.addEventListener('eh:closed', function (event) {
         if (event.detail && event.detail.id === 'accessibility') {
             panel.classList.remove('eh-a11y-panel-open');
         }
@@ -113,17 +114,8 @@
         closeBtn.addEventListener('click', closePanel);
     }
 
-    document.addEventListener('click', function (event) {
-        if (!panel.classList.contains('eh-a11y-panel-open')) return;
-        if (panel.contains(event.target)) return;
-        var fab = document.getElementById('eh-fab');
-        if (fab && fab.contains(event.target)) return;
-        closePanel();
-    });
-
-    document.addEventListener('keydown', function (event) {
-        if (event.key === 'Escape' && panel.classList.contains('eh-a11y-panel-open')) {
-            closePanel();
-        }
-    });
+    // Le clic en dehors et la touche Échap sont désormais gérés de façon
+    // centralisée par le noyau (assets/js/core.js), puisque ce panneau est
+    // maintenant un contenu du même objet #eh-fab plutôt qu'un élément
+    // indépendant.
 })();
