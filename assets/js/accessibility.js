@@ -72,13 +72,29 @@
     if (!panel) return;
 
     function openPanel() {
-        panel.classList.add('eh-a11y-panel-open');
-        if (window.ehHub) window.ehHub.openPanel('accessibility');
+        // Le basculement de classe doit se faire À L'INTÉRIEUR du callback
+        // transmis au noyau : c'est ce qui permet à la View Transitions API
+        // de capturer le bon état "avant" (engrenage) et "après" (panneau)
+        // pour l'animation de fusion (voir assets/js/core.js).
+        function apply() {
+            panel.classList.add('eh-a11y-panel-open');
+        }
+        if (window.ehHub) {
+            window.ehHub.openPanel('accessibility', panel, apply);
+        } else {
+            apply();
+        }
     }
 
     function closePanel() {
-        panel.classList.remove('eh-a11y-panel-open');
-        if (window.ehHub) window.ehHub.closePanel('accessibility');
+        function apply() {
+            panel.classList.remove('eh-a11y-panel-open');
+        }
+        if (window.ehHub) {
+            window.ehHub.closePanel('accessibility', panel, apply);
+        } else {
+            apply();
+        }
     }
 
     document.addEventListener('eh:action', function (event) {

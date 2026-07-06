@@ -20,20 +20,23 @@
     max-width: calc(100vw - 40px);
     max-height: calc(100vh - 140px);
     z-index: 999996; /* juste sous le bouton engrenage (999997) */
-    background: #fff;
+    /* Même habillage que les panneaux panier et cookies (assets/css/sticky-cart.css,
+       cookie-consent.css) : un seul système visuel pour les trois. */
+    background-color: rgb(255 255 255 / 92%);
+    backdrop-filter: blur(14px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
     border-radius: 0;
     box-shadow: 0 16px 40px rgb(0 0 0 / 18%);
     font-family: sans-serif;
+    /* Pas de transition CSS ici : c'est la View Transitions API (assets/js/core.js)
+       qui anime la fusion avec l'engrenage. Une transition locale en plus
+       ferait doublon/entrerait en conflit avec cette animation. */
     opacity: 0;
-    transform: scale(0.15);
-    transform-origin: bottom right;
     pointer-events: none;
-    transition: opacity 0.25s ease, transform 0.3s cubic-bezier(0.2, 0.85, 0.25, 1);
 }
 
 .eh-a11y-panel.eh-a11y-panel-open {
     opacity: 1;
-    transform: scale(1);
     pointer-events: auto;
 }
 
@@ -168,12 +171,8 @@
     }
 }
 
-@media (prefers-reduced-motion: reduce) {
-    .eh-a11y-panel {
-        transition: opacity 0.2s ease-out;
-        transform: none;
-    }
-}
+/* prefers-reduced-motion est géré au niveau de l'animation de fusion
+   (::view-transition-group, assets/css/core.css) : rien à faire ici. */
 
 /* ========================================
    Effets appliqués au site : contraste et curseur agrandi

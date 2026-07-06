@@ -119,19 +119,49 @@
     // l'engrenage (pulsation) tant qu'un panneau est ouvert.
     var activePanel = null;
 
+    // Nom de transition partagé : au moment où on l'assigne à un panneau (et
+    // qu'on le retire de l'engrenage, ou l'inverse), la View Transitions API
+    // du navigateur interpole automatiquement position/taille/rayon entre
+    // les deux — l'engrenage "devient" littéralement le panneau, sans qu'on
+    // ait à coder l'animation image par image. Navigateur sans support :
+    // repli silencieux sur un affichage instantané (rien ne casse).
+    var MORPH_NAME = 'eh-fab-morph';
+
+    function morph( applyFn ) {
+        if ( typeof document.startViewTransition === 'function' ) {
+            document.startViewTransition( applyFn );
+        } else {
+            applyFn();
+        }
+    }
+
     window.ehHub = {
-        openPanel: function (id) {
+        // panelEl : l'élément DOM du panneau (pour la fusion visuelle avec
+        // l'engrenage). applyFn : callback du module qui bascule SA propre
+        // classe d'affichage — doit s'exécuter à l'intérieur du morph pour
+        // que le navigateur capture les bons états "avant/après".
+        openPanel: function (id, panelEl, applyFn) {
             if (activePanel && activePanel !== id) {
                 document.dispatchEvent(new CustomEvent('eh:panel-close', { detail: { id: activePanel } }));
             }
             activePanel = id;
-            fab.classList.add('eh-fab-linked');
+            morph(function () {
+                fab.classList.add('eh-fab-linked');
+                toggle.classList.add('eh-fab-toggle-hidden');
+                if (panelEl) panelEl.style.viewTransitionName = MORPH_NAME;
+                if (typeof applyFn === 'function') applyFn();
+            });
             document.dispatchEvent(new CustomEvent('eh:panel-open', { detail: { id: id } }));
         },
-        closePanel: function (id) {
+        closePanel: function (id, panelEl, applyFn) {
             if (activePanel !== id) return;
             activePanel = null;
-            fab.classList.remove('eh-fab-linked');
+            morph(function () {
+                fab.classList.remove('eh-fab-linked');
+                toggle.classList.remove('eh-fab-toggle-hidden');
+                if (panelEl) panelEl.style.viewTransitionName = '';
+                if (typeof applyFn === 'function') applyFn();
+            });
             document.dispatchEvent(new CustomEvent('eh:panel-close', { detail: { id: id } }));
         },
         // Conservé pour compatibilité : un module peut encore piloter le

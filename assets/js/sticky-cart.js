@@ -717,12 +717,22 @@
         // l'engrenage, pour que ça se lise comme un seul système plutôt
         // qu'une barre qui apparaît de nulle part.
         function setStickyBarVisible(visible) {
-            $stickyBar.toggleClass('visible', visible);
-            if (!window.ehHub) return;
+            // Le basculement de classe doit se faire À L'INTÉRIEUR du callback
+            // transmis au noyau : c'est ce qui permet à la View Transitions API
+            // de capturer le bon état "avant" (engrenage) et "après" (panneau)
+            // pour l'animation de fusion (voir assets/js/core.js).
+            if (!window.ehHub) {
+                $stickyBar.toggleClass('visible', visible);
+                return;
+            }
             if (visible) {
-                window.ehHub.openPanel('sticky-cart');
+                window.ehHub.openPanel('sticky-cart', $stickyBar[0], function () {
+                    $stickyBar.addClass('visible');
+                });
             } else {
-                window.ehHub.closePanel('sticky-cart');
+                window.ehHub.closePanel('sticky-cart', $stickyBar[0], function () {
+                    $stickyBar.removeClass('visible');
+                });
             }
         }
 

@@ -31,18 +31,34 @@ document.addEventListener("DOMContentLoaded", function() {
     function openModal(trigger) {
         if (!modal || !modalBox) return;
         lastFocusedElement = trigger || document.activeElement;
-        modal.classList.add("bcc-modal-overlay-open");
-        modalBox.focus();
-        document.addEventListener("keydown", handleModalKeydown);
-        if (window.ehHub) window.ehHub.openPanel("cookie-consent");
+        // Le basculement de classe doit se faire À L'INTÉRIEUR du callback
+        // transmis au noyau : c'est ce qui permet à la View Transitions API
+        // de capturer le bon état "avant" (engrenage) et "après" (panneau)
+        // pour l'animation de fusion (voir assets/js/core.js).
+        function apply() {
+            modal.classList.add("bcc-modal-overlay-open");
+            modalBox.focus();
+            document.addEventListener("keydown", handleModalKeydown);
+        }
+        if (window.ehHub) {
+            window.ehHub.openPanel("cookie-consent", modal, apply);
+        } else {
+            apply();
+        }
     }
 
     function closeModal() {
         if (!modal) return;
-        modal.classList.remove("bcc-modal-overlay-open");
-        document.removeEventListener("keydown", handleModalKeydown);
-        if (lastFocusedElement) lastFocusedElement.focus();
-        if (window.ehHub) window.ehHub.closePanel("cookie-consent");
+        function apply() {
+            modal.classList.remove("bcc-modal-overlay-open");
+            document.removeEventListener("keydown", handleModalKeydown);
+            if (lastFocusedElement) lastFocusedElement.focus();
+        }
+        if (window.ehHub) {
+            window.ehHub.closePanel("cookie-consent", modal, apply);
+        } else {
+            apply();
+        }
     }
 
     function setConsent(stats, mkt) {
@@ -72,9 +88,7 @@ document.addEventListener("DOMContentLoaded", function() {
         window.dataLayer.push({ 'event': 'cookie_consent_updated' });
 
         if(banner) banner.style.display = "none";
-        document.removeEventListener("keydown", handleModalKeydown);
-        if (modal) modal.classList.remove("bcc-modal-overlay-open");
-        if (window.ehHub) window.ehHub.closePanel("cookie-consent");
+        closeModal();
     }
 
     const btnAccepter = document.getElementById("bcc-btn-accepter");
