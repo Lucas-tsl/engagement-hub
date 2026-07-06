@@ -3,6 +3,15 @@
 Toutes les versions notables du plugin sont documentées ici. Ce fichier est
 mis à jour à chaque Release (voir README, section Workflow).
 
+## [1.3.2]
+
+- Fond du menu (choix des icônes) redevenu transparent (`0%` d'opacité,
+  flou conservé), sur demande explicite — remplace le fond gris clair de
+  la 1.3.1.
+- Ajout d'une croix de fermeture à droite des icônes du menu, pour revenir
+  directement à l'engrenage (état 1) sans devoir cliquer en dehors ou
+  faire Échap.
+
 ## [1.3.1]
 
 - Correctif : dans le panneau détaillé (cookies/panier/accessibilité), la

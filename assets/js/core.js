@@ -105,6 +105,20 @@
             });
             menu.appendChild(btn);
         });
+
+        // Croix de sortie, à droite des bulles : referme entièrement et
+        // retrouve l'engrenage de départ (état 1), sans devoir cliquer en
+        // dehors ou faire Échap.
+        var closeBtn = document.createElement('button');
+        closeBtn.type = 'button';
+        closeBtn.className = 'eh-fab-menu-close';
+        closeBtn.style.setProperty('--eh-index', String(items.length));
+        closeBtn.setAttribute('aria-label', config.closeLabel || 'Fermer');
+        closeBtn.textContent = '✕';
+        closeBtn.addEventListener('click', function () {
+            forceClose();
+        });
+        menu.appendChild(closeBtn);
     }
 
     function openMenu() {

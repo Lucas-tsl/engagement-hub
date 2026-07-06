@@ -38,8 +38,9 @@ function eh_enqueue_core_assets() {
         'eh-core-js',
         'ehHubConfig',
         array(
-            'items'     => $items,
-            'isProduct' => function_exists( 'is_product' ) && is_product(),
+            'items'      => $items,
+            'isProduct'  => function_exists( 'is_product' ) && is_product(),
+            'closeLabel' => __( 'Fermer', 'engagement-hub' ),
         )
     );
 }

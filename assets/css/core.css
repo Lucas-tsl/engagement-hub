@@ -31,11 +31,7 @@
 .eh-fab[data-state="menu"],
 .eh-fab[data-state="detail"] {
     border-radius: 0;
-
-    /* Légèrement plus gris que blanc pur : les bulles du menu (fond blanc,
-       voir .eh-fab-item plus bas) doivent rester nettement détachables du
-       fond, pas s'y fondre. */
-    background-color: rgb(230 230 232 / 94%);
+    background-color: rgb(230 230 232 / 0%);
     backdrop-filter: blur(14px);
     box-shadow: 0 16px 40px rgba(0, 0, 0, 0.18);
 }
@@ -104,9 +100,9 @@
     align-items: center;
     justify-content: center;
     gap: 10px;
-    width: 100%;
+    /* width: 100%; */
     height: 100%;
-    padding: 16px;
+    padding: 10px;
 }
 
 .eh-fab[data-state="menu"] .eh-fab-menu {
@@ -136,6 +132,39 @@
 }
 
 .eh-fab[data-state="menu"] .eh-fab-item {
+    opacity: 1;
+    transform: scale(1);
+}
+
+/* Croix de sortie de l'état 2 (choix des icônes), affichée à droite des
+   bulles : referme entièrement et retrouve l'engrenage de départ, sans
+   devoir cliquer en dehors ou faire Échap. */
+.eh-fab-menu-close {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    background: #fff;
+    color: #333;
+    font-size: 14px;
+    line-height: 1;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgb(0 0 0 / 22%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    opacity: 0;
+    transform: scale(0.6);
+    transition: opacity 0.2s ease, transform 0.2s ease, background 0.2s ease;
+    transition-delay: calc(var(--eh-index, 0) * 40ms);
+}
+
+.eh-fab-menu-close:hover {
+    background: rgba(0, 0, 0, 0.06);
+}
+
+.eh-fab[data-state="menu"] .eh-fab-menu-close {
     opacity: 1;
     transform: scale(1);
 }
@@ -254,6 +283,7 @@
     .eh-fab,
     .eh-fab-gear,
     .eh-fab-item,
+    .eh-fab-menu-close,
     .eh-fab-toggle {
         transition: none;
     }
@@ -263,7 +293,8 @@
    cookie-consent.css, accessibility.css) : couleur unique repérable sur
    fond clair comme sur fond sombre. */
 .eh-fab-toggle:focus-visible,
-.eh-fab-item:focus-visible {
+.eh-fab-item:focus-visible,
+.eh-fab-menu-close:focus-visible {
     outline: 2px solid #2563eb;
     outline-offset: 2px;
 }
