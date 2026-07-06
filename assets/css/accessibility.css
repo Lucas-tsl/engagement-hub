@@ -65,6 +65,7 @@
     flex: 1;
     min-height: 0;
     overflow: hidden auto;
+
     /* Marge droite plus large que les autres côtés : laisse de la place à la
        barre de défilement, pour qu'elle n'arrive pas juste sous la croix de
        fermeture (position: absolute, hors de cette zone qui défile). */

@@ -132,14 +132,16 @@
     justify-content: center;
     opacity: 0;
     transform: scale(0.6);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+
     /* Pas de délai par défaut : à la fermeture, les bulles doivent
        disparaître tout de suite, pendant que la boîte se rétrécit. */
-    transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
 .eh-fab[data-state="menu"] .eh-fab-item {
     opacity: 1;
     transform: scale(1);
+
     /* Délai à l'ouverture seulement : le temps que #eh-fab ait fini de
        s'élargir (transition width, ~0.45s) avant de révéler les bulles —
        sinon on voit le réagencement flex en cours de route (les icônes
