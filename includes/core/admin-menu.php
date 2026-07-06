@@ -1,31 +1,13 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-// Priorité tardive (20) : laisse le temps à "Saito Toolkit" de s'enregistrer
-// avant qu'on vérifie sa présence réelle (eh_saito_menu_exists()), plutôt
-// que de se fier à l'ordre de chargement des plugins.
-add_action( 'admin_menu', 'eh_add_admin_menu', 20 );
+// Menu de premier niveau propre au plugin, entièrement indépendant : ne se
+// rattache à aucun autre plugin/menu (ex. un éventuel "Saito Toolkit").
+add_action( 'admin_menu', 'eh_add_admin_menu' );
 function eh_add_admin_menu() {
-    // Si le menu "Saito" est réellement enregistré, on s'y range au lieu de
-    // créer une entrée de premier niveau supplémentaire (voir eh_admin_parent_slug()
-    // et eh_saito_menu_exists() : ne pas se fier à function_exists() seul,
-    // qui a déjà laissé 'eh-main' orphelin quand Saito Toolkit plantait
-    // ailleurs sans empêcher son fichier de se charger).
-    if ( eh_saito_menu_exists() ) {
-        add_submenu_page(
-            eh_admin_parent_slug(),
-            __( 'Engagement Hub', 'engagement-hub' ),
-            __( 'Engagement Hub', 'engagement-hub' ),
-            'manage_options',
-            'eh-main',
-            'eh_render_dashboard_page'
-        );
-        return;
-    }
-
     add_menu_page(
-        __( 'Engagement Hub', 'engagement-hub' ),
-        __( 'Engagement Hub', 'engagement-hub' ),
+        __( 'LSG Hub', 'engagement-hub' ),
+        __( 'LSG Hub', 'engagement-hub' ),
         'manage_options',
         'eh-main',
         'eh_render_dashboard_page',
@@ -57,7 +39,7 @@ function eh_render_dashboard_page() {
     }
     ?>
     <div class="wrap">
-        <h1><?php esc_html_e( 'Engagement Hub', 'engagement-hub' ); ?></h1>
+        <h1><?php esc_html_e( 'LSG Hub', 'engagement-hub' ); ?></h1>
         <p><?php esc_html_e( 'Activez ou désactivez les modules pilotés par le bouton flottant du site.', 'engagement-hub' ); ?></p>
         <form method="post" action="options.php">
             <?php settings_fields( 'eh_modules_group' ); ?>

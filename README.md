@@ -1,6 +1,8 @@
-# Engagement Hub 🧩
+# LSG Hub 🧩 (dépôt "Engagement Hub")
 
 Plugin WordPress/WooCommerce unique qui regroupe, derrière **un seul bouton flottant** (icône engrenage, bas droite du site), plusieurs modules d'engagement client. Né de la fusion de deux plugins précédemment séparés (`banner-cookie-custom` et `sticky-cart`), conçu dès le départ pour accueillir de nouveaux modules sans toucher au noyau.
+
+Nommé **"LSG Hub"** dans WordPress (liste des extensions, menu admin) ; le nom de code interne (préfixe `eh_`, text-domain `engagement-hub`, dépôt Git) reste `engagement-hub` pour ne pas renommer des centaines de références sans bénéfice fonctionnel. Entièrement indépendant : ne se rattache à aucun autre plugin/menu.
 
 ## 🎯 Origine : le schéma
 
@@ -27,7 +29,7 @@ includes/
   core/
     class-eh-module-registry.php  # Registre : chaque module s'y déclare (icône, condition, option d'activation…)
     helpers.php                   # Petits helpers partagés (enqueue, permissions, sanitisation)
-    admin-menu.php                # Page "Réglages > Engagement Hub" : active/désactive les modules
+    admin-menu.php                # Menu top-level "LSG Hub" : active/désactive les modules
     frontend.php                  # Enqueue des assets du noyau + construit la config JS du bouton flottant
   modules/
     cookie-consent/    # Consentement cookies + Google Consent Mode V2 (ex banner-cookie-custom)
@@ -141,4 +143,4 @@ La traduction s'appuie sur **WPML** (filtre officiel `wpml_active_languages`) : 
 
 1. Télécharger `engagement-hub.zip` depuis une Release GitHub (ou lancer `npm run` / le job `build` en local).
 2. L'uploader dans **Extensions > Ajouter** sur WordPress.
-3. Activer le plugin, puis aller dans **Réglages > Engagement Hub** pour activer/désactiver les modules et accéder à leurs réglages spécifiques (ex. textes de la bannière cookie).
+3. Activer le plugin, puis aller dans le menu **LSG Hub** (premier niveau, indépendant de tout autre plugin) pour activer/désactiver les modules et accéder à leurs réglages spécifiques (ex. textes de la bannière cookie).

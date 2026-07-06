@@ -3,6 +3,18 @@
 Toutes les versions notables du plugin sont documentées ici. Ce fichier est
 mis à jour à chaque Release (voir README, section Workflow).
 
+## [1.2.0]
+
+- Renommé "LSG Hub" (en-tête du plugin, menu admin) — reste identifié en
+  interne comme `engagement-hub` (préfixe `eh_`, text-domain, dépôt).
+- Rattachement au menu "Saito" retiré : le plugin gère désormais son propre
+  menu de premier niveau, entièrement indépendant de tout autre plugin.
+- Animation d'ouverture des panneaux (cookies/panier/accessibilité) revue :
+  remplace la View Transitions API (support navigateur incertain, aucun
+  effet visible constaté) par un calcul de position réelle de la bulle
+  cliquée (getBoundingClientRect) + une transition CSS scale() classique,
+  fiable sur tous les navigateurs.
+
 ## [1.1.0]
 
 - Panneaux (cookies, panier, accessibilité) : design unifié (fond translucide

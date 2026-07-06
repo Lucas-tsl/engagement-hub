@@ -17,7 +17,7 @@ EH_Module_Registry::register(
 );
 
 // Pas de réglages dédiés : l'activation se fait depuis le tableau de bord
-// central (page "Engagement Hub"), via l'option 'eh_module_active_sticky-cart'.
+// central (page "LSG Hub"), via l'option 'eh_module_active_sticky-cart'.
 if ( EH_Module_Registry::is_active( 'sticky-cart' ) && ! is_admin() ) {
     require_once __DIR__ . '/sticky-frontend.php';
 }

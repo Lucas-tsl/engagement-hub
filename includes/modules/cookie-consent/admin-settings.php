@@ -1,14 +1,8 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-// Même priorité tardive que eh_add_admin_menu() (admin-menu.php) : la
-// détection de Saito (eh_admin_parent_slug()) doit se faire après que Saito
-// ait eu l'occasion de s'enregistrer.
-add_action( 'admin_menu', 'eh_cookie_ajouter_menu', 20 );
+add_action( 'admin_menu', 'eh_cookie_ajouter_menu' );
 function eh_cookie_ajouter_menu() {
-    // 'eh-main' n'est un menu de premier niveau valide comme parent que si
-    // Engagement Hub n'est pas déjà rattaché au menu "Saito" (WordPress ne
-    // supporte pas les sous-menus de sous-menus) : voir eh_admin_parent_slug().
     add_submenu_page(
         eh_admin_parent_slug(),
         __( 'Réglages Bannière Cookie', 'engagement-hub' ),
