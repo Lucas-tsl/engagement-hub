@@ -14,20 +14,20 @@
          return $('.stock.out-of-stock').not('#stickyVariationBar *').length > 0;
      }
 
-     // Applique/retire l'état "rupture de stock" sur le bouton du panneau :
-     // désactivé, texte remplacé, pour ne jamais permettre un ajout au
-     // panier d'un produit (ou d'une variation) indisponible.
+     // Retire complètement le bouton du DOM visible en rupture de stock (au
+     // lieu d'un simple bouton désactivé) : impossible de le cliquer par
+     // erreur ou de déclencher l'animation de chargement pour un produit (ou
+     // une variation) indisponible. Un texte "Rupture de stock" le remplace.
      function setStickyOutOfStock($stickyBar, outOfStock) {
          const $btn = $stickyBar.find('.sticky-add-to-cart');
-         const $text = $btn.find('.sticky-button-text');
-         $btn.toggleClass('out-of-stock', outOfStock);
+         const $label = $stickyBar.find('.sticky-out-of-stock');
+         $btn.prop('disabled', outOfStock);
          if (outOfStock) {
-             $btn.prop('disabled', true);
-             if ($text.length) $text.text(stickyI18n.outOfStockText);
-             $btn.find('.sticky-price').hide();
+             $btn.hide();
+             $label.show();
          } else {
-             if ($text.length) $text.text(stickyI18n.addToCartText);
-             $btn.find('.sticky-price').show();
+             $btn.show();
+             $label.hide();
          }
      }
 
@@ -54,6 +54,7 @@
                                 <span class="sticky-button-text">${stickyI18n.addToCartText}</span> &nbsp;
                                  <span class="sticky-price"></span>
                              </button>
+                             <div class="sticky-out-of-stock" style="display:none;">${stickyI18n.outOfStockText}</div>
                          </div>
                      </div>
                  </div>
@@ -421,8 +422,11 @@
 
              const $btn = $(this);
 
-             // Empêcher les doubles clics
-             if ($btn.hasClass('loading')) {
+             // Empêcher les doubles clics, et par sécurité un ajout au panier
+             // pour un produit en rupture (le bouton est normalement masqué
+             // dans ce cas, voir setStickyOutOfStock, mais on se protège
+             // aussi ici au cas où l'état n'aurait pas encore été appliqué).
+             if ($btn.hasClass('loading') || $btn.prop('disabled')) {
                  return false;
              }
 
@@ -615,8 +619,11 @@
 
              const $btn = $(this);
 
-             // Empêcher les doubles clics
-             if ($btn.hasClass('loading')) {
+             // Empêcher les doubles clics, et par sécurité un ajout au panier
+             // pour un produit en rupture (le bouton est normalement masqué
+             // dans ce cas, voir setStickyOutOfStock, mais on se protège
+             // aussi ici au cas où l'état n'aurait pas encore été appliqué).
+             if ($btn.hasClass('loading') || $btn.prop('disabled')) {
                  return false;
              }
 

@@ -95,6 +95,17 @@
     background: #fff;
 }
 
+.eh-a11y-lang-status {
+    margin: -4px 0 6px;
+    font-size: 11px;
+    color: #b45309;
+    min-height: 14px;
+}
+
+.eh-a11y-lang-status:empty {
+    display: none;
+}
+
 .eh-a11y-switch {
     width: 42px;
     height: 24px;

@@ -20,6 +20,7 @@ function eh_a11y_render_panel() {
                     <option value="pt">Português</option>
                 </select>
             </div>
+            <p id="eh-a11y-lang-status" class="eh-a11y-lang-status" role="status" aria-live="polite"></p>
 
             <div class="eh-a11y-row">
                 <span><?php esc_html_e( 'Contraste élevé', 'engagement-hub' ); ?></span>

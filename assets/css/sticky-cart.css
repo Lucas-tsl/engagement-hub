@@ -255,6 +255,19 @@
     opacity: 0.6;
 }
 
+/* Remplace le bouton (masqué) quand le produit/la variation est en rupture. */
+.sticky-out-of-stock {
+    width: 100%;
+    padding: 12px 15px;
+    background: #eee;
+    color: #666;
+    font-family: 'Gotu', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    text-align: center;
+    text-transform: uppercase;
+}
+
 /* État de chargement du bouton */
 .sticky-add-to-cart.loading {
     background: #000;
