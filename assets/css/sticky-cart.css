@@ -94,11 +94,12 @@
    selon la largeur d'écran, sans dupliquer le contenu ni le JS qui le
    remplit.
 
-   Desktop/tablette : image à gauche (agrandie, 46px -> 72px), nom +
-   sélecteur de variation empilés à droite dans la MÊME colonne (le panneau
-   panier a sa propre largeur de 480px, assets/css/core.css
-   [data-detail="sticky-cart"], assez pour que 3 variations restent sur une
-   ligne dans cette colonne).
+   Desktop/tablette : image à gauche (60px), nom + sélecteur de variation
+   empilés à droite dans la MÊME colonne (le panneau panier a sa propre
+   largeur de 480px, assets/css/core.css [data-detail="sticky-cart"], assez
+   pour que 3 variations restent sur une ligne dans cette colonne). 60px
+   plutôt que 72px : pour un produit simple (un seul nom, sans variations à
+   côté), une image plus haute que le texte laissait un blanc disproportionné.
 
    Mobile (<=480px, media query plus bas) : le sélecteur de variation
    redescend en pleine largeur, entre la rangée image+nom et le bouton
@@ -107,7 +108,7 @@
    ======================================== */
 .sticky-variation-content {
     display: grid;
-    grid-template-columns: 72px 1fr;
+    grid-template-columns: 60px 1fr;
     grid-template-areas:
         "image name"
         "image variations"
@@ -120,20 +121,24 @@
 
 .sticky-product-image {
     grid-area: image;
-    width: 72px;
-    height: 72px;
+    width: 60px;
+    height: 60px;
 }
 
 .sticky-product-img {
-    width: 72px;
-    height: 72px;
+    width: 60px;
+    height: 60px;
     object-fit: cover;
     border-radius: 0;
 }
 
 .sticky-product-info {
     grid-area: name;
-    align-self: start;
+
+    /* Centré (pas "start") : pour un produit simple, sans variations pour
+       occuper la colonne, un nom centré à côté de l'image évite qu'il ne
+       reste collé en haut avec du vide visible en dessous. */
+    align-self: center;
 
     /* min-width: 0 : sans lui, cette cellule de grille refuserait de se
        réduire sous la largeur naturelle du nom du produit, et pourrait
