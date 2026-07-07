@@ -20,7 +20,7 @@ add_action( 'wp_footer', 'eh_a11y_render_panel' );
 function eh_a11y_render_panel() {
     $eh_languages = eh_a11y_get_languages();
     ?>
-    <div id="eh-a11y-panel" class="eh-a11y-panel">
+    <div id="eh-a11y-panel" class="eh-a11y-panel" tabindex="-1">
         <button type="button" class="eh-a11y-close" aria-label="<?php esc_attr_e( 'Fermer', 'engagement-hub' ); ?>">✕</button>
         <div class="eh-a11y-scroll">
             <h3 class="eh-a11y-title"><?php esc_html_e( 'Accessibilité', 'engagement-hub' ); ?></h3>

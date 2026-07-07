@@ -33,13 +33,17 @@ document.addEventListener("DOMContentLoaded", function() {
         lastFocusedElement = trigger || document.activeElement;
         function apply() {
             modal.classList.add("bcc-modal-overlay-open");
-            modalBox.focus();
             document.addEventListener("keydown", handleModalKeydown);
         }
         if (window.ehHub) {
+            // Le focus est déposé par le noyau (assets/js/core.js,
+            // ehHub.showDetail) sur #bcc-modal-overlay lui-même
+            // (tabindex="-1"), pour un comportement identique aux autres
+            // panneaux (panier, accessibilité).
             window.ehHub.showDetail("cookie-consent", apply);
         } else {
             apply();
+            modalBox.focus();
         }
     }
 

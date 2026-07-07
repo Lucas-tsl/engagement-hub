@@ -320,3 +320,13 @@
 html.eh-mouse-user #eh-fab *:focus-visible {
     outline: none;
 }
+
+/* Ces 3 conteneurs (un par module) ne reçoivent le focus programmatique
+   qu'en simple point d'entrée clavier (voir focusActiveDetail, assets/js/core.js) :
+   pas d'anneau de focus visible sur le conteneur lui-même, les vrais éléments
+   interactifs à l'intérieur (boutons, cases à cocher) gardent le leur. */
+#bcc-modal-overlay:focus,
+#stickyVariationBar:focus,
+#eh-a11y-panel:focus {
+    outline: none;
+}

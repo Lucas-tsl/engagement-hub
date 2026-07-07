@@ -67,7 +67,7 @@ function eh_cookie_afficher_banniere() {
         </div>
     </div>
 
-    <div id="bcc-modal-overlay" class="bcc-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="bcc-modal-title">
+    <div id="bcc-modal-overlay" class="bcc-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="bcc-modal-title" tabindex="-1">
         <div class="bcc-modal" tabindex="-1">
             <button type="button" class="bcc-modal-close" aria-label="<?php esc_attr_e( 'Fermer', 'engagement-hub' ); ?>">✕</button>
             <div class="bcc-modal-scroll">

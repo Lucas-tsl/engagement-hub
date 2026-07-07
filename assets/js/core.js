@@ -175,6 +175,22 @@
     // connaît pas ce contenu : chaque module bascule sa propre classe
     // d'affichage via applyFn, le noyau se charge uniquement de faire
     // grandir/rétrécir l'objet partagé et de choisir quel contenu montrer.
+    // Déplace le focus clavier dans le contenu qui vient de s'afficher : le
+    // premier enfant de #eh-fab-detail dont le CSS le rend visible (voir les
+    // sélecteurs par data-detail dans assets/css/core.css) porte lui-même un
+    // tabindex="-1" (cookie-consent, sticky-cart, accessibility), ce fichier
+    // n'a donc pas besoin de connaître la structure interne de chaque module.
+    function focusActiveDetail() {
+        var children = detail.children;
+        for (var i = 0; i < children.length; i++) {
+            var child = children[i];
+            if (window.getComputedStyle(child).display !== 'none') {
+                if (typeof child.focus === 'function') child.focus();
+                return;
+            }
+        }
+    }
+
     window.ehHub = {
         // Affiche le contenu du module `id` (état 3). À utiliser aussi bien
         // pour une ouverture manuelle (icône cliquée) qu'automatique (ex. le
@@ -184,6 +200,7 @@
             fab.setAttribute('data-detail', id);
             setState('detail');
             if (typeof applyFn === 'function') applyFn();
+            focusActiveDetail();
         },
         // Fermeture AUTOMATIQUE (ex. la barre panier qui se masque au scroll,
         // sans action explicite de l'utilisateur) : retour direct à l'état

@@ -58,7 +58,7 @@
      // Créer le HTML du sticky bar
      function createStickyBar() {
          const stickyHTML = `
-             <div class="sticky-variation-bar" id="stickyVariationBar">
+             <div class="sticky-variation-bar" id="stickyVariationBar" tabindex="-1">
                  <button type="button" class="sticky-panel-close" aria-label="Fermer">✕</button>
                  <div class="sticky-panel-scroll">
                      <div class="sticky-variation-content">
