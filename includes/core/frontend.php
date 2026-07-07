@@ -69,7 +69,7 @@ function eh_render_fab_markup() {
     // partagé où chaque module vient afficher son propre contenu (déplacé ou
     // injecté par assets/js/core.js), plutôt que de flotter indépendamment.
     ?>
-    <div id="eh-fab" class="eh-fab" data-state="closed">
+    <div id="eh-fab" class="eh-fab" data-state="closed" data-position="<?php echo esc_attr( get_option( 'eh_fab_position', 'right' ) ); ?>">
         <button type="button" id="eh-fab-toggle" class="eh-fab-toggle" aria-expanded="false" aria-label="<?php esc_attr_e( 'Ouvrir le menu', 'engagement-hub' ); ?>">
             <span class="eh-fab-gear" aria-hidden="true"><?php echo EH_GEAR_SVG; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- constante SVG interne, pas une entrée utilisateur. ?></span>
         </button>

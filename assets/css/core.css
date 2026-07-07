@@ -55,6 +55,13 @@
                 box-shadow 0.35s ease;
 }
 
+/* Réglage admin (LSG Hub > position du bouton) : évite une collision avec un
+   widget tiers (chat, WhatsApp...) déjà logé en bas droite. */
+.eh-fab[data-position="left"] {
+    right: auto;
+    left: 20px;
+}
+
 .eh-fab[data-state="menu"],
 .eh-fab[data-state="detail"] {
     border-radius: 0;
@@ -299,6 +306,11 @@
     .eh-fab {
         right: 14px;
         bottom: 14px;
+    }
+
+    .eh-fab[data-position="left"] {
+        right: auto;
+        left: 14px;
     }
 
     .eh-fab[data-state="menu"],

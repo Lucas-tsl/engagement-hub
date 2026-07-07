@@ -17,6 +17,12 @@ function eh_sanitize_checkbox( $value ) {
     return empty( $value ) ? 0 : 1;
 }
 
+// Whitelist stricte : toute valeur inattendue retombe sur 'right' (position
+// historique du FAB), plutôt que de laisser passer une chaîne arbitraire.
+function eh_sanitize_fab_position( $value ) {
+    return ( 'left' === $value ) ? 'left' : 'right';
+}
+
 /**
  * Slug du menu admin sous lequel LSG Hub (et ses sous-pages, comme les
  * réglages du module cookies) se rattachent : toujours son propre menu de

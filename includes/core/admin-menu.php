@@ -31,6 +31,19 @@ function eh_register_module_settings() {
             )
         );
     }
+
+    // Position du bouton flottant : un widget tiers (chat, WhatsApp...) est
+    // très souvent logé en bas-droite sur les sites e-commerce, d'où ce
+    // réglage pour éviter toute collision visuelle.
+    register_setting(
+        'eh_modules_group',
+        'eh_fab_position',
+        array(
+            'type'              => 'string',
+            'sanitize_callback' => 'eh_sanitize_fab_position',
+            'default'           => 'right',
+        )
+    );
 }
 
 function eh_render_dashboard_page() {
@@ -83,6 +96,17 @@ function eh_render_dashboard_page() {
                 <?php endforeach; ?>
                 </tbody>
             </table>
+
+            <h2><?php esc_html_e( 'Position du bouton flottant', 'engagement-hub' ); ?></h2>
+            <p>
+                <label for="eh_fab_position"><?php esc_html_e( 'Coin de l\'écran', 'engagement-hub' ); ?></label><br />
+                <select name="eh_fab_position" id="eh_fab_position">
+                    <option value="right" <?php selected( 'right', get_option( 'eh_fab_position', 'right' ) ); ?>><?php esc_html_e( 'Bas droite (par défaut)', 'engagement-hub' ); ?></option>
+                    <option value="left" <?php selected( 'left', get_option( 'eh_fab_position', 'right' ) ); ?>><?php esc_html_e( 'Bas gauche', 'engagement-hub' ); ?></option>
+                </select>
+            </p>
+            <p class="description"><?php esc_html_e( 'À changer si un autre widget flottant (chat, WhatsApp...) occupe déjà le bas droite du site.', 'engagement-hub' ); ?></p>
+
             <?php submit_button(); ?>
         </form>
     </div>
