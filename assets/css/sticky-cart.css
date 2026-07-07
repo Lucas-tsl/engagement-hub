@@ -98,13 +98,14 @@
 }
 
 /* ========================================
-   Image à gauche (agrandie), nom + variations empilés à droite : gagne la
-   place qu'occupait le sélecteur de variation sur toute la largeur du
-   panneau, quitte à élargir l'image (46px -> 72px).
+   Image à gauche (agrandie, 46px -> 72px), nom du produit à droite. Le
+   sélecteur de variation redescend en pleine largeur du panneau juste en
+   dessous (.sticky-variation-options) plutôt que dans cette colonne
+   étroite, où il manquait de place et se retrouvait empilé en colonne.
    ======================================== */
 .sticky-product-row {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     gap: 14px;
 }
 
@@ -122,12 +123,8 @@
 }
 
 /* min-width: 0 : sans lui, ce conteneur flex refuserait de se réduire sous
-   la largeur naturelle de son contenu (nom du produit, boutons de
-   variation), et pourrait déborder du panneau. */
+   la largeur naturelle du nom du produit, et pourrait déborder du panneau. */
 .sticky-product-info {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
     flex: 1;
     min-width: 0;
 }
