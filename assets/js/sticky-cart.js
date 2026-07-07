@@ -76,21 +76,23 @@
                  <button type="button" class="sticky-panel-close" aria-label="Fermer">✕</button>
                  <div class="sticky-panel-scroll">
                      <div class="sticky-variation-content">
-                         <!-- Image à gauche (agrandie), nom à droite : le
-                              sélecteur de variation redescend en pleine
-                              largeur juste en dessous (et non plus coincé
-                              dans cette colonne étroite, où il manquait de
-                              place et se retrouvait empilé en colonne). -->
+                         <!-- Image à gauche (agrandie), nom + sélecteur de
+                              variation empilés à droite dans la même
+                              colonne. Le panneau panier a sa propre largeur
+                              (480px, assets/css/core.css) : la colonne a
+                              maintenant assez de place pour que les
+                              variations restent sur une ligne, sans revenir
+                              coincées en colonne comme avant cet élargissement. -->
                          <div class="sticky-product-row">
                              <div class="sticky-product-image">
                                  <img src="" alt="" class="sticky-product-img">
                              </div>
                              <div class="sticky-product-info">
                                  <div class="sticky-product-name"></div>
+                                 <div class="sticky-variation-options">
+                                     <div class="sticky-variation-buttons"></div>
+                                 </div>
                              </div>
-                         </div>
-                         <div class="sticky-variation-options">
-                             <div class="sticky-variation-buttons"></div>
                          </div>
                          <!-- role="status" + aria-live : le prix et le
                               passage bouton <-> rupture de stock changent

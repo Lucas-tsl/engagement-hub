@@ -98,14 +98,15 @@
 }
 
 /* ========================================
-   Image à gauche (agrandie, 46px -> 72px), nom du produit à droite. Le
-   sélecteur de variation redescend en pleine largeur du panneau juste en
-   dessous (.sticky-variation-options) plutôt que dans cette colonne
-   étroite, où il manquait de place et se retrouvait empilé en colonne.
+   Image à gauche (agrandie, 46px -> 72px), nom + sélecteur de variation
+   empilés à droite dans la même colonne. Le panneau panier a sa propre
+   largeur (480px, assets/css/core.css [data-detail="sticky-cart"]) : cette
+   colonne a maintenant assez de place pour que les variations restent sur
+   une ligne au lieu de retomber en colonne faute d'espace.
    ======================================== */
 .sticky-product-row {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 14px;
 }
 
@@ -123,8 +124,12 @@
 }
 
 /* min-width: 0 : sans lui, ce conteneur flex refuserait de se réduire sous
-   la largeur naturelle du nom du produit, et pourrait déborder du panneau. */
+   la largeur naturelle de son contenu (nom du produit, boutons de
+   variation), et pourrait déborder du panneau. */
 .sticky-product-info {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
     flex: 1;
     min-width: 0;
 }
