@@ -97,6 +97,18 @@
     will-change: opacity, transform;
 }
 
+/* Même traitement que les titres des panneaux cookies/accessibilité
+   (assets/css/cookie-consent.css .bcc-title, accessibility.css
+   .eh-a11y-title) : ce panneau n'en avait pas, ce qui le faisait ressortir
+   comme un composant étranger plutôt qu'un membre du même système. */
+.sticky-panel-title {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #111;
+    font-family: Gotu, sans-serif;
+}
+
 /* ========================================
    Image + Nom du produit
    ======================================== */
@@ -158,9 +170,13 @@
 
 .sticky-variation-btn {
     padding: 6px 10px;
-    border: 2px solid #e0e0e0;
+
+    /* Bordure teintée d'encre (comme les boutons du panneau cookies,
+       assets/css/cookie-consent.css) plutôt qu'un gris neutre #e0e0e0, pour
+       que ce panneau se lise comme le même système que les deux autres. */
+    border: 1.5px solid rgba(33, 28, 23, 0.18);
     background: #fff;
-    color: #333;
+    color: #211c17;
     font-size: 0.8125rem;
     font-weight: 500;
     cursor: pointer;
@@ -187,13 +203,13 @@
 }
 
 .sticky-variation-btn:hover {
-    border-color: #333;
+    border-color: #211c17;
 }
 
 .sticky-variation-btn.active {
     background: #fff;
-    color: #333;
-    border-color: #333;
+    color: #211c17;
+    border-color: #211c17;
 }
 
 /* Image de variation dans les boutons */
@@ -224,7 +240,10 @@
     font-family: Gotu, sans-serif;
     width: 100%;
     padding: 12px 15px;
-    background: #2c2c2c;
+
+    /* Même encre que les boutons "Tout Accepter" et le FAB (#211c17), au
+       lieu d'un noir légèrement différent (#2c2c2c) propre à ce panneau. */
+    background: #211c17;
     color: #fff;
     border: none;
     font-size: 0.875rem;
@@ -240,12 +259,12 @@
 
 .sticky-add-to-cart:hover:not(:disabled) {
     background: #fff;
-    color: #2c2c2c;
-    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.25);
+    color: #211c17;
+    box-shadow: 0 8px 18px rgba(33, 28, 23, 0.2);
 }
 
 .sticky-add-to-cart:disabled {
-    background: #2c2c2c;
+    background: #211c17;
     cursor: not-allowed;
     opacity: 0.6;
 }
@@ -265,7 +284,7 @@
 
 /* État de chargement du bouton */
 .sticky-add-to-cart.loading {
-    background: #000;
+    background: #211c17;
     cursor: wait;
     pointer-events: none;
 }

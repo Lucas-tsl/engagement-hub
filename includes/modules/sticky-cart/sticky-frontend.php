@@ -30,9 +30,14 @@ function eh_sticky_enqueue_assets() {
         'eh-sticky-js',
         'ehStickyCartI18n',
         array(
-            'addToCartText' => __( 'Ajouter au panier - ', 'engagement-hub' ),
-            'addingText'    => __( 'Ajout en cours...', 'engagement-hub' ),
-            'addedText'     => __( 'Ajouté', 'engagement-hub' ),
+            // Titre du panneau : les panneaux cookies/accessibilité en ont un
+            // (voir includes/modules/cookie-consent/public-display.php,
+            // includes/modules/accessibility/public-display.php), celui-ci en
+            // était dépourvu jusqu'ici.
+            'panelTitle'     => __( 'Ajout au panier', 'engagement-hub' ),
+            'addToCartText'  => __( 'Ajouter au panier - ', 'engagement-hub' ),
+            'addingText'     => __( 'Ajout en cours...', 'engagement-hub' ),
+            'addedText'      => __( 'Ajouté', 'engagement-hub' ),
             'outOfStockText' => __( 'Rupture de stock', 'engagement-hub' ),
         )
     );

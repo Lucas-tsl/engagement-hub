@@ -2,6 +2,7 @@
      'use strict';
 
      const stickyI18n = window.ehStickyCartI18n || {
+         panelTitle: 'Ajout au panier',
          addToCartText: 'Ajouter au panier - ',
          addingText: 'Ajout en cours...',
          addedText: 'Ajouté',
@@ -76,6 +77,7 @@
                  <button type="button" class="sticky-panel-close" aria-label="Fermer">✕</button>
                  <div class="sticky-panel-scroll">
                      <div class="sticky-variation-content">
+                         <h3 class="sticky-panel-title">${stickyI18n.panelTitle}</h3>
                          <!-- Bloc gauche : Image + Nom du produit -->
                          <div class="sticky-left-block">
                              <div class="sticky-product-image">
