@@ -3,13 +3,21 @@
 
     var STORAGE_CONTRAST = 'eh_a11y_contrast';
     var STORAGE_CURSOR = 'eh_a11y_cursor';
+    var STORAGE_UNDERLINE = 'eh_a11y_underline';
+    var STORAGE_TEXTSIZE = 'eh_a11y_textsize_index';
+    var TEXT_SIZES = [100, 112, 125, 137, 150];
 
     var html = document.documentElement;
     var panel = document.getElementById('eh-a11y-panel');
     var closeBtn = panel ? panel.querySelector('.eh-a11y-close') : null;
     var contrastToggle = document.getElementById('eh-a11y-contrast-toggle');
     var cursorToggle = document.getElementById('eh-a11y-cursor-toggle');
+    var underlineToggle = document.getElementById('eh-a11y-underline-toggle');
     var langSelect = document.getElementById('eh-a11y-lang');
+    var textDecBtn = document.getElementById('eh-a11y-textsize-dec');
+    var textIncBtn = document.getElementById('eh-a11y-textsize-inc');
+    var textValueEl = document.getElementById('eh-a11y-textsize-value');
+    var resetBtn = document.getElementById('eh-a11y-reset');
 
     // --- Préférences persistantes (contraste / curseur), appliquées dès le chargement ---
     function readPref(key) {
@@ -37,6 +45,7 @@
 
     applyToggleState('eh-a11y-contrast', STORAGE_CONTRAST, contrastToggle);
     applyToggleState('eh-a11y-large-cursor', STORAGE_CURSOR, cursorToggle);
+    applyToggleState('eh-a11y-underline-links', STORAGE_UNDERLINE, underlineToggle);
 
     if (contrastToggle) {
         contrastToggle.addEventListener('click', function () {
@@ -54,6 +63,93 @@
             cursorToggle.setAttribute('aria-pressed', active ? 'true' : 'false');
             writePref(STORAGE_CURSOR, active);
         });
+    }
+
+    if (underlineToggle) {
+        underlineToggle.addEventListener('click', function () {
+            var active = !html.classList.contains('eh-a11y-underline-links');
+            html.classList.toggle('eh-a11y-underline-links', active);
+            underlineToggle.setAttribute('aria-pressed', active ? 'true' : 'false');
+            writePref(STORAGE_UNDERLINE, active);
+        });
+    }
+
+    // --- Taille du texte : applique un pourcentage sur la racine (rem),
+    // mémorisé au même titre que le contraste et le curseur. ---
+    var textSizeIndex = 0;
+
+    function applyTextSize(index) {
+        textSizeIndex = Math.min(Math.max(index, 0), TEXT_SIZES.length - 1);
+        html.style.fontSize = TEXT_SIZES[textSizeIndex] + '%';
+        if (textValueEl) textValueEl.textContent = TEXT_SIZES[textSizeIndex] + '%';
+        if (textDecBtn) textDecBtn.disabled = (textSizeIndex === 0);
+        if (textIncBtn) textIncBtn.disabled = (textSizeIndex === TEXT_SIZES.length - 1);
+    }
+
+    function readTextSizeIndex() {
+        try {
+            var parsed = parseInt(window.localStorage.getItem(STORAGE_TEXTSIZE), 10);
+            return isNaN(parsed) ? 0 : parsed;
+        } catch {
+            return 0;
+        }
+    }
+
+    function writeTextSizeIndex(index) {
+        try {
+            window.localStorage.setItem(STORAGE_TEXTSIZE, String(index));
+        } catch {
+            // Stockage indisponible (navigation privée...) : le réglage ne
+            // sera simplement pas mémorisé d'une page à l'autre.
+        }
+    }
+
+    applyTextSize(readTextSizeIndex());
+
+    if (textDecBtn) {
+        textDecBtn.addEventListener('click', function () {
+            applyTextSize(textSizeIndex - 1);
+            writeTextSizeIndex(textSizeIndex);
+        });
+    }
+
+    if (textIncBtn) {
+        textIncBtn.addEventListener('click', function () {
+            applyTextSize(textSizeIndex + 1);
+            writeTextSizeIndex(textSizeIndex);
+        });
+    }
+
+    // --- Réinitialisation groupée : sans elle, l'utilisateur devait rouvrir
+    // chaque bascule une à une pour revenir à l'état par défaut. ---
+    if (resetBtn) {
+        resetBtn.addEventListener('click', function () {
+            html.classList.remove('eh-a11y-contrast', 'eh-a11y-large-cursor', 'eh-a11y-underline-links');
+            writePref(STORAGE_CONTRAST, false);
+            writePref(STORAGE_CURSOR, false);
+            writePref(STORAGE_UNDERLINE, false);
+            if (contrastToggle) contrastToggle.setAttribute('aria-pressed', 'false');
+            if (cursorToggle) cursorToggle.setAttribute('aria-pressed', 'false');
+            if (underlineToggle) underlineToggle.setAttribute('aria-pressed', 'false');
+
+            applyTextSize(0);
+            writeTextSizeIndex(0);
+        });
+    }
+
+    // --- Lien d'évitement (includes/modules/accessibility/public-display.php) ---
+    // Ce plugin ne connaît pas la structure du thème actif : on cherche le
+    // premier repère de contenu principal usuel plutôt que de supposer un id
+    // particulier, et on lui ajoute un tabindex si besoin pour que le focus
+    // y atterrisse même s'il n'est pas nativement focusable.
+    var skipLink = document.querySelector('.eh-a11y-skip-link');
+    if (skipLink) {
+        var mainContent = document.querySelector('main, [role="main"], #content, #main, #primary');
+        if (mainContent) {
+            if (!mainContent.id) mainContent.id = 'eh-a11y-main-content';
+            if (!mainContent.hasAttribute('tabindex')) mainContent.setAttribute('tabindex', '-1');
+            skipLink.setAttribute('href', '#' + mainContent.id);
+        }
     }
 
     // --- Traduction (WPML) ---

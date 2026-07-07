@@ -16,6 +16,16 @@ function eh_a11y_get_languages() {
     return is_array( $languages ) ? $languages : array();
 }
 
+// Lien d'évitement (WCAG 2.4.1) : totalement absent du plugin jusqu'ici, pas
+// seulement du panneau. La cible réelle est déterminée en JS (assets/js/accessibility.js),
+// ce fichier ne connaissant pas la structure du thème actif.
+add_action( 'wp_body_open', 'eh_a11y_render_skip_link' );
+function eh_a11y_render_skip_link() {
+    ?>
+    <a href="#eh-a11y-main-content" class="eh-a11y-skip-link"><?php esc_html_e( 'Aller au contenu', 'engagement-hub' ); ?></a>
+    <?php
+}
+
 add_action( 'wp_footer', 'eh_a11y_render_panel' );
 function eh_a11y_render_panel() {
     $eh_languages = eh_a11y_get_languages();
@@ -41,6 +51,15 @@ function eh_a11y_render_panel() {
             <?php endif; ?>
 
             <div class="eh-a11y-row">
+                <span id="eh-a11y-textsize-label"><?php esc_html_e( 'Taille du texte', 'engagement-hub' ); ?></span>
+                <div class="eh-a11y-stepper">
+                    <button type="button" id="eh-a11y-textsize-dec" aria-label="<?php esc_attr_e( 'Réduire la taille du texte', 'engagement-hub' ); ?>" aria-describedby="eh-a11y-textsize-label">−</button>
+                    <span id="eh-a11y-textsize-value" aria-live="polite">100%</span>
+                    <button type="button" id="eh-a11y-textsize-inc" aria-label="<?php esc_attr_e( 'Augmenter la taille du texte', 'engagement-hub' ); ?>" aria-describedby="eh-a11y-textsize-label">+</button>
+                </div>
+            </div>
+
+            <div class="eh-a11y-row">
                 <span><?php esc_html_e( 'Contraste élevé', 'engagement-hub' ); ?></span>
                 <button type="button" id="eh-a11y-contrast-toggle" class="eh-a11y-switch" aria-pressed="false">
                     <span class="eh-a11y-switch-knob"></span>
@@ -53,6 +72,15 @@ function eh_a11y_render_panel() {
                     <span class="eh-a11y-switch-knob"></span>
                 </button>
             </div>
+
+            <div class="eh-a11y-row">
+                <span><?php esc_html_e( 'Souligner les liens', 'engagement-hub' ); ?></span>
+                <button type="button" id="eh-a11y-underline-toggle" class="eh-a11y-switch" aria-pressed="false">
+                    <span class="eh-a11y-switch-knob"></span>
+                </button>
+            </div>
+
+            <button type="button" id="eh-a11y-reset" class="eh-a11y-reset"><?php esc_html_e( 'Réinitialiser les réglages', 'engagement-hub' ); ?></button>
         </div>
     </div>
     <?php

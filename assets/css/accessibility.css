@@ -1,3 +1,24 @@
+/* Lien d'évitement (WCAG 2.4.1), includes/modules/accessibility/public-display.php :
+   invisible tant qu'il n'a pas le focus clavier, comme tout skip-link standard. */
+.eh-a11y-skip-link {
+    position: fixed;
+    top: -100px;
+    left: 12px;
+    z-index: 999999;
+    background: #111;
+    color: #fff;
+    padding: 10px 16px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 14px;
+    font-family: sans-serif;
+    transition: top 0.2s ease;
+}
+
+.eh-a11y-skip-link:focus {
+    top: 12px;
+}
+
 /* Panneau Accessibilité, ancré au bouton engrenage (même position que les
    panneaux panier et cookies : assets/css/sticky-cart.css / cookie-consent.css). */
 .eh-a11y-panel,
@@ -146,16 +167,90 @@
     line-height: 1.4;
 }
 
+/* Stepper "Taille du texte" */
+.eh-a11y-stepper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.eh-a11y-stepper button {
+    width: 26px;
+    height: 26px;
+    border-radius: 0;
+    border: 1px solid #ccc;
+    background: #fff;
+    color: #111;
+    font-size: 15px;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+}
+
+.eh-a11y-stepper button:hover:not(:disabled) {
+    background: #f0f0f0;
+}
+
+.eh-a11y-stepper button:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.eh-a11y-stepper span {
+    min-width: 42px;
+    text-align: center;
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+    color: #333;
+}
+
+/* Bouton "Réinitialiser les réglages" */
+.eh-a11y-reset {
+    display: block;
+    width: 100%;
+    margin-top: 16px;
+    padding: 8px;
+    background: none;
+    border: 1px solid #ccc;
+    color: #333;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.eh-a11y-reset:hover {
+    background: #f0f0f0;
+    border-color: #999;
+}
+
 /* ========================================
-   Effets appliqués au site : contraste et curseur agrandi
+   Effets appliqués au site : contraste, curseur agrandi, liens soulignés
    ======================================== */
+
+/* Un filtre CSS global ne garantit aucun ratio de contraste WCAG précis, et
+   peut même dégrader un contraste déjà correct sur certaines combinaisons de
+   couleurs — un vrai jeu de couleurs de substitution testées serait plus
+   fiable, mais suppose de connaître les couleurs du thème actif. En
+   attendant, on limite l'intensité du filtre et on ajoute un signal de
+   distinction des liens qui ne dépend pas de la couleur (soulignement). */
 html.eh-a11y-contrast {
-    filter: contrast(1.35) saturate(1.1);
+    filter: contrast(1.2) saturate(1.05);
 }
 
 html.eh-a11y-contrast img,
 html.eh-a11y-contrast video {
-    filter: contrast(0.85);
+    filter: contrast(0.9);
+}
+
+html.eh-a11y-contrast a {
+    text-decoration: underline;
+}
+
+html.eh-a11y-underline-links a {
+    text-decoration: underline !important;
+    text-underline-offset: 2px;
 }
 
 html.eh-a11y-large-cursor,
