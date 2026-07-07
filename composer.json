@@ -1,6 +1,6 @@
 {
     "name": "lucas-tsl/engagement-hub",
-    "description": "Hub d'engagement WordPress/WooCommerce : consentement cookies, sticky add-to-cart et modules futurs (vidéo, accessibilité) pilotés depuis un bouton flottant unique.",
+    "description": "Hub d'engagement WordPress/WooCommerce : consentement cookies, ajout au panier automatique, accessibilité, et modules futurs (vidéo) pilotés depuis un bouton flottant unique.",
     "type": "wordpress-plugin",
     "license": "GPL-2.0-or-later",
     "require-dev": {

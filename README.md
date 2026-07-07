@@ -13,9 +13,9 @@ Le design vient du croquis dans [`docs/schema.png`](docs/schema.png) :
 - Chaque icône a sa propre condition d'apparition, et ouvre un **panneau ancré au bouton** (pas un widget indépendant) :
   - 🍪 **Cookies** — toujours visible, ouvre le panneau de préférences de consentement.
   - ↑ **Haut de page** — apparaît après 50% de scroll, remonte la page.
-  - 🛒 **Ajout panier** — visible uniquement sur fiche produit, ouvre le panneau produit (image, variation, ajout au panier).
-  - ♿ **Accessibilité** — toujours visible, ouvre le panneau langue (Google Traduction) / contraste / curseur agrandi.
+  - ♿ **Accessibilité** — toujours visible, ouvre le panneau langue (WPML) / taille du texte / contraste / curseur agrandi / soulignage des liens.
   - ▶️ **Vidéo à la une** *(à venir)* — vidéo courte associée à une annonce produit.
+  - 🛒 **Ajout panier** — n'est **pas** une icône du menu : sur fiche produit, le panneau produit (image, variation, ajout au panier) s'affiche et se masque tout seul selon le scroll, comme le fait le bouton "Haut de page" mais sans jamais passer par le choix des icônes.
 
 **Un seul objet, 3 états, pas trois blocs séparés.** Le bouton engrenage (`#eh-fab`) n'ouvre pas un menu flottant au-dessus d'un panneau lui-même indépendant : c'est le même élément DOM qui grandit successivement — (1) fermé (petit cercle avec l'engrenage), (2) menu (le cercle s'agrandit et révèle le choix des icônes en son sein), (3) détail (il s'agrandit encore pour montrer le contenu du module choisi : cookies, panier ou accessibilité). Une croix de fermeture dans le contenu détaillé revient à l'étape 2 (choix des icônes) ; un clic en dehors ou Échap referme tout d'un coup. Le panier reste **automatique** (s'ouvre au scroll sur fiche produit, en sautant directement à l'étape 3) ; la toute première bannière de consentement cookie reste **indépendante et immédiate** (exigence RGPD : elle ne doit pas nécessiter un clic sur l'engrenage) — seule sa réouverture après coup passe par le panneau.
 
@@ -137,7 +137,18 @@ Une fois ces 8 secrets renseignés, chaque merge sur `main` se déploie seul en 
 
 ## ⚠️ À savoir : module Accessibilité
 
-La traduction s'appuie sur **WPML** (filtre officiel `wpml_active_languages`) : le sélecteur de langue liste les langues actives du site avec leurs vraies URLs traduites, calculées côté serveur. Si WPML n'est pas actif, le sélecteur n'apparaît pas du tout — pas de solution de repli vers un service Google, après deux échecs en conditions réelles (le widget `Google Website Translator` intégré à la page est abandonné par Google pour les nouveaux domaines depuis 2019 ; son proxy `translate.goog` ne peut pas non plus joindre un environnement d'hébergement non standard comme un staging Kinsta). Le contraste élevé et le curseur agrandi restent 100% CSS/JS maison (pas de dépendance externe) et mémorisés via `localStorage`.
+La traduction s'appuie sur **WPML** (filtre officiel `wpml_active_languages`) : le sélecteur de langue liste les langues actives du site avec leurs vraies URLs traduites, calculées côté serveur. Si WPML n'est pas actif, le sélecteur n'apparaît pas du tout — pas de solution de repli vers un service Google, après deux échecs en conditions réelles (le widget `Google Website Translator` intégré à la page est abandonné par Google pour les nouveaux domaines depuis 2019 ; son proxy `translate.goog` ne peut pas non plus joindre un environnement d'hébergement non standard comme un staging Kinsta). Taille du texte, contraste élevé, curseur agrandi et soulignage des liens restent 100% CSS/JS maison (pas de dépendance externe) et mémorisés via `localStorage`.
+
+## ⚙️ Réglages
+
+Depuis le menu **LSG Hub** (voir Installation ci-dessous) :
+
+- **Activation par module** — chaque module (cookies, panier, accessibilité, vidéo) peut être désactivé indépendamment.
+- **Position du bouton** — bas droite (par défaut) ou bas gauche, utile si un widget tiers (chat, WhatsApp...) occupe déjà le bas droite du site.
+
+Réglages spécifiques à un module :
+
+- **Cookies** — texte de la bannière, logo, URLs politique de confidentialité/mentions légales (sous-menu "Cookies"). Le lien de réouverture des préférences n'est pas qu'une icône du bouton flottant : le shortcode `[eh_cookie_preferences_link]` (option `text="..."` pour changer le libellé, par défaut "Gérer les cookies") permet d'en poser un directement dans le footer du site ou n'importe quelle page/widget.
 
 ## 📦 Installation sur le site
 

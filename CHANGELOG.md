@@ -3,6 +3,59 @@
 Toutes les versions notables du plugin sont documentées ici. Ce fichier est
 mis à jour à chaque Release (voir README, section Workflow).
 
+## [1.4.0]
+
+Passage d'audit UX/accessibilité complet sur les 3 panneaux (cookies, panier,
+accessibilité), suivi d'une refonte de l'identité visuelle du bouton flottant.
+
+### Accessibilité
+- Lien d'évitement "Aller au contenu" (WCAG 2.4.1), absent jusqu'ici.
+- Nouveau réglage de taille du texte (+/-, mémorisé comme les autres).
+- Nouvelle bascule "Souligner les liens".
+- Bouton "Réinitialiser les réglages" (contraste, curseur, soulignage, taille).
+- Filtre de contraste élevé adouci, complété d'un soulignement systématique
+  des liens (un filtre seul ne garantit aucun ratio de contraste précis).
+
+### Consentement cookies
+- "Tout Accepter" et "Tout Refuser" ont désormais la même prééminence
+  visuelle (conformité CNIL) ; "Personnaliser" devient un lien secondaire.
+- Bannière et case "Strictement nécessaires" correctement annoncées aux
+  lecteurs d'écran (rôle ARIA, `<label>` manquant).
+- Confirmation "Préférences enregistrées" après un choix.
+- Nouveau shortcode `[eh_cookie_preferences_link]` pour un lien "Gérer les
+  cookies" en pied de page.
+- Corrigé : "Personnaliser mes choix" se refermait dans le même clic que
+  celui qui l'ouvrait, à la toute première apparition de la bannière.
+- Bordures et ombres adoucies pour coller au thème réel du site.
+
+### Ajout au panier
+- Icône retirée du menu de l'engrenage : le panneau s'affiche déjà tout
+  seul au scroll sur une fiche produit, l'entrée manuelle était redondante.
+- Prix et disponibilité fiabilisés sur les événements WooCommerce plutôt que
+  des délais devinés ; défilement optimisé (throttle par requestAnimationFrame).
+- Variation par défaut dérivée génériquement (URL / sélection WooCommerce)
+  au lieu d'une liste codée en dur propre à un seul produit.
+- `aria-live` sur le prix/la rupture de stock, `aria-pressed` sur les
+  boutons de variation, confirmation "✓ Ajouté" après un ajout réussi.
+- Disposition revue : image et nom du produit sur une rangée, sélecteur de
+  variation dans la même colonne sur desktop/tablette (le panneau a sa
+  propre largeur, 480px) et en pleine largeur sur mobile.
+- Corrigé une collision de nom de classe avec le sélecteur de variation
+  propre au thème du site (les deux composants partageaient `.sticky-var-img`).
+
+### Bouton flottant (noyau)
+- Focus clavier déplacé automatiquement à l'ouverture de n'importe lequel
+  des 3 panneaux (auparavant seulement les cookies).
+- Lien d'évitement dédié pour atteindre le bouton sans tabuler toute la page.
+- Position du bouton réglable (bas gauche/droite) depuis le tableau de bord,
+  pour éviter une collision avec un widget tiers (chat, WhatsApp...).
+- Identité visuelle revue pour coller au thème réel du site (palette et
+  police tirées de son theme.json) plutôt qu'un style générique : bordures
+  fines, aucune ombre dure, bouton fermé réduit.
+- Les tailles de police du plugin sont passées de px à rem : le réglage
+  "taille du texte" du panneau accessibilité s'applique désormais aussi à
+  l'interface du plugin elle-même, pas seulement au reste du site.
+
 ## [1.3.3]
 
 - Croix de fermeture des panneaux (cookies/panier/accessibilité) éloignée

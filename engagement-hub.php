@@ -1,8 +1,8 @@
 <?php
 /**
  * Plugin Name: LSG Hub
- * Description: Hub d'engagement flottant, propre à Les Senteurs Gourmandes et indépendant de tout autre plugin : consentement cookies (Google Consent Mode V2), ajout au panier, accessibilité (langue, contraste, curseur), et modules futurs (vidéo), pilotés depuis un bouton unique.
- * Version: 1.3.3
+ * Description: Hub d'engagement flottant, propre à Les Senteurs Gourmandes et indépendant de tout autre plugin : consentement cookies (Google Consent Mode V2), ajout au panier automatique sur fiche produit, accessibilité (langue, taille du texte, contraste, curseur, soulignage des liens), et modules futurs (vidéo), pilotés depuis un bouton unique.
+ * Version: 1.4.0
  * Author: Troteseil Lucas
  * Author URI: https://github.com/Lucas-tsl
  * Text Domain: engagement-hub
@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 define( 'EH_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'EH_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
-define( 'EH_VERSION', '1.3.3' );
+define( 'EH_VERSION', '1.4.0' );
 
 // Chargement des traductions
 add_action( 'plugins_loaded', 'eh_charger_traductions' );

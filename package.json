@@ -1,8 +1,8 @@
 {
   "name": "engagement-hub",
-  "version": "1.0.0",
+  "version": "1.4.0",
   "private": true,
-  "description": "Hub d'engagement WordPress/WooCommerce : consentement cookies, sticky add-to-cart et modules futurs (vidéo, accessibilité) pilotés depuis un bouton flottant unique.",
+  "description": "Hub d'engagement WordPress/WooCommerce : consentement cookies, ajout au panier automatique, accessibilité, et modules futurs (vidéo) pilotés depuis un bouton flottant unique.",
   "scripts": {
     "lint:js": "eslint assets/js",
     "lint:css": "stylelint \"assets/css/**/*.css\"",
