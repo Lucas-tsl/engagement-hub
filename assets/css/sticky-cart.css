@@ -44,29 +44,6 @@
     .sticky-variation-bar {
         max-height: calc(100vh - 110px);
     }
-
-    /* Le sélecteur de variation redescend en pleine largeur, entre la
-       rangée image+nom et le bouton d'ajout : la colonne à droite de
-       l'image est ici trop étroite pour l'accueillir sans qu'il ne
-       retombe en colonne faute de place (voir grid-template-areas plus
-       haut pour la disposition desktop/tablette). */
-    .sticky-variation-content {
-        grid-template-areas:
-            "image name"
-            "variations variations"
-            "cart cart";
-    }
-
-    .sticky-variation-options {
-        align-self: start;
-    }
-
-    /* Seul point de rupture où le wrap revient : la pleine largeur du
-       panneau ne suffit plus forcément à garder toutes les variations sur
-       une seule ligne sur un petit écran. */
-    .sticky-variation-buttons {
-        flex-wrap: wrap !important;
-    }
 }
 
 .sticky-panel-close {
@@ -205,6 +182,46 @@
     flex-wrap: nowrap !important;
     gap: 8px;
     width: 100%;
+}
+
+/* Produit simple (sans variations, voir syncSimpleProduct, assets/js/sticky-cart.js
+   qui retire complètement .sticky-variation-options du DOM) : la zone
+   "variations" de la grille disparaît entièrement, pas seulement son
+   contenu — sinon la ligne et le row-gap qui l'entourent laissaient un
+   blanc entre le nom et le bouton, même sans rien à y afficher. Spécificité
+   plus élevée que les règles ci-dessus (et la media query mobile plus bas) :
+   gagne sur les deux, pas besoin de la répéter par point de rupture. */
+.sticky-variation-bar.simple-product .sticky-variation-content {
+    grid-template-areas:
+        "image name"
+        "cart cart";
+}
+
+/* Le sélecteur de variation redescend en pleine largeur, entre la rangée
+   image+nom et le bouton d'ajout : la colonne à droite de l'image est ici
+   trop étroite pour l'accueillir sans qu'il ne retombe en colonne faute de
+   place (voir grid-template-areas plus haut pour la disposition
+   desktop/tablette). Cette règle doit rester déclarée APRÈS la règle de
+   base .sticky-variation-content ci-dessus : à spécificité égale, c'est
+   l'ordre dans le fichier qui décide, pas la media query elle-même. */
+@media (max-width: 480px) {
+    .sticky-variation-content {
+        grid-template-areas:
+            "image name"
+            "variations variations"
+            "cart cart";
+    }
+
+    .sticky-variation-options {
+        align-self: start;
+    }
+
+    /* Seul point de rupture où le wrap revient : la pleine largeur du
+       panneau ne suffit plus forcément à garder toutes les variations sur
+       une seule ligne sur un petit écran. */
+    .sticky-variation-buttons {
+        flex-wrap: wrap !important;
+    }
 }
 
 .sticky-variation-btn {
