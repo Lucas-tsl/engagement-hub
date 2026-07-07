@@ -275,7 +275,7 @@
              const button = $(`
                  <button class="sticky-variation-btn" data-value="${attrValue}" aria-pressed="false">
                      <div class="sticky-var-left">
-                         ${variationImgSrc ? `<img src="${variationImgSrc}" alt="${attrValue}" class="sticky-var-img">` : ''}
+                         ${variationImgSrc ? `<img src="${variationImgSrc}" alt="${attrValue}" class="eh-sticky-var-img">` : ''}
                      </div>
                      <div class="sticky-var-right">
                          <span class="sticky-var-label">${attrValue}</span>

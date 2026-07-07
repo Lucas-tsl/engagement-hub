@@ -213,8 +213,14 @@
     border-color: #211c17;
 }
 
-/* Image de variation dans les boutons */
-.sticky-var-img {
+/* Image de variation dans les boutons. Nommée "eh-" (au lieu de
+   "sticky-var-img") : le template WooCommerce personnalisé du site
+   (single-product/add-to-cart/variable.php) pose la MÊME classe
+   "sticky-var-img" sur les vignettes de son propre sélecteur de variation
+   affiché sur la fiche produit — deux composants différents qui se
+   marchaient dessus sur ce nom, l'un pouvant hériter du dimensionnement de
+   l'autre selon la spécificité/l'ordre de chargement. */
+.eh-sticky-var-img {
     width: 28px;
     height: 28px;
     object-fit: cover;
