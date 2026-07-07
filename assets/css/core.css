@@ -1,3 +1,26 @@
+/* Lien d'évitement vers le FAB (includes/core/frontend.php) : invisible tant
+   qu'il n'a pas le focus clavier, comme tout skip-link standard. Cible le
+   bouton engrenage lui-même, pas seulement le conteneur, pour que le focus
+   atterrisse directement sur un élément activable. */
+.eh-skip-link {
+    position: fixed;
+    top: -100px;
+    left: 12px;
+    z-index: 999999;
+    background: #111;
+    color: #fff;
+    padding: 10px 16px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 14px;
+    font-family: sans-serif;
+    transition: top 0.2s ease;
+}
+
+.eh-skip-link:focus {
+    top: 12px;
+}
+
 /* Engagement Hub - Bouton flottant (FAB), unifié en un seul objet qui
    grandit à travers 3 états (voir assets/js/core.js pour la machine à états) :
    1. fermé   : petit cercle avec l'engrenage
