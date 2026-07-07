@@ -91,7 +91,22 @@
                 icon.className = 'eh-fab-item-icon eh-fab-item-icon--emoji';
                 icon.textContent = item.icon;
             }
-            btn.appendChild(icon);
+
+            // Anneau qui porte le fond/la bordure (icône inchangée à
+            // l'intérieur) + légende visible sous l'icône : le bouton
+            // lui-même n'est plus qu'un simple conteneur en colonne.
+            var ring = document.createElement('span');
+            ring.className = 'eh-fab-item-ring';
+            ring.appendChild(icon);
+            btn.appendChild(ring);
+
+            var label = document.createElement('span');
+            label.className = 'eh-fab-item-label';
+            // aria-hidden : le nom accessible du bouton est déjà porté par
+            // son propre aria-label ci-dessus, pas la peine de le répéter.
+            label.setAttribute('aria-hidden', 'true');
+            label.textContent = item.shortLabel || item.label;
+            btn.appendChild(label);
             btn.addEventListener('click', function () {
                 if (item.action === 'scroll-top') {
                     window.scrollTo({ top: 0, behavior: 'smooth' });

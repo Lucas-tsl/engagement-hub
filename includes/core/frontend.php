@@ -13,6 +13,7 @@ function eh_enqueue_core_assets() {
             'id'              => 'top',
             'icon'            => '↑',
             'label'           => __( 'Haut de page', 'engagement-hub' ),
+            'shortLabel'      => __( 'Haut', 'engagement-hub' ),
             'action'          => 'scroll-top',
             'condition'       => 'scroll',
             'scrollThreshold' => 50,
@@ -25,12 +26,16 @@ function eh_enqueue_core_assets() {
             continue;
         }
         $items[] = array(
-            'id'        => $module_id,
-            'icon'      => $module['icon'],
-            'iconSvg'   => $module['icon_svg'],
-            'label'     => $module['label'],
-            'action'    => $module['fab_action'],
-            'condition' => $module['fab_condition'],
+            'id'         => $module_id,
+            'icon'       => $module['icon'],
+            'iconSvg'    => $module['icon_svg'],
+            'label'      => $module['label'],
+            // Légende affichée sous l'icône (design "Flacon") : plus courte
+            // que le libellé complet, qui déborderait sous une bulle de 44px.
+            // Repli sur le libellé complet si un module n'en définit pas.
+            'shortLabel' => ! empty( $module['short_label'] ) ? $module['short_label'] : $module['label'],
+            'action'     => $module['fab_action'],
+            'condition'  => $module['fab_condition'],
         );
     }
 
