@@ -48,7 +48,10 @@ if ( EH_Module_Registry::is_active( 'cookie-consent' ) ) {
         wp_localize_script(
             'eh-cookie-js',
             'ehCookieConfig',
-            array( 'consentVersion' => EH_COOKIE_CONSENT_VERSION )
+            array(
+                'consentVersion' => EH_COOKIE_CONSENT_VERSION,
+                'savedText'      => __( 'Préférences enregistrées', 'engagement-hub' ),
+            )
         );
     }
 }

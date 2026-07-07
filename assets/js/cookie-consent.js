@@ -92,6 +92,28 @@ document.addEventListener("DOMContentLoaded", function() {
 
         if(banner) banner.style.display = "none";
         closeModal();
+        showSavedToast();
+    }
+
+    // Confirmation brève après un choix enregistré (accepter/refuser/personnaliser) :
+    // sans elle, la bannière/modale se contentait de se fermer, sans aucun
+    // signal explicite que le choix avait bien été pris en compte.
+    function showSavedToast() {
+        var savedText = (typeof ehCookieConfig !== "undefined" && ehCookieConfig.savedText)
+            ? ehCookieConfig.savedText
+            : "Préférences enregistrées";
+        var toast = document.createElement("div");
+        toast.className = "bcc-toast";
+        toast.setAttribute("role", "status");
+        toast.textContent = savedText;
+        document.body.appendChild(toast);
+        window.requestAnimationFrame(function () {
+            toast.classList.add("bcc-toast-visible");
+        });
+        setTimeout(function () {
+            toast.classList.remove("bcc-toast-visible");
+            setTimeout(function () { toast.remove(); }, 300);
+        }, 2200);
     }
 
     const btnAccepter = document.getElementById("bcc-btn-accepter");
@@ -138,6 +160,17 @@ document.addEventListener("DOMContentLoaded", function() {
             if (banner) banner.style.display = "none";
             openModal();
         }
+    });
+
+    // Réouverture depuis un lien [eh_cookie_preferences_link] posé par le
+    // site dans son footer (includes/modules/cookie-consent/public-display.php) :
+    // convention attendue par les visiteurs, en plus du raccourci du hub.
+    document.addEventListener("click", function(event) {
+        var link = event.target.closest(".eh-cookie-preferences-link");
+        if (!link) return;
+        event.preventDefault();
+        if (banner) banner.style.display = "none";
+        openModal(link);
     });
 
     // Le hub s'est refermé entièrement (clic extérieur, Échap, un autre

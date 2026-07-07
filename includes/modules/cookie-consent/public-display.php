@@ -38,6 +38,22 @@ function eh_cookie_inject_consent_mode() {
     <?php
 }
 
+// Lien de gestion des cookies utilisable n'importe où (typiquement le footer
+// du site) : [eh_cookie_preferences_link] ou [eh_cookie_preferences_link
+// text="Gérer les cookies"]. Le seul point d'entrée existant jusqu'ici pour
+// rouvrir les préférences était l'icône 🍪 du bouton flottant, deux clics
+// sans le repère visuel qu'un visiteur attend habituellement (un lien dédié
+// en pied de page).
+add_shortcode( 'eh_cookie_preferences_link', 'eh_cookie_preferences_link_shortcode' );
+function eh_cookie_preferences_link_shortcode( $atts ) {
+    $atts = shortcode_atts(
+        array( 'text' => __( 'Gérer les cookies', 'engagement-hub' ) ),
+        $atts,
+        'eh_cookie_preferences_link'
+    );
+    return '<a href="#" class="eh-cookie-preferences-link">' . esc_html( $atts['text'] ) . '</a>';
+}
+
 // Affichage HTML de la bannière et de la modale de préférences.
 // Le bouton de réouverture après consentement est désormais le bouton
 // flottant central du hub (icône 🍪 dans includes/core/frontend.php),
@@ -53,18 +69,21 @@ function eh_cookie_afficher_banniere() {
         && eh_cookie_cookie_value( 'bcc_consent_version' ) === EH_COOKIE_CONSENT_VERSION;
     ?>
 
-    <div id="bcc-banner-card" class="bcc-banner-card" style="display: <?php echo $choix_fait ? 'none' : 'block'; ?>;">
+    <div id="bcc-banner-card" class="bcc-banner-card" role="region" aria-labelledby="bcc-banner-title" style="display: <?php echo $choix_fait ? 'none' : 'block'; ?>;">
         <?php if ( ! empty( $logo ) ) : ?><img src="<?php echo esc_url( $logo ); ?>" alt="<?php esc_attr_e( 'Logo', 'engagement-hub' ); ?>" class="bcc-logo" /><?php endif; ?>
-        <h3 class="bcc-title"><?php esc_html_e( 'Gérer le consentement', 'engagement-hub' ); ?></h3>
+        <h3 class="bcc-title" id="bcc-banner-title"><?php esc_html_e( 'Gérer le consentement', 'engagement-hub' ); ?></h3>
         <p class="bcc-desc"><?php echo nl2br( esc_html( $texte ) ); ?></p>
         <div class="bcc-links">
             <a href="<?php echo esc_url( $url_politique ); ?>"><?php esc_html_e( 'Politique de confidentialité', 'engagement-hub' ); ?></a> | <a href="<?php echo esc_url( $url_mentions ); ?>"><?php esc_html_e( 'Mentions légales', 'engagement-hub' ); ?></a>
         </div>
+        <?php /* "Tout Accepter" et "Tout Refuser" à même niveau, même poids visuel :
+                 la CNIL exige une prééminence équivalente entre les deux (recommandations
+                 2020). "Personnaliser" reste un choix possible mais secondaire. */ ?>
         <div class="bcc-actions">
             <button id="bcc-btn-accepter" class="bcc-btn bcc-btn-accepter"><?php esc_html_e( 'Tout Accepter', 'engagement-hub' ); ?></button>
             <button id="bcc-btn-refuser" class="bcc-btn bcc-btn-refuser"><?php esc_html_e( 'Tout Refuser', 'engagement-hub' ); ?></button>
-            <button id="bcc-btn-prefs" class="bcc-btn bcc-btn-prefs"><?php esc_html_e( 'Personnaliser', 'engagement-hub' ); ?></button>
         </div>
+        <button id="bcc-btn-prefs" class="bcc-btn-link"><?php esc_html_e( 'Personnaliser mes choix', 'engagement-hub' ); ?></button>
     </div>
 
     <div id="bcc-modal-overlay" class="bcc-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="bcc-modal-title" tabindex="-1">
@@ -73,11 +92,11 @@ function eh_cookie_afficher_banniere() {
             <div class="bcc-modal-scroll">
                 <h3 class="bcc-title" id="bcc-modal-title"><?php esc_html_e( 'Préférences des cookies', 'engagement-hub' ); ?></h3>
                 <div class="bcc-cookie-type">
-                    <div>
+                    <label for="chk-necessaires">
                         <strong><?php esc_html_e( 'Strictement Nécessaires', 'engagement-hub' ); ?></strong>
                         <p class="bcc-desc"><?php esc_html_e( 'Requis pour le site (panier, sécurité). Non désactivables.', 'engagement-hub' ); ?></p>
-                    </div>
-                    <input type="checkbox" checked disabled>
+                    </label>
+                    <input type="checkbox" id="chk-necessaires" checked disabled>
                 </div>
                 <div class="bcc-cookie-type">
                     <label for="chk-stats">
