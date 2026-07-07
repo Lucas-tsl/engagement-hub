@@ -63,17 +63,17 @@
     left: 20px;
 }
 
-/* Coins déjà carrés (border-radius: 0) mais fond en verre flouté + ombre
-   douce jusqu'ici : un langage visuel différent de celui déjà posé ailleurs
-   dans le plugin (bordure 2px noire + ombre portée dure sur la bannière
-   cookie, croix de fermeture carrées...). Bordure et ombre dures ici aussi,
-   pour que le contenant lise comme le même objet que ce qu'il affiche. */
+/* Coins carrés (border-radius: 0), mais un contour presque invisible et une
+   ombre diffuse plutôt qu'une bordure épaisse et une ombre portée dure : le
+   thème du site (theme.json) travaille en tons chauds et sourds (greige,
+   taupe, terracotta) et une serif élégante (Cardo), pas en noir franc — une
+   bordure 2px noire jurait avec cette identité. */
 .eh-fab[data-state="menu"],
 .eh-fab[data-state="detail"] {
     border-radius: 0;
-    background-color: #efefef;
-    border: 2px solid #000;
-    box-shadow: 6px 6px 0 #000;
+    background-color: #fff;
+    border: 1px solid rgba(17, 17, 17, 0.06);
+    box-shadow: 0 18px 45px rgba(17, 17, 17, 0.16);
 }
 
 .eh-fab[data-state="menu"] {
