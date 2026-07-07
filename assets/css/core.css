@@ -41,12 +41,12 @@
     height: 56px;
     border-radius: 50%;
 
-    /* Dégradé ambré façon verre de flacon (plutôt qu'un disque noir uni),
-       cohérent avec la palette réelle du site (theme.json : taupe #c2a990,
-       terracotta #d8613c...) — voir aussi le contenant ouvert plus bas. */
-    background: radial-gradient(circle at 32% 28%, #e3c391, #b3854a 70%, #93692f);
-    border: 2px solid #8a6a3a;
-    box-shadow: 0 3px 10px rgba(80, 55, 20, 0.35), inset 0 1px 2px rgba(255, 255, 255, 0.4);
+    /* Direction "Ligne" : quasi invisible tant qu'il n'est pas utilisé, un
+       simple filet fin plutôt qu'un disque plein — cohérent avec le panneau
+       ouvert plus bas (fond blanc, bordure fine, aucune ombre dure). */
+    background-color: #fff;
+    border: 1.5px solid rgba(33, 28, 23, 0.55);
+    box-shadow: 0 2px 8px rgba(33, 28, 23, 0.1);
     overflow: hidden;
 
     /* Durée allongée + courbe plus douce (décélération progressive) qu'un
@@ -67,30 +67,15 @@
     left: 20px;
 }
 
-/* Coins carrés (border-radius: 0), fond crème et bordure quasi invisible :
-   direction "Flacon", cohérente avec le dégradé ambré du bouton fermé. Le
-   dégradé du bouton fermé (background, plus haut) doit être explicitement
-   retiré ici (background-image: none), sinon il resterait dessiné sous le
-   fond uni puisque background-color seul ne l'efface pas. */
+/* Coins carrés (border-radius: 0), fond blanc, un seul filet gris très
+   discret et aucune ombre : direction "Ligne", quasi invisible tant qu'il
+   n'est pas utilisé — le plus silencieux des partis pris déjà explorés. */
 .eh-fab[data-state="menu"],
 .eh-fab[data-state="detail"] {
     border-radius: 0;
-    background-image: none;
-    background-color: #fdf8ef;
-    border: 1px solid #d8c3a0;
-    box-shadow: 0 18px 40px rgba(120, 85, 40, 0.16);
-}
-
-/* Fin liseré doré en tête de carte, façon étiquette de flacon. */
-.eh-fab[data-state="menu"]::before,
-.eh-fab[data-state="detail"]::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 20px;
-    right: 20px;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, #b3854a, transparent);
+    background-color: #fff;
+    border: 1px solid rgba(33, 28, 23, 0.12);
+    box-shadow: none;
 }
 
 .eh-fab[data-state="menu"] {
@@ -119,7 +104,11 @@
     height: 100%;
     border: none;
     background: transparent;
-    color: #fff;
+
+    /* Icône sombre : le bouton fermé est désormais un fond clair (direction
+       "Ligne"), plus le disque sombre d'origine sur lequel un glyphe blanc
+       se détachait. */
+    color: #211c17;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -167,10 +156,10 @@
     display: flex;
 }
 
-/* Le bouton n'est plus la bulle elle-même : un simple conteneur en colonne
-   (anneau + légende, voir .eh-fab-item-ring/.eh-fab-item-label), pour porter
-   une légende visible sous l'icône (design "Flacon") sans agrandir la bulle
-   elle-même. */
+/* Le bouton n'est plus une bulle : un simple conteneur en colonne (icône +
+   légende, voir .eh-fab-item-ring/.eh-fab-item-label), sans fond ni bordure
+   propres — direction "Ligne", rien ne doit ajouter de poids visuel autour
+   de l'icône elle-même. */
 .eh-fab-item {
     display: flex;
     flex-direction: column;
@@ -181,43 +170,49 @@
     background: none;
     border: none;
     padding: 0;
-    color: #111;
+    color: #211c17;
     cursor: pointer;
     opacity: 0;
-    transform: scale(0.85);
+    transform: scale(0.92);
     transition: opacity 0.2s ease, transform 0.2s ease;
 
     /* Pas de délai par défaut : à la fermeture, les bulles doivent
        disparaître tout de suite, pendant que la boîte se rétrécit. */
 }
 
+/* Pas de fond/bordure/ombre ici (contrairement aux directions précédentes) :
+   seule la taille du cadre de clic est fixée, l'icône reste nue. */
 .eh-fab-item-ring {
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
+    width: 32px;
+    height: 32px;
     font-size: 20px;
     display: flex;
     align-items: center;
     justify-content: center;
-
-    /* Liseré teinté (plutôt qu'un gris neutre) pour rappeler l'anneau doré
-       du bouton fermé, sur un simple fond blanc qui garde l'icône lisible. */
-    border: 1px solid rgba(147, 105, 47, 0.35);
-    background: #fff;
-    box-shadow: 0 2px 6px rgba(80, 55, 20, 0.18);
-    transition: transform 0.2s ease;
 }
 
 .eh-fab-item-label {
     font-family: Cardo, Georgia, serif;
     font-size: 11px;
     line-height: 1.2;
-    color: #6b5a44;
+    color: #6b6058;
     text-align: center;
     max-width: 64px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+
+    /* Soulignement toujours présent mais transparent par défaut : seule sa
+       couleur transitionne au survol (text-decoration-line, lui, ne peut
+       pas s'animer). Retour discret plutôt qu'un effet de grossissement. */
+    text-decoration-line: underline;
+    text-underline-offset: 2px;
+    text-decoration-color: transparent;
+    transition: text-decoration-color 0.15s ease;
+}
+
+.eh-fab-item:hover .eh-fab-item-label {
+    text-decoration-color: currentColor;
 }
 
 .eh-fab[data-state="menu"] .eh-fab-item {
@@ -234,41 +229,37 @@
 
 /* Croix de sortie de l'état 2 (choix des icônes), affichée à droite des
    bulles : referme entièrement et retrouve l'engrenage de départ, sans
-   devoir cliquer en dehors ou faire Échap. */
+   devoir cliquer en dehors ou faire Échap. Rien ne se montre tant qu'on ne
+   l'utilise pas (ni fond, ni bordure, ni ombre) : seul un cercle discret
+   apparaît au survol pour signaler le clic. */
 .eh-fab-menu-close {
-    width: 36px;
-    height: 36px;
+    width: 32px;
+    height: 32px;
     border-radius: 50%;
-    border: 1px solid rgba(147, 105, 47, 0.35);
-    background: #fff;
-    color: #333;
+    border: none;
+    background: none;
+    color: #6b6058;
     font-size: 14px;
     line-height: 1;
     cursor: pointer;
-    box-shadow: 0 2px 6px rgb(0 0 0 / 22%);
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 0;
     opacity: 0;
-    transform: scale(0.6);
-    transition: opacity 0.2s ease, transform 0.2s ease, background 0.2s ease;
+    transform: scale(0.85);
+    transition: opacity 0.2s ease, transform 0.2s ease, background 0.15s ease, color 0.15s ease;
 }
 
 .eh-fab-menu-close:hover {
-    background: rgba(0, 0, 0, 0.06);
+    background: rgba(33, 28, 23, 0.06);
+    color: #211c17;
 }
 
 .eh-fab[data-state="menu"] .eh-fab-menu-close {
     opacity: 1;
     transform: scale(1);
     transition-delay: calc(220ms + var(--eh-index, 0) * 40ms);
-}
-
-/* Seul l'anneau grossit au survol (pas toute la colonne, légende comprise) :
-   un pop plus net sur l'icône, sans faire "sauter" le texte sous elle. */
-.eh-fab-item:hover .eh-fab-item-ring {
-    transform: scale(1.08);
 }
 
 .eh-fab-item-icon {
