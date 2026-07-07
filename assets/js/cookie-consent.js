@@ -126,7 +126,14 @@ document.addEventListener("DOMContentLoaded", function() {
     if(btnAccepter) btnAccepter.addEventListener("click", () => setConsent(1, 1));
     if(btnRefuser) btnRefuser.addEventListener("click", () => setConsent(0, 0));
 
-    if(btnPrefs) btnPrefs.addEventListener("click", () => {
+    if(btnPrefs) btnPrefs.addEventListener("click", (event) => {
+        // #bcc-banner-card (contrairement à la modale) n'est jamais déplacé
+        // à l'intérieur de #eh-fab (voir assets/js/core.js) : sans stopPropagation,
+        // ce même clic remonte jusqu'à document, où le noyau referme tout ce
+        // qui est cliqué en dehors du FAB — annulant l'ouverture qu'on vient
+        // de demander, dans le même clic (la modale s'ouvre puis se referme
+        // aussitôt, perçu comme "la bannière disparaît sans rien montrer").
+        event.stopPropagation();
         banner.style.display = "none";
         openModal(btnPrefs);
     });
@@ -169,6 +176,11 @@ document.addEventListener("DOMContentLoaded", function() {
         var link = event.target.closest(".eh-cookie-preferences-link");
         if (!link) return;
         event.preventDefault();
+        // Même raison que sur le bouton "Personnaliser" de la bannière : ce
+        // lien vit hors de #eh-fab, sans stopPropagation le clic remonterait
+        // jusqu'au gestionnaire "clic en dehors" du noyau (assets/js/core.js)
+        // et refermerait la modale dans le clic même qui l'ouvre.
+        event.stopPropagation();
         if (banner) banner.style.display = "none";
         openModal(link);
     });
