@@ -30,9 +30,9 @@ function eh_enqueue_core_assets() {
             'icon'       => $module['icon'],
             'iconSvg'    => $module['icon_svg'],
             'label'      => $module['label'],
-            // Légende affichée sous l'icône (design "Flacon") : plus courte
-            // que le libellé complet, qui déborderait sous une bulle de 44px.
-            // Repli sur le libellé complet si un module n'en définit pas.
+            // Légende affichée sous l'icône dans le menu du FAB : plus courte
+            // que le libellé complet, qui déborderait sous l'icône. Repli sur
+            // le libellé complet si un module n'en définit pas.
             'shortLabel' => ! empty( $module['short_label'] ) ? $module['short_label'] : $module['label'],
             'action'     => $module['fab_action'],
             'condition'  => $module['fab_condition'],
