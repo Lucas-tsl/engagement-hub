@@ -11,7 +11,11 @@ EH_Module_Registry::register(
         'description'     => __( 'Panneau produit (image, variation, ajout au panier) ancré au bouton, qui suit l\'utilisateur sur les fiches produit.', 'engagement-hub' ),
         'option_name'     => 'eh_module_active_sticky-cart',
         'default_active'  => true,
-        'fab_action'      => 'open-sticky-panel',
+        // Pas d'icône dans le menu du FAB : le panneau panier s'affiche déjà
+        // tout seul au scroll sur une fiche produit (handleStickyVisibility,
+        // assets/js/sticky-cart.js) — une entrée manuelle en plus n'apportait
+        // rien, seulement une icône de plus à afficher pour rien.
+        'fab_action'      => '',
         'fab_condition'   => 'is_product',
         'available'       => true,
     )

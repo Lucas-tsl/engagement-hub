@@ -735,13 +735,6 @@
             }
         });
 
-        // Ouverture manuelle depuis l'icône 🛒 du bouton engrenage.
-        document.addEventListener('eh:action', function (event) {
-            if (event.detail && event.detail.action === 'open-sticky-panel') {
-                setStickyBarVisible(true);
-            }
-        });
-
         $stickyBar.on('click', '.sticky-panel-close', function () {
             setStickyBarVisible(false, true);
         });

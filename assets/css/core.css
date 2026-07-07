@@ -37,8 +37,8 @@
 
     --eh-scroll: 0;
 
-    width: 56px;
-    height: 56px;
+    width: 48px;
+    height: 48px;
     border-radius: 50%;
 
     /* Direction "Ligne" : quasi invisible tant qu'il n'est pas utilisé, un
@@ -78,8 +78,12 @@
     box-shadow: none;
 }
 
+/* Largeur intrinsèque (pas une valeur fixe) : le menu ne compte que 3-4
+   icônes, autant qu'il s'ajuste à son contenu et reste sur une seule ligne
+   (voir flex-wrap: nowrap sur .eh-fab-menu) plutôt que de forcer un retour
+   à la ligne au milieu des icônes. Le mobile repasse en wrap plus bas. */
 .eh-fab[data-state="menu"] {
-    width: 260px;
+    width: max-content;
     height: auto;
     max-height: 320px;
 }
@@ -132,8 +136,8 @@
 }
 
 .eh-fab-gear svg {
-    width: 24px;
-    height: 24px;
+    width: 20px;
+    height: 20px;
     display: block;
 }
 
@@ -142,7 +146,12 @@
    ============================================================ */
 .eh-fab-menu {
     display: none;
-    flex-flow: row wrap;
+
+    /* nowrap : toutes les icônes restent sur une seule ligne (le conteneur
+       est dimensionné à son contenu, voir width: max-content plus haut).
+       Repasse en wrap uniquement sur mobile (media query plus bas), où la
+       largeur de l'écran ne permet plus de garder tout aligné. */
+    flex-flow: row nowrap;
     align-items: center;
     justify-content: center;
     gap: 10px;
@@ -318,17 +327,18 @@
    que dimensionnés pour un grand écran, on réduit d'un cran. */
 @media (max-width: 1440px) {
     .eh-fab {
-        width: 44px;
-        height: 44px;
+        width: 40px;
+        height: 40px;
     }
 
     .eh-fab-gear svg {
-        width: 19px;
-        height: 19px;
+        width: 17px;
+        height: 17px;
     }
 
+    /* Largeur toujours intrinsèque (width: max-content, règle par défaut) :
+       seule la hauteur max diffère à ce point de rupture. */
     .eh-fab[data-state="menu"] {
-        width: 220px;
         max-height: 280px;
     }
 
@@ -362,6 +372,12 @@
     .eh-fab[data-state="detail"] {
         width: auto;
         max-width: calc(100vw - 28px);
+    }
+
+    /* Seul point de rupture où les icônes reviennent à la ligne : la largeur
+       de l'écran ne permet plus de toutes les garder alignées. */
+    .eh-fab-menu {
+        flex-flow: row wrap;
     }
 
     .eh-fab[data-state="menu"] {
