@@ -76,23 +76,19 @@
                  <button type="button" class="sticky-panel-close" aria-label="Fermer">✕</button>
                  <div class="sticky-panel-scroll">
                      <div class="sticky-variation-content">
-                         <!-- Image à gauche (agrandie), nom + sélecteur de
-                              variation empilés à droite dans la même
-                              colonne. Le panneau panier a sa propre largeur
-                              (480px, assets/css/core.css) : la colonne a
-                              maintenant assez de place pour que les
-                              variations restent sur une ligne, sans revenir
-                              coincées en colonne comme avant cet élargissement. -->
-                         <div class="sticky-product-row">
-                             <div class="sticky-product-image">
-                                 <img src="" alt="" class="sticky-product-img">
-                             </div>
-                             <div class="sticky-product-info">
-                                 <div class="sticky-product-name"></div>
-                                 <div class="sticky-variation-options">
-                                     <div class="sticky-variation-buttons"></div>
-                                 </div>
-                             </div>
+                         <!-- Grille (pas d'imbrication en flex) : seule façon
+                              de placer les MÊMES éléments dans la colonne du
+                              titre sur desktop/tablette, et en pleine largeur
+                              entre l'image et le bouton sur mobile, sans dupliquer
+                              le contenu (voir grid-template-areas, assets/css/sticky-cart.css). -->
+                         <div class="sticky-product-image">
+                             <img src="" alt="" class="sticky-product-img">
+                         </div>
+                         <div class="sticky-product-info">
+                             <div class="sticky-product-name"></div>
+                         </div>
+                         <div class="sticky-variation-options">
+                             <div class="sticky-variation-buttons"></div>
                          </div>
                          <!-- role="status" + aria-live : le prix et le
                               passage bouton <-> rupture de stock changent

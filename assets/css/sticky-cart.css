@@ -44,6 +44,29 @@
     .sticky-variation-bar {
         max-height: calc(100vh - 110px);
     }
+
+    /* Le sélecteur de variation redescend en pleine largeur, entre la
+       rangée image+nom et le bouton d'ajout : la colonne à droite de
+       l'image est ici trop étroite pour l'accueillir sans qu'il ne
+       retombe en colonne faute de place (voir grid-template-areas plus
+       haut pour la disposition desktop/tablette). */
+    .sticky-variation-content {
+        grid-template-areas:
+            "image name"
+            "variations variations"
+            "cart cart";
+    }
+
+    .sticky-variation-options {
+        align-self: start;
+    }
+
+    /* Seul point de rupture où le wrap revient : la pleine largeur du
+       panneau ne suffit plus forcément à garder toutes les variations sur
+       une seule ligne sur un petit écran. */
+    .sticky-variation-buttons {
+        flex-wrap: wrap !important;
+    }
 }
 
 .sticky-panel-close {
@@ -88,32 +111,40 @@
     padding: 34px 20px 16px 16px;
 }
 
+/* ========================================
+   Grille (pas de flex imbriqué) : seule façon de placer les MÊMES éléments
+   (image, nom, sélecteur de variation, bouton) à deux endroits différents
+   selon la largeur d'écran, sans dupliquer le contenu ni le JS qui le
+   remplit.
+
+   Desktop/tablette : image à gauche (agrandie, 46px -> 72px), nom +
+   sélecteur de variation empilés à droite dans la MÊME colonne (le panneau
+   panier a sa propre largeur de 480px, assets/css/core.css
+   [data-detail="sticky-cart"], assez pour que 3 variations restent sur une
+   ligne dans cette colonne).
+
+   Mobile (<=480px, media query plus bas) : le sélecteur de variation
+   redescend en pleine largeur, entre la rangée image+nom et le bouton
+   d'ajout — la colonne y est trop étroite pour l'accueillir sans qu'il ne
+   retombe en colonne faute de place.
+   ======================================== */
 .sticky-variation-content {
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 14px;
+    display: grid;
+    grid-template-columns: 72px 1fr;
+    grid-template-areas:
+        "image name"
+        "image variations"
+        "cart cart";
+    column-gap: 14px;
+    row-gap: 8px;
     opacity: 0;
     will-change: opacity, transform;
 }
 
-/* ========================================
-   Image à gauche (agrandie, 46px -> 72px), nom + sélecteur de variation
-   empilés à droite dans la même colonne. Le panneau panier a sa propre
-   largeur (480px, assets/css/core.css [data-detail="sticky-cart"]) : cette
-   colonne a maintenant assez de place pour que les variations restent sur
-   une ligne au lieu de retomber en colonne faute d'espace.
-   ======================================== */
-.sticky-product-row {
-    display: flex;
-    align-items: flex-start;
-    gap: 14px;
-}
-
 .sticky-product-image {
+    grid-area: image;
     width: 72px;
     height: 72px;
-    flex-shrink: 0;
 }
 
 .sticky-product-img {
@@ -123,14 +154,13 @@
     border-radius: 0;
 }
 
-/* min-width: 0 : sans lui, ce conteneur flex refuserait de se réduire sous
-   la largeur naturelle de son contenu (nom du produit, boutons de
-   variation), et pourrait déborder du panneau. */
 .sticky-product-info {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    flex: 1;
+    grid-area: name;
+    align-self: start;
+
+    /* min-width: 0 : sans lui, cette cellule de grille refuserait de se
+       réduire sous la largeur naturelle du nom du produit, et pourrait
+       déborder du panneau. */
     min-width: 0;
 }
 
@@ -142,9 +172,11 @@
 }
 
 .sticky-variation-options {
+    grid-area: variations;
     display: flex;
     flex-direction: column;
     gap: 8px;
+    min-width: 0;
 }
 
 .sticky-variation-label {
@@ -161,11 +193,16 @@
    chargement qui prend le pas sur les nôtres — même raison que le
    !important déjà posé sur les cases à cocher, assets/css/cookie-consent.css.
    Sans ça, les boutons de variation se retrouvaient empilés en pleine
-   largeur au lieu de se ranger en ligne. */
+   largeur au lieu de se ranger en ligne.
+
+   Desktop/tablette : nowrap, la colonne (480px de panneau moins l'image)
+   a la place pour 3 variations sur une seule ligne, pas besoin d'un repli
+   sur plusieurs lignes. Le wrap ne revient que sur mobile (media query plus
+   bas), seul point de rupture où cette largeur ne suffit plus. */
 .sticky-variation-buttons {
     display: flex !important;
     flex-direction: row !important;
-    flex-wrap: wrap !important;
+    flex-wrap: nowrap !important;
     gap: 8px;
     width: 100%;
 }
@@ -246,6 +283,12 @@
 
 .sticky-variation-btn.active .sticky-var-unit-price {
     color: #211c17;
+}
+
+/* Zone bouton d'ajout + message de rupture : dernière zone de la grille,
+   toujours en pleine largeur (voir grid-template-areas plus haut). */
+.sticky-availability {
+    grid-area: cart;
 }
 
 .sticky-add-to-cart {
