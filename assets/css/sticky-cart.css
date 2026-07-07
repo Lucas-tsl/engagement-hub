@@ -286,6 +286,13 @@
     animation: spin 0.8s linear infinite;
 }
 
+/* Confirmation brève après un ajout réussi : seul signal explicite si le
+   mini-panier n'est pas dans le champ de vision de l'utilisateur. */
+.sticky-add-to-cart.added {
+    background: #2f6b45;
+    cursor: default;
+}
+
 @keyframes spin {
     to {
         transform: rotate(360deg);

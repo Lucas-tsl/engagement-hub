@@ -4,6 +4,7 @@
      const stickyI18n = window.ehStickyCartI18n || {
          addToCartText: 'Ajouter au panier - ',
          addingText: 'Ajout en cours...',
+         addedText: 'Ajouté',
          outOfStockText: 'Rupture de stock'
      };
 
@@ -55,6 +56,19 @@
          }
      }
 
+     // Confirmation brève après un ajout au panier réussi : sans elle, le
+     // bouton revenait directement à son texte d'origine, sans qu'aucun
+     // signal explicite ne confirme l'ajout si le mini-panier n'est pas dans
+     // le champ de vision de l'utilisateur.
+     function showAddedConfirmation($btn, originalText) {
+         $btn.removeClass('loading').addClass('added').prop('disabled', false);
+         $btn.html('<span class="added-text">✓ ' + (stickyI18n.addedText || 'Ajouté') + '</span>');
+         setTimeout(function() {
+             $btn.removeClass('added');
+             $btn.html(originalText);
+         }, 900);
+     }
+
      // Créer le HTML du sticky bar
      function createStickyBar() {
          const stickyHTML = `
@@ -74,11 +88,17 @@
                              <div class="sticky-variation-options">
                                   <!--  <div class="sticky-variation-label"><span class="variation-name">Sélectionner une option</span></div>-->                            <div class="sticky-variation-buttons"></div>
                              </div>
-                             <button class="sticky-add-to-cart" disabled>
-                                <span class="sticky-button-text">${stickyI18n.addToCartText}</span> &nbsp;
-                                 <span class="sticky-price"></span>
-                             </button>
-                             <div class="sticky-out-of-stock" style="display:none;">${stickyI18n.outOfStockText}</div>
+                             <!-- role="status" + aria-live : le prix et le
+                                  passage bouton <-> rupture de stock changent
+                                  sans rechargement de page, un lecteur d'écran
+                                  a besoin d'être informé de ces mises à jour. -->
+                             <div class="sticky-availability" role="status" aria-live="polite">
+                                 <button class="sticky-add-to-cart" disabled>
+                                    <span class="sticky-button-text">${stickyI18n.addToCartText}</span> &nbsp;
+                                     <span class="sticky-price"></span>
+                                 </button>
+                                 <div class="sticky-out-of-stock" style="display:none;">${stickyI18n.outOfStockText}</div>
+                             </div>
                          </div>
                      </div>
                  </div>
@@ -156,13 +176,11 @@
 
              if (priceHTML && priceHTML.trim()) {
                  $stickyPrice.html(priceHTML);
-                 console.log('✓ Prix mis à jour pour la variation:', selectedValue, 'Prix:', priceHTML);
                  $stickyAddToCart.prop('disabled', false);
                  return true;
              }
          }
 
-         console.warn('✗ Aucun élément price trouvé pour:', selectedValue);
          return false;
      }
 
@@ -253,7 +271,7 @@
              }
 
              const button = $(`
-                 <button class="sticky-variation-btn" data-value="${attrValue}">
+                 <button class="sticky-variation-btn" data-value="${attrValue}" aria-pressed="false">
                      <div class="sticky-var-left">
                          ${variationImgSrc ? `<img src="${variationImgSrc}" alt="${attrValue}" class="sticky-var-img">` : ''}
                      </div>
@@ -329,9 +347,10 @@
 
              const value = $(this).data('value');
 
-             // Mettre à jour la classe active
-             $stickyButtons.find('.sticky-variation-btn').removeClass('active');
-             $(this).addClass('active');
+             // Mettre à jour la classe active (aria-pressed pour les
+             // technologies d'assistance, la classe seule ne suffit pas).
+             $stickyButtons.find('.sticky-variation-btn').removeClass('active').attr('aria-pressed', 'false');
+             $(this).addClass('active').attr('aria-pressed', 'true');
 
              // Mettre à jour l'opacité des éléments .product-var-cust sur la page
              $('.product-var-cust').css('opacity', '0.5');
@@ -364,93 +383,75 @@
              setStickyOutOfStock($stickyBar, chosenVariation ? chosenVariation.is_in_stock === false : false);
 
              // Vider le prix affiché tout de suite : sans ça, le prix de
-             // l'ANCIENNE variation reste visible pendant les ~200-400ms où
-             // WooCommerce n'a pas encore mis à jour le DOM, ce qui donne
-             // l'impression trompeuse qu'on voit encore la variation précédente.
-             $stickyPrice.empty();
-
-             // Mettre à jour le prix après les délais de WooCommerce
-             setTimeout(function() {
-                 console.log('Mise à jour du prix après 200ms');
-                 updateStickyPrice();
-             }, 200);
-
-             setTimeout(function() {
-                 console.log('Mise à jour du prix après 400ms');
-                 updateStickyPrice();
-             }, 400);
+             // l'ANCIENNE variation reste visible le temps que WooCommerce
+             // mette à jour le DOM, ce qui donne l'impression trompeuse qu'on
+             // voit encore la variation précédente. Le rattrapage du nouveau
+             // prix est déjà assuré par l'écouteur 'found_variation' plus bas
+             // (déclenché par le trigger('change') ci-dessus), pas besoin
+             // d'une seconde cascade de délais ici.
 
              return false;
          });
 
          // Synchroniser avec les changements du formulaire principal
          $variationForm.on('found_variation', function(event, variation) {
-             console.log('Variation trouvée:', variation.attributes[attributeName], 'ID variation:', variation.variation_id);
-
-             // Mettre à jour immédiatement ET après plusieurs délais pour être sûr
              updateStickyPrice();
              setStickyOutOfStock($stickyBar, variation.is_in_stock === false);
 
-             // Re-vérifier après plusieurs délais
-             setTimeout(function() {
-                 console.log('Re-vérification après 50ms');
-                 updateStickyPrice();
-             }, 50);
+             // Filet de sécurité unique : 'found_variation' est aussi écouté
+             // par le script de variations de WooCommerce lui-même, qui met à
+             // jour le DOM du prix affiché sur la page. Si notre lecture
+             // arrive avant la sienne (deux écouteurs sur le même événement,
+             // ordre non garanti), ce court retry suffit à rattraper la valeur
+             // finale sans empiler plusieurs délais devinés au hasard.
+             setTimeout(updateStickyPrice, 100);
 
-             setTimeout(function() {
-                 console.log('Re-vérification après 150ms');
-                 updateStickyPrice();
-             }, 150);
-
-             setTimeout(function() {
-                 console.log('Re-vérification après 300ms');
-                 updateStickyPrice();
-             }, 300);
-
-             // Mettre à jour le bouton actif
+             // Mettre à jour le bouton actif (classe + aria-pressed)
              const selectedValue = $variationForm.find('.variations select').val();
-             $stickyButtons.find('.sticky-variation-btn').removeClass('active');
-             $stickyButtons.find(`[data-value="${selectedValue}"]`).addClass('active');
+             $stickyButtons.find('.sticky-variation-btn').removeClass('active').attr('aria-pressed', 'false');
+             $stickyButtons.find(`[data-value="${selectedValue}"]`).addClass('active').attr('aria-pressed', 'true');
          });
 
          $variationForm.on('reset_data', function() {
-             //$stickyPrice.html('Sélectionner une option');
              $stickyAddToCart.prop('disabled', true);
-             $stickyButtons.find('.sticky-variation-btn').removeClass('active');
+             $stickyButtons.find('.sticky-variation-btn').removeClass('active').attr('aria-pressed', 'false');
          });
 
          // Ajouter des écouteurs supplémentaires pour capturer les mises à jour de prix
          // après un ajout au panier ou une modification du formulaire
          $variationForm.on('woocommerce_variation_has_changed', function() {
-             console.log('Variation a changé');
              updateStickyPrice();
-             // Re-vérifier après un délai
-             setTimeout(updateStickyPrice, 50);
+             setTimeout(updateStickyPrice, 100);
          });
 
          $(document.body).on('updated_wc_div', function() {
-             console.log('WC div updated');
              updateStickyPrice();
-             setTimeout(updateStickyPrice, 50);
+             setTimeout(updateStickyPrice, 100);
          });
 
          // Vérifier le prix quand une variation est reset aussi
          $(document.body).on('woocommerce_variation_reset_data', function() {
-             console.log('Variation reset');
              updateStickyPrice();
          });
 
-         // Sélectionner la variation par défaut en fonction de l'URL
+         // Sélectionner une variation par défaut : d'abord celle indiquée dans
+         // l'URL (convention WooCommerce attribute_{nom}=valeur), sinon celle
+         // déjà présélectionnée par WooCommerce sur le formulaire principal,
+         // sinon la première de la liste triée. Générique à n'importe quel
+         // produit/attribut, plutôt qu'une liste ('15ml'/'30ml'/'100ml') et un
+         // repli ('100ml') qui ne valaient que pour un seul produit du catalogue.
          setTimeout(function() {
              const params = new URLSearchParams(window.location.search);
-             const urlValue = (params.get('attribute_pa_contenance') || '').toLowerCase();
-             const allowedDefaults = ['15ml', '30ml', '100ml'];
-             const targetValue = allowedDefaults.includes(urlValue) ? urlValue : '100ml';
+             const urlValue = (params.get(`attribute_${attributeName}`) || '').toLowerCase();
+             const currentValue = ($variationForm.find('.variations select').val() || '').toLowerCase();
+
+             const targetValue = sortedValues.find(v => v.toLowerCase() === urlValue)
+                 || sortedValues.find(v => v.toLowerCase() === currentValue)
+                 || sortedValues[0];
 
              const $btnTarget = $stickyButtons.find(`[data-value="${targetValue}"]`);
              if ($btnTarget.length) {
                  $btnTarget.trigger('click');
-                 console.log(`✓ ${targetValue} sélectionné par défaut`);
              }
          }, 700);
 
@@ -481,8 +482,6 @@
                  .not('.mini-cart *, .widget *, .cart-contents *, header *, .site-header *, #stickyVariationBar *, .woocommerce-mini-cart *, .cart_list *')
                  .first();
 
-             console.log('Original button found:', $originalBtn.length ? $originalBtn[0] : 'NOT FOUND');
-
              if ($originalBtn.length) {
                  // Utiliser un click natif pour éviter les propagations jQuery
                  $originalBtn[0].click();
@@ -490,15 +489,13 @@
                  // Fallback: soumettre le formulaire directement
                  const $form = $('form.cart').not('.mini-cart form, .widget form, .woocommerce-mini-cart form').first();
                  if ($form.length) {
-                     console.log('Submitting form:', $form[0]);
                      $form.submit();
                  }
              }
 
              // Attendre la fin de l'AJAX WooCommerce
              $(document.body).one('added_to_cart wc_cart_button_updated', function() {
-                 $btn.removeClass('loading').prop('disabled', false);
-                 $btn.html(originalText);
+                 showAddedConfirmation($btn, originalText);
              });
 
              // Timeout de sécurité (5 secondes max)
@@ -611,7 +608,6 @@
 
             if ($el.length) {
                 $priceElement = $el;
-                console.log('Prix trouvé avec sélecteur:', selector);
                 break;
             }
         }
@@ -624,9 +620,7 @@
             $clone.find('a, button, input').remove();
             priceText = $clone.html();
 
-            console.log('Prix HTML récupéré:', priceText);
         } else {
-            console.warn('Aucun élément prix trouvé pour le produit simple');
         }
 
         if (priceText && priceText.trim()) {
@@ -636,9 +630,7 @@
                 $(this).replaceWith($(this).text());
             });
             $stickyPrice.html($tempDiv.html());
-            console.log('Prix affiché dans sticky bar:', $tempDiv.html());
         } else {
-            console.warn('Prix vide ou invalide');
         }
 
         // Activer le bouton pour les produits simples, sauf rupture de stock
@@ -673,8 +665,6 @@
                  .not('.mini-cart *, .widget *, .cart-contents *, header *, .site-header *, #stickyVariationBar *, .woocommerce-mini-cart *, .cart_list *')
                  .first();
 
-             console.log('Original button found:', $originalBtn.length ? $originalBtn[0] : 'NOT FOUND');
-
              if ($originalBtn.length) {
                  // Utiliser un click natif pour éviter les propagations jQuery
                  $originalBtn[0].click();
@@ -682,15 +672,13 @@
                  // Fallback: soumettre le formulaire directement
                  const $form = $('form.cart').not('.mini-cart form, .widget form, .woocommerce-mini-cart form').first();
                  if ($form.length) {
-                     console.log('Submitting form:', $form[0]);
                      $form.submit();
                  }
              }
 
              // Attendre la fin de l'AJAX WooCommerce
              $(document.body).one('added_to_cart wc_cart_button_updated', function() {
-                 $btn.removeClass('loading').prop('disabled', false);
-                 $btn.html(originalText);
+                 showAddedConfirmation($btn, originalText);
              });
 
              // Timeout de sécurité (5 secondes max)
@@ -702,12 +690,6 @@
              }, 5000);
 
              return false;
-         });
-
-         console.log('Sticky bar simple product initialized:', {
-             name: productNameText,
-             image: productImgSrc,
-             price: priceText
          });
      }
 
@@ -798,7 +780,6 @@
         function checkVisibility() {
             // Si on est en train de mettre à jour, ignorer cette vérification
             if (isUpdating) {
-                console.log('⏸️ CHECK SKIPPED - Update in progress');
                 return;
             }
 
@@ -810,28 +791,21 @@
             // Rechercher le bouton à chaque check
             const $addToCartBtn = findAddToCartBtn();
 
-            console.log('=== CHECK VISIBILITY ===');
-            console.log('scrollTop:', scrollTop, 'windowBottom:', windowBottom, 'docHeight:', docHeight);
-            console.log('Button found:', $addToCartBtn !== null && $addToCartBtn.length > 0);
 
             // 1. Vérifier si on approche du footer - MASQUER la sticky bar
             const $footer = $('footer, footer.wp-block-template-part, [role="contentinfo"]');
             if ($footer.length) {
                 const footerTop = $footer.first().offset().top;
-                console.log('Footer found at:', footerTop);
 
                 // Si on chevauche le footer, masquer
                 if (windowBottom >= footerTop) {
-                    console.log('>>> ACTION: HIDING - near/in footer');
                     setStickyBarVisible(false);
                     return;
                 }
             } else {
                 // Si pas de footer, masquer les 200px avant la fin
                 const nearEnd = docHeight - windowBottom <= 200;
-                console.log('No footer found, near end:', nearEnd);
                 if (nearEnd) {
-                    console.log('>>> ACTION: HIDING - near end of page');
                     setStickyBarVisible(false);
                     return;
                 }
@@ -845,29 +819,20 @@
                 const btnBottom = btnTop + btnHeight;
                 const isBtnVisible = $addToCartBtn.is(':visible');
 
-                console.log('Button details:');
-                console.log('  - Top:', btnTop, 'Bottom:', btnBottom);
-                console.log('  - Visible:', isBtnVisible);
-                console.log('  - In viewport: top < bottom?', btnTop < windowBottom, ', bottom > scroll?', btnBottom > scrollTop);
 
                 // Le bouton est visible si au moins une partie est dans le viewport ET visible
                 const isBtnInViewport = (btnTop < windowBottom) && (btnBottom > scrollTop) && isBtnVisible;
 
-                console.log('  => Button in viewport:', isBtnInViewport);
 
                 if (isBtnInViewport) {
-                    console.log('>>> ACTION: HIDING - button is visible');
                     setStickyBarVisible(false);
                     return;
                 }
             } else {
-                console.log('Add to cart button NOT found');
             }
 
             // 3. Sinon, AFFICHER la sticky bar
-            console.log('>>> ACTION: SHOWING sticky bar');
             setStickyBarVisible(true);
-            console.log('');
         }
 
         // Fonction debounced pour éviter les appels multiples rapides
@@ -881,31 +846,35 @@
             }, delay || 100);
         }
 
+         // Throttle par requestAnimationFrame (même pattern que le noyau,
+         // assets/js/core.js) : sans lui, checkVisibility() relit des
+         // offsets/hauteurs (footer, bouton d'origine) de façon synchrone à
+         // chaque évènement scroll/touchmove, ce qui peut saccader le
+         // défilement sur des appareils bas de gamme.
+         let stickyTicking = false;
+         function throttledCheckVisibility() {
+             if (stickyTicking) return;
+             stickyTicking = true;
+             window.requestAnimationFrame(function() {
+                 if (!isUpdating) checkVisibility();
+                 stickyTicking = false;
+             });
+         }
+
          // Bindé sur scroll et resize (pas de verrouillage pour le scroll)
-         $(window).off('scroll.stickyBar resize.stickyBar').on('scroll.stickyBar resize.stickyBar', function() {
-             // Ne pas bloquer le scroll, mais utiliser le debounce quand même
-             if (!isUpdating) {
-                 checkVisibility();
-             }
-         });
+         $(window).off('scroll.stickyBar resize.stickyBar').on('scroll.stickyBar resize.stickyBar', throttledCheckVisibility);
 
          // Aussi écouter les événements touch pour mobile
-         $(window).off('touchmove.stickyBar').on('touchmove.stickyBar', function() {
-             if (!isUpdating) {
-                 checkVisibility();
-             }
-         });
+         $(window).off('touchmove.stickyBar').on('touchmove.stickyBar', throttledCheckVisibility);
 
          // Écouter les changements de variation WooCommerce avec verrouillage
          $('form.variations_form').on('found_variation reset_data woocommerce_variation_has_changed', function() {
-             console.log('🔒 Variation event detected - Locking updates');
              isUpdating = true; // Verrouiller immédiatement
 
              // Si le clic vient de la sticky bar, ne pas la masquer
              if (!clickedFromStickyBar) {
                  setStickyBarVisible(false); // Masquer pendant la mise à jour
              } else {
-                 console.log('✅ Click from sticky bar - keeping it visible');
              }
 
              // Utiliser un délai plus long pour laisser WooCommerce finir toutes ses mises à jour
@@ -914,7 +883,6 @@
 
          // Écouter les clics sur les boutons de variation personnalisés avec verrouillage
          $('.product-var-cust').on('click', function() {
-             console.log('🔒 Variation button clicked - Locking updates');
              isUpdating = true; // Verrouiller immédiatement
              clickedFromStickyBar = false; // Ce clic vient de la page
              setStickyBarVisible(false); // Masquer pendant la mise à jour
@@ -924,7 +892,6 @@
          // Exposer la fonction pour permettre à syncVariations de l'appeler
          window.stickyBarSetClickFromBar = function() {
              clickedFromStickyBar = true;
-             console.log('🎯 Click registered from sticky bar');
              // Réinitialiser après un délai
              setTimeout(function() {
                  clickedFromStickyBar = false;
@@ -982,7 +949,6 @@
                                        $('.product').length > 0 ||
                                        $('.wp-block-woocommerce-product-image').length > 0;
 
-                 console.log('Simple product check:', { hasCartForm, hasWooBlock, hasAddToCartButton, isProductPage });
 
                  if ((hasCartForm || hasWooBlock || hasAddToCartButton) && isProductPage) {
                      createStickyBar();
