@@ -1,4 +1,8 @@
-/* Design Brutaliste - Bannière Cookie */
+/* Bannière Cookie — même identité "Ligne" que le FAB (assets/css/core.css) :
+   filet quasi invisible et ombre diffuse plutôt qu'une bordure épaisse et
+   une ombre portée dure, qui juraient avec le thème réel du site (tons
+   chauds et sourds, serif élégante Cardo) tout autant qu'avec le FAB
+   aujourd'hui adouci. */
 .bcc-banner-card, .bcc-banner-card *, .bcc-banner-card *::before, .bcc-banner-card *::after,
 .bcc-modal-overlay, .bcc-modal-overlay *, .bcc-modal-overlay *::before, .bcc-modal-overlay *::after {
     box-sizing: border-box;
@@ -18,8 +22,8 @@
     max-height: calc(100vh - 40px);
     overflow: hidden auto;
     background: #fff;
-    border: 2px solid #000;
-    box-shadow: 4px 4px 0px #000;
+    border: 1px solid rgba(33, 28, 23, 0.12);
+    box-shadow: 0 18px 40px rgba(33, 28, 23, 0.14);
     padding: 20px;
     z-index: 999999;
     font-family: sans-serif;
@@ -29,17 +33,17 @@
 /* Gotu : même police que le titre produit et le bouton d'ajout au panier
    (assets/css/sticky-cart.css) — les 3 panneaux du FAB doivent se lire comme
    un seul système, pas trois designs juxtaposés. */
-.bcc-title { margin: 0 0 10px 0; font-size: 16px; font-weight: bold; color: #000; font-family: Gotu, sans-serif; }
-.bcc-desc { margin: 0 0 15px 0; font-size: 13px; color: #333; line-height: 1.4; }
-.bcc-links { margin-bottom: 15px; font-size: 11px; }
+.bcc-title { margin: 0 0 10px 0; font-size: 1rem; font-weight: bold; color: #000; font-family: Gotu, sans-serif; }
+.bcc-desc { margin: 0 0 15px 0; font-size: 0.8125rem; color: #333; line-height: 1.4; }
+.bcc-links { margin-bottom: 15px; font-size: 0.6875rem; }
 .bcc-links a { color: #000; text-decoration: underline; }
 /* "Accepter" et "Refuser" sur la même rangée, même taille, même poids de
    police : voir la note dans public-display.php sur la prééminence CNIL. */
 .bcc-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.bcc-btn { padding: 10px; font-size: 13px; font-weight: bold; cursor: pointer; border: 2px solid #000; background: #fff; color: #000; transition: all 0.2s; text-transform: uppercase; font-family: Gotu, sans-serif; }
-.bcc-btn-accepter { background: #000; color: #fff; }
-.bcc-btn-accepter:hover { background: #fff; color: #000; border-color: #000; }
-.bcc-btn-refuser:hover { background: #eee; }
+.bcc-btn { padding: 10px; font-size: 0.8125rem; font-weight: bold; cursor: pointer; border: 1.5px solid rgba(33, 28, 23, 0.55); background: #fff; color: #211c17; transition: all 0.2s; text-transform: uppercase; font-family: Gotu, sans-serif; }
+.bcc-btn-accepter { background: #211c17; color: #fff; border-color: #211c17; }
+.bcc-btn-accepter:hover { background: #fff; color: #211c17; }
+.bcc-btn-refuser:hover { background: rgba(33, 28, 23, 0.06); }
 
 /* "Personnaliser" : action secondaire, un simple lien sous les deux boutons
    principaux plutôt qu'un troisième bouton de même poids visuel. */
@@ -51,7 +55,7 @@
     background: none;
     border: none;
     text-decoration: underline;
-    font-size: 12px;
+    font-size: 0.75rem;
     color: #333;
     cursor: pointer;
     text-align: center;
@@ -111,7 +115,7 @@
     border: none;
     background: rgba(0, 0, 0, 0.06);
     color: #333;
-    font-size: 14px;
+    font-size: 0.875rem;
     line-height: 1;
     cursor: pointer;
     display: flex;
@@ -128,7 +132,7 @@
 
 .bcc-cookie-type { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #ddd; gap: 15px; }
 .bcc-cookie-type label { cursor: pointer; }
-.bcc-cookie-type strong { font-size: 13px; }
+.bcc-cookie-type strong { font-size: 0.8125rem; }
 
 /* Le thème du site peut appliquer des styles globaux agressifs aux checkboxes
    (reset, toggle personnalisé) : on force explicitement leur affichage natif. */
@@ -157,7 +161,7 @@
 }
 
 @media (max-width: 480px) {
-    .bcc-banner-card { width: 100%; bottom: 0; right: 0; border: none; border-top: 2px solid #000; box-shadow: none; }
+    .bcc-banner-card { width: 100%; bottom: 0; right: 0; border: none; border-top: 1px solid rgba(33, 28, 23, 0.12); box-shadow: none; }
 
     .bcc-modal-overlay {
         max-height: calc(100vh - 110px);
@@ -175,7 +179,7 @@
     color: #fff;
     padding: 10px 18px;
     border-radius: 6px;
-    font-size: 13px;
+    font-size: 0.8125rem;
     font-family: sans-serif;
     z-index: 999999;
     opacity: 0;
