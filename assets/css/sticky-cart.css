@@ -97,18 +97,6 @@
     will-change: opacity, transform;
 }
 
-/* Même traitement que les titres des panneaux cookies/accessibilité
-   (assets/css/cookie-consent.css .bcc-title, accessibility.css
-   .eh-a11y-title) : ce panneau n'en avait pas, ce qui le faisait ressortir
-   comme un composant étranger plutôt qu'un membre du même système. */
-.sticky-panel-title {
-    margin: 0;
-    font-size: 1rem;
-    font-weight: 700;
-    color: #111;
-    font-family: Gotu, sans-serif;
-}
-
 /* ========================================
    Image + Nom du produit
    ======================================== */
