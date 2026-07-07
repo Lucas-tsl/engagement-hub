@@ -22,17 +22,6 @@
     var menu = document.getElementById('eh-fab-menu');
     var detail = document.getElementById('eh-fab-detail');
 
-    // Bouton "retour en haut" (includes/core/frontend.php) : indépendant du
-    // FAB, sa visibilité suit uniquement le scroll (voir updateScrollPercent
-    // plus bas), pas l'état ouvert/fermé de l'engrenage.
-    var scrollTopBtn = document.getElementById('eh-scroll-top');
-    if (scrollTopBtn) {
-        scrollTopBtn.addEventListener('click', function () {
-            var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-            window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' });
-        });
-    }
-
     if (!fab || !toggle || !menu || !detail) return;
 
     // #eh-fab est UN SEUL objet qui traverse 3 états (voir assets/css/core.css) :
@@ -68,11 +57,6 @@
         var height = (doc.scrollHeight - doc.clientHeight) || 1;
         scrollPercent = Math.min(100, Math.max(0, (scrollTop / height) * 100));
         fab.style.setProperty('--eh-scroll', String(scrollPercent));
-
-        if (scrollTopBtn) {
-            var threshold = config.scrollTopThreshold || 65;
-            scrollTopBtn.classList.toggle('is-visible', scrollPercent >= threshold);
-        }
     }
 
     function visibleItems() {
@@ -124,6 +108,11 @@
             label.textContent = item.shortLabel || item.label;
             btn.appendChild(label);
             btn.addEventListener('click', function () {
+                if (item.action === 'scroll-top') {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                    forceClose();
+                    return;
+                }
                 // Le module concerné écoute cet événement pour afficher son
                 // propre contenu dans le slot détail (ehHub.showDetail), sans
                 // que le noyau ait besoin de connaître ce contenu.
