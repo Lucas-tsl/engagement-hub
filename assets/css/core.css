@@ -94,9 +94,13 @@
     max-height: calc(100vh - 140px);
 }
 
-/* Largeur adaptée par module affiché en détail (repli 340px ci-dessus). */
+/* Largeur adaptée par module affiché en détail (repli 340px ci-dessus).
+   Le panier a besoin de plus de place que les autres : avec 3 variations,
+   les boutons (vignette + libellé) ne tenaient plus sur une seule ligne et
+   retombaient en colonne faute d'espace. */
 .eh-fab[data-state="detail"][data-detail="cookie-consent"] { width: 420px; }
 .eh-fab[data-state="detail"][data-detail="accessibility"] { width: 320px; }
+.eh-fab[data-state="detail"][data-detail="sticky-cart"] { width: 480px; }
 
 /* ============================================================
    État 1 : bouton fermé (engrenage)
@@ -349,6 +353,7 @@
 
     .eh-fab[data-state="detail"][data-detail="cookie-consent"] { width: 340px; }
     .eh-fab[data-state="detail"][data-detail="accessibility"] { width: 270px; }
+    .eh-fab[data-state="detail"][data-detail="sticky-cart"] { width: 400px; }
 
     .eh-fab-item-ring {
         width: 38px;
