@@ -232,12 +232,15 @@
 .sticky-var-unit-price {
     font-size: 0.625rem;
     font-weight: 400;
-    color: #666;
+
+    /* Même gris d'encre que la légende du FAB (assets/css/core.css
+       .eh-fab-item-label), plutôt qu'un gris neutre #666 propre à ce panneau. */
+    color: #6b6058;
     display: block;
 }
 
 .sticky-variation-btn.active .sticky-var-unit-price {
-    color: #333;
+    color: #211c17;
 }
 
 .sticky-add-to-cart {
@@ -273,12 +276,14 @@
     opacity: 0.6;
 }
 
-/* Remplace le bouton (masqué) quand le produit/la variation est en rupture. */
+/* Remplace le bouton (masqué) quand le produit/la variation est en rupture.
+   Fond/texte teintés d'encre (comme le reste du panneau), pas un gris
+   neutre #eee/#666 propre à cet état. */
 .sticky-out-of-stock {
     width: 100%;
     padding: 12px 15px;
-    background: #eee;
-    color: #666;
+    background: rgba(33, 28, 23, 0.06);
+    color: #6b6058;
     font-family: Gotu, sans-serif;
     font-size: 0.875rem;
     font-weight: 600;
