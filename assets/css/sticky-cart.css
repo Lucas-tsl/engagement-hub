@@ -153,10 +153,19 @@
     letter-spacing: 0.5px;
 }
 
+/* !important sur les propriétés de mise en page seulement : le thème/
+   WooCommerce applique parfois ses propres règles génériques aux boutons
+   (display:block, width:100%...) avec une spécificité ou un ordre de
+   chargement qui prend le pas sur les nôtres — même raison que le
+   !important déjà posé sur les cases à cocher, assets/css/cookie-consent.css.
+   Sans ça, les boutons de variation se retrouvaient empilés en pleine
+   largeur au lieu de se ranger en ligne. */
 .sticky-variation-buttons {
-    display: flex;
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
     gap: 8px;
-    flex-wrap: wrap;
+    width: 100%;
 }
 
 .sticky-variation-btn {
@@ -173,8 +182,9 @@
     cursor: pointer;
     transition: all 0.2s ease;
     white-space: nowrap;
-    display: flex;
-    flex-direction: row;
+    display: flex !important;
+    flex-direction: row !important;
+    width: auto !important;
     align-items: center;
     gap: 8px;
 }
