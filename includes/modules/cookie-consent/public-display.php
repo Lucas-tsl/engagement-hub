@@ -38,6 +38,22 @@ function eh_cookie_inject_consent_mode() {
     <?php
 }
 
+// Lien de gestion des cookies utilisable n'importe où (typiquement le footer
+// du site) : [eh_cookie_preferences_link] ou [eh_cookie_preferences_link
+// text="Gérer les cookies"]. Le seul point d'entrée existant jusqu'ici pour
+// rouvrir les préférences était l'icône 🍪 du bouton flottant, deux clics
+// sans le repère visuel qu'un visiteur attend habituellement (un lien dédié
+// en pied de page).
+add_shortcode( 'eh_cookie_preferences_link', 'eh_cookie_preferences_link_shortcode' );
+function eh_cookie_preferences_link_shortcode( $atts ) {
+    $atts = shortcode_atts(
+        array( 'text' => __( 'Gérer les cookies', 'engagement-hub' ) ),
+        $atts,
+        'eh_cookie_preferences_link'
+    );
+    return '<a href="#" class="eh-cookie-preferences-link">' . esc_html( $atts['text'] ) . '</a>';
+}
+
 // Affichage HTML de la bannière et de la modale de préférences.
 // Le bouton de réouverture après consentement est désormais le bouton
 // flottant central du hub (icône 🍪 dans includes/core/frontend.php),
