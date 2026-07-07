@@ -76,29 +76,31 @@
                  <button type="button" class="sticky-panel-close" aria-label="Fermer">✕</button>
                  <div class="sticky-panel-scroll">
                      <div class="sticky-variation-content">
-                         <!-- Bloc gauche : Image + Nom du produit -->
-                         <div class="sticky-left-block">
+                         <!-- Image à gauche (agrandie), nom + variations
+                              empilés à droite : gagne la place qu'occupait
+                              le sélecteur de variation sur toute la largeur
+                              du panneau. -->
+                         <div class="sticky-product-row">
                              <div class="sticky-product-image">
                                  <img src="" alt="" class="sticky-product-img">
                              </div>
-                             <div class="sticky-product-name"></div>
+                             <div class="sticky-product-info">
+                                 <div class="sticky-product-name"></div>
+                                 <div class="sticky-variation-options">
+                                     <div class="sticky-variation-buttons"></div>
+                                 </div>
+                             </div>
                          </div>
-                         <!-- Bloc droite : Variations + Bouton -->
-                         <div class="sticky-right-block">
-                             <div class="sticky-variation-options">
-                                  <!--  <div class="sticky-variation-label"><span class="variation-name">Sélectionner une option</span></div>-->                            <div class="sticky-variation-buttons"></div>
-                             </div>
-                             <!-- role="status" + aria-live : le prix et le
-                                  passage bouton <-> rupture de stock changent
-                                  sans rechargement de page, un lecteur d'écran
-                                  a besoin d'être informé de ces mises à jour. -->
-                             <div class="sticky-availability" role="status" aria-live="polite">
-                                 <button class="sticky-add-to-cart" disabled>
-                                    <span class="sticky-button-text">${stickyI18n.addToCartText}</span> &nbsp;
-                                     <span class="sticky-price"></span>
-                                 </button>
-                                 <div class="sticky-out-of-stock" style="display:none;">${stickyI18n.outOfStockText}</div>
-                             </div>
+                         <!-- role="status" + aria-live : le prix et le
+                              passage bouton <-> rupture de stock changent
+                              sans rechargement de page, un lecteur d'écran
+                              a besoin d'être informé de ces mises à jour. -->
+                         <div class="sticky-availability" role="status" aria-live="polite">
+                             <button class="sticky-add-to-cart" disabled>
+                                <span class="sticky-button-text">${stickyI18n.addToCartText}</span> &nbsp;
+                                 <span class="sticky-price"></span>
+                             </button>
+                             <div class="sticky-out-of-stock" style="display:none;">${stickyI18n.outOfStockText}</div>
                          </div>
                      </div>
                  </div>

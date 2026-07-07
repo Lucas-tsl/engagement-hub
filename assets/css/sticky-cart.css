@@ -98,25 +98,38 @@
 }
 
 /* ========================================
-   Image + Nom du produit
+   Image à gauche (agrandie), nom + variations empilés à droite : gagne la
+   place qu'occupait le sélecteur de variation sur toute la largeur du
+   panneau, quitte à élargir l'image (46px -> 72px).
    ======================================== */
-.sticky-left-block {
+.sticky-product-row {
     display: flex;
-    align-items: center;
-    gap: 12px;
+    align-items: flex-start;
+    gap: 14px;
 }
 
 .sticky-product-image {
-    width: 46px;
-    height: 46px;
+    width: 72px;
+    height: 72px;
     flex-shrink: 0;
 }
 
 .sticky-product-img {
-    width: 46px;
-    height: 46px;
+    width: 72px;
+    height: 72px;
     object-fit: cover;
     border-radius: 0;
+}
+
+/* min-width: 0 : sans lui, ce conteneur flex refuserait de se réduire sous
+   la largeur naturelle de son contenu (nom du produit, boutons de
+   variation), et pourrait déborder du panneau. */
+.sticky-product-info {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex: 1;
+    min-width: 0;
 }
 
 .sticky-product-name {
@@ -124,16 +137,6 @@
     font-weight: 600;
     color: #333;
     font-family: Gotu, sans-serif;
-}
-
-/* ========================================
-   Variations + Bouton
-   ======================================== */
-.sticky-right-block {
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 12px;
 }
 
 .sticky-variation-options {
