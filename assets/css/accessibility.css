@@ -93,11 +93,15 @@
     padding: 34px 20px 16px 16px;
 }
 
+/* Gotu : même police que le titre produit du panneau panier et que les
+   titres/boutons du panneau cookies (assets/css/sticky-cart.css,
+   cookie-consent.css) — les 3 panneaux doivent se lire comme un seul système. */
 .eh-a11y-title {
     margin: 0 0 14px;
     font-size: 16px;
     font-weight: 700;
     color: #111;
+    font-family: Gotu, sans-serif;
 }
 
 .eh-a11y-row {

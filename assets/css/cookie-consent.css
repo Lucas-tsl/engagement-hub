@@ -26,14 +26,17 @@
     border-radius: 0;
 }
 .bcc-logo { max-height: 65px; margin-bottom: 15px; }
-.bcc-title { margin: 0 0 10px 0; font-size: 16px; font-weight: bold; color: #000; }
+/* Gotu : même police que le titre produit et le bouton d'ajout au panier
+   (assets/css/sticky-cart.css) — les 3 panneaux du FAB doivent se lire comme
+   un seul système, pas trois designs juxtaposés. */
+.bcc-title { margin: 0 0 10px 0; font-size: 16px; font-weight: bold; color: #000; font-family: Gotu, sans-serif; }
 .bcc-desc { margin: 0 0 15px 0; font-size: 13px; color: #333; line-height: 1.4; }
 .bcc-links { margin-bottom: 15px; font-size: 11px; }
 .bcc-links a { color: #000; text-decoration: underline; }
 /* "Accepter" et "Refuser" sur la même rangée, même taille, même poids de
    police : voir la note dans public-display.php sur la prééminence CNIL. */
 .bcc-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.bcc-btn { padding: 10px; font-size: 13px; font-weight: bold; cursor: pointer; border: 2px solid #000; background: #fff; color: #000; transition: all 0.2s; text-transform: uppercase; }
+.bcc-btn { padding: 10px; font-size: 13px; font-weight: bold; cursor: pointer; border: 2px solid #000; background: #fff; color: #000; transition: all 0.2s; text-transform: uppercase; font-family: Gotu, sans-serif; }
 .bcc-btn-accepter { background: #000; color: #fff; }
 .bcc-btn-accepter:hover { background: #fff; color: #000; border-color: #000; }
 .bcc-btn-refuser:hover { background: #eee; }
