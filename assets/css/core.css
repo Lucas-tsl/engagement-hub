@@ -40,9 +40,13 @@
     width: 56px;
     height: 56px;
     border-radius: 50%;
-    background-color: #111;
-    border: 1px solid rgba(255, 255, 255, 0.5);
-    box-shadow: 0 1px 4px rgb(0 0 0 / 18%);
+
+    /* Dégradé ambré façon verre de flacon (plutôt qu'un disque noir uni),
+       cohérent avec la palette réelle du site (theme.json : taupe #c2a990,
+       terracotta #d8613c...) — voir aussi le contenant ouvert plus bas. */
+    background: radial-gradient(circle at 32% 28%, #e3c391, #b3854a 70%, #93692f);
+    border: 2px solid #8a6a3a;
+    box-shadow: 0 3px 10px rgba(80, 55, 20, 0.35), inset 0 1px 2px rgba(255, 255, 255, 0.4);
     overflow: hidden;
 
     /* Durée allongée + courbe plus douce (décélération progressive) qu'un
@@ -63,17 +67,30 @@
     left: 20px;
 }
 
-/* Coins carrés (border-radius: 0), mais un contour presque invisible et une
-   ombre diffuse plutôt qu'une bordure épaisse et une ombre portée dure : le
-   thème du site (theme.json) travaille en tons chauds et sourds (greige,
-   taupe, terracotta) et une serif élégante (Cardo), pas en noir franc — une
-   bordure 2px noire jurait avec cette identité. */
+/* Coins carrés (border-radius: 0), fond crème et bordure quasi invisible :
+   direction "Flacon", cohérente avec le dégradé ambré du bouton fermé. Le
+   dégradé du bouton fermé (background, plus haut) doit être explicitement
+   retiré ici (background-image: none), sinon il resterait dessiné sous le
+   fond uni puisque background-color seul ne l'efface pas. */
 .eh-fab[data-state="menu"],
 .eh-fab[data-state="detail"] {
     border-radius: 0;
-    background-color: #fff;
-    border: 1px solid rgba(17, 17, 17, 0.06);
-    box-shadow: 0 18px 45px rgba(17, 17, 17, 0.16);
+    background-image: none;
+    background-color: #fdf8ef;
+    border: 1px solid #d8c3a0;
+    box-shadow: 0 18px 40px rgba(120, 85, 40, 0.16);
+}
+
+/* Fin liseré doré en tête de carte, façon étiquette de flacon. */
+.eh-fab[data-state="menu"]::before,
+.eh-fab[data-state="detail"]::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 20px;
+    right: 20px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #b3854a, transparent);
 }
 
 .eh-fab[data-state="menu"] {
@@ -150,28 +167,57 @@
     display: flex;
 }
 
+/* Le bouton n'est plus la bulle elle-même : un simple conteneur en colonne
+   (anneau + légende, voir .eh-fab-item-ring/.eh-fab-item-label), pour porter
+   une légende visible sous l'icône (design "Flacon") sans agrandir la bulle
+   elle-même. */
 .eh-fab-item {
-    width: 46px;
-    height: 46px;
-    border-radius: 50%;
-
-    /* Bordure + ombre plus marquée : sur le fond gris clair du menu, un
-       simple fond blanc ne suffisait pas à distinguer nettement la bulle. */
-    border: 1px solid rgba(0, 0, 0, 0.08);
-    background: #fff;
-    color: #111;
-    font-size: 20px;
-    cursor: pointer;
-    box-shadow: 0 2px 6px rgb(0 0 0 / 22%);
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: center;
+    gap: 6px;
+    width: auto;
+    height: auto;
+    background: none;
+    border: none;
+    padding: 0;
+    color: #111;
+    cursor: pointer;
     opacity: 0;
-    transform: scale(0.6);
+    transform: scale(0.85);
     transition: opacity 0.2s ease, transform 0.2s ease;
 
     /* Pas de délai par défaut : à la fermeture, les bulles doivent
        disparaître tout de suite, pendant que la boîte se rétrécit. */
+}
+
+.eh-fab-item-ring {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    /* Liseré teinté (plutôt qu'un gris neutre) pour rappeler l'anneau doré
+       du bouton fermé, sur un simple fond blanc qui garde l'icône lisible. */
+    border: 1px solid rgba(147, 105, 47, 0.35);
+    background: #fff;
+    box-shadow: 0 2px 6px rgba(80, 55, 20, 0.18);
+    transition: transform 0.2s ease;
+}
+
+.eh-fab-item-label {
+    font-family: Cardo, Georgia, serif;
+    font-size: 11px;
+    line-height: 1.2;
+    color: #6b5a44;
+    text-align: center;
+    max-width: 64px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .eh-fab[data-state="menu"] .eh-fab-item {
@@ -193,7 +239,7 @@
     width: 36px;
     height: 36px;
     border-radius: 50%;
-    border: 1px solid rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(147, 105, 47, 0.35);
     background: #fff;
     color: #333;
     font-size: 14px;
@@ -219,7 +265,9 @@
     transition-delay: calc(220ms + var(--eh-index, 0) * 40ms);
 }
 
-.eh-fab-item:hover {
+/* Seul l'anneau grossit au survol (pas toute la colonne, légende comprise) :
+   un pop plus net sur l'icône, sans faire "sauter" le texte sous elle. */
+.eh-fab-item:hover .eh-fab-item-ring {
     transform: scale(1.08);
 }
 
@@ -301,7 +349,7 @@
     .eh-fab[data-state="detail"][data-detail="cookie-consent"] { width: 340px; }
     .eh-fab[data-state="detail"][data-detail="accessibility"] { width: 270px; }
 
-    .eh-fab-item {
+    .eh-fab-item-ring {
         width: 38px;
         height: 38px;
         font-size: 17px;
@@ -338,6 +386,7 @@
     .eh-fab,
     .eh-fab-gear,
     .eh-fab-item,
+    .eh-fab-item-ring,
     .eh-fab-menu-close,
     .eh-fab-toggle {
         transition: none;
