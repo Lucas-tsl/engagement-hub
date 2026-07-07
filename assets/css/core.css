@@ -21,6 +21,98 @@
     top: 12px;
 }
 
+/* Bouton "retour en haut", indépendant du FAB (includes/core/frontend.php,
+   assets/js/core.js) : sa visibilité est pilotée par le scroll seul, pas
+   par l'état ouvert/fermé de l'engrenage — même principe que le panneau
+   panier qui s'affiche tout seul sur une fiche produit. Bulle à fond blanc,
+   même traitement visuel que le bouton fermé du FAB (direction "Ligne"). */
+.eh-scroll-top {
+    position: fixed;
+    right: 20px;
+    bottom: 80px;
+    z-index: 999996;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background-color: #fff;
+    border: 1.5px solid rgba(33, 28, 23, 0.55);
+    box-shadow: 0 2px 8px rgba(33, 28, 23, 0.1);
+    color: #211c17;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    /* Masqué par défaut, révélé par assets/js/core.js (classe .is-visible)
+       une fois le seuil de scroll franchi. */
+    opacity: 0;
+    transform: translateY(8px);
+    pointer-events: none;
+    transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.eh-scroll-top.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+.eh-scroll-top[data-position="left"] {
+    right: auto;
+    left: 20px;
+}
+
+.eh-scroll-top svg {
+    width: 20px;
+    height: 20px;
+    display: block;
+}
+
+.eh-scroll-top:hover {
+    background: rgba(33, 28, 23, 0.04);
+}
+
+.eh-scroll-top:focus-visible {
+    outline: 2px solid #2563eb;
+    outline-offset: 2px;
+}
+
+html.eh-mouse-user .eh-scroll-top:focus-visible {
+    outline: none;
+}
+
+@media (max-width: 1440px) {
+    .eh-scroll-top {
+        width: 40px;
+        height: 40px;
+        bottom: 72px;
+    }
+
+    .eh-scroll-top svg {
+        width: 17px;
+        height: 17px;
+    }
+}
+
+@media (max-width: 480px) {
+    .eh-scroll-top {
+        right: 14px;
+        bottom: 64px;
+    }
+
+    .eh-scroll-top[data-position="left"] {
+        right: auto;
+        left: 14px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .eh-scroll-top {
+        transition: none;
+    }
+}
+
 /* Engagement Hub - Bouton flottant (FAB), unifié en un seul objet qui
    grandit à travers 3 états (voir assets/js/core.js pour la machine à états) :
    1. fermé   : petit cercle avec l'engrenage

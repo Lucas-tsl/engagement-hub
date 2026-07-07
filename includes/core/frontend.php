@@ -6,19 +6,11 @@ function eh_enqueue_core_assets() {
     eh_enqueue_style( 'eh-core-css', EH_PLUGIN_URL . 'assets/css/core.css', array(), EH_VERSION );
     eh_enqueue_script( 'eh-core-js', EH_PLUGIN_URL . 'assets/js/core.js', array(), EH_VERSION, true );
 
-    // Icône "retour en haut" : toujours proposée par le noyau, visible uniquement
-    // après 50% de scroll. Ce n'est pas un module car elle n'a pas d'état activable.
-    $items = array(
-        array(
-            'id'              => 'top',
-            'icon'            => '↑',
-            'label'           => __( 'Haut de page', 'engagement-hub' ),
-            'shortLabel'      => __( 'Haut', 'engagement-hub' ),
-            'action'          => 'scroll-top',
-            'condition'       => 'scroll',
-            'scrollThreshold' => 50,
-        ),
-    );
+    // Le "retour en haut" n'est plus un choix du menu de l'engrenage : voir
+    // eh_render_scroll_top_button() plus bas, un bouton indépendant qui
+    // apparaît/disparaît tout seul au scroll, sur le même principe que le
+    // panneau panier sur une fiche produit.
+    $items = array();
 
     foreach ( EH_Module_Registry::active_modules() as $module_id ) {
         $module = EH_Module_Registry::get( $module_id );
@@ -43,9 +35,13 @@ function eh_enqueue_core_assets() {
         'eh-core-js',
         'ehHubConfig',
         array(
-            'items'      => $items,
-            'isProduct'  => function_exists( 'is_product' ) && is_product(),
-            'closeLabel' => __( 'Fermer', 'engagement-hub' ),
+            'items'              => $items,
+            'isProduct'          => function_exists( 'is_product' ) && is_product(),
+            'closeLabel'         => __( 'Fermer', 'engagement-hub' ),
+            // Seuil du bouton "retour en haut" indépendant (voir
+            // eh_render_scroll_top_button plus bas) : 65% de la page
+            // défilée, contre 50% quand c'était un choix du menu.
+            'scrollTopThreshold' => 65,
         )
     );
 }
@@ -64,6 +60,25 @@ add_action( 'wp_body_open', 'eh_render_skip_to_fab_link' );
 function eh_render_skip_to_fab_link() {
     ?>
     <a href="#eh-fab-toggle" class="eh-skip-link"><?php esc_html_e( 'Aller aux réglages (accessibilité, cookies, panier)', 'engagement-hub' ); ?></a>
+    <?php
+}
+
+// Flèche dessinée (voir EH_GEAR_SVG un peu plus haut pour la même logique) :
+// un simple trait + chevron, plutôt que l'emoji ↑ dont l'épaisseur/le style
+// varie trop d'un système à l'autre pour rester cohérent avec le reste des
+// icônes du plugin.
+define( 'EH_ARROW_UP_SVG', '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"></path><path d="M5 12l7-7 7 7"></path></svg>' );
+
+// Bouton "retour en haut" indépendant du FAB : apparaît/disparaît tout seul
+// selon la position de scroll (assets/js/core.js), sur le même principe que
+// le panneau panier qui s'affiche tout seul sur une fiche produit — pas
+// besoin d'ouvrir l'engrenage pour y accéder.
+add_action( 'wp_footer', 'eh_render_scroll_top_button', 5 );
+function eh_render_scroll_top_button() {
+    ?>
+    <button type="button" id="eh-scroll-top" class="eh-scroll-top" data-position="<?php echo esc_attr( get_option( 'eh_fab_position', 'right' ) ); ?>" aria-label="<?php esc_attr_e( 'Haut de page', 'engagement-hub' ); ?>">
+        <span aria-hidden="true"><?php echo EH_ARROW_UP_SVG; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- constante SVG interne, pas une entrée utilisateur. ?></span>
+    </button>
     <?php
 }
 
